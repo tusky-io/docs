@@ -2,11 +2,11 @@
 
 ## Cursor Cloud specific instructions
 
-This repository (`tusky-io/docs`) is a Mintlify documentation site for "Tusky — super simple decentralised storage."
+This repository (`tusky-io/docs`) is a Mintlify documentation site for "Tusky — super simple decentralised storage on Walrus."
 
-- **Framework**: Mintlify (MDX-based). Config lives in `docs.json` (new format, not the legacy `mint.json`).
-- **Node version**: Use Node 20 (`nvm use 20`). The Mintlify CLI has compatibility issues with Node 22+.
-- **Dev server**: `mintlify dev` (runs on port 3000 by default; use `--port <n>` for a custom port).
-- **Validation**: `mintlify validate` — strict mode, exits on warnings or errors. Run this before committing.
-- **No automated tests** — this is a docs-only repo. Validation (`mintlify validate`) is the primary check.
-- **Navigation schema**: `docs.json` uses the v2 navigation format (object with `groups` / `tabs` at the top level). See [Mintlify docs](https://mintlify.com/docs/navigation) for reference. Do not use the legacy array-based `navigation` format.
+- **Framework**: Mintlify (MDX-based). Config lives in `docs.json` (v2 navigation format with `groups` / `tabs`).
+- **Dev server**: `mintlify dev` (port 3000 by default; `--port <n>` for custom). Mintlify CLI is installed globally via `npm i -g mintlify`.
+- **Validation**: `mintlify validate` — run before committing to catch broken navigation or invalid MDX.
+- **No automated tests** — this is a docs-only repo. Validation is the primary check.
+- **Sections**: Main docs (introduction, quickstart, getting-started, core-concepts, gateways, billing, tools, architecture), API Reference tab (REST endpoints), SDK tab (TypeScript SDK reference).
+- **Public test URL**: Can be created ad-hoc with `cloudflared tunnel --url http://localhost:3000` (gives a `*.trycloudflare.com` URL).
