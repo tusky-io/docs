@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="30" viewBox="0 0 120 30">
+  <rect width="30" height="30" rx="6" fill="#818CF8"/>
+  <text x="10" y="22" font-family="Arial, sans-serif" font-weight="bold" font-size="18" fill="white">T</text>
+  <text x="38" y="22" font-family="Arial, sans-serif" font-weight="bold" font-size="20" fill="#F1F5F9">Tusky</text>
+</svg>
