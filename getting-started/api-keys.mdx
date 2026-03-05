@@ -38,8 +38,8 @@ API keys can be scoped to limit what operations they are allowed to perform:
 | `members:read` | List vault members |
 | `members:write` | Add, update, and remove vault members |
 | `account:read` | Read account info, usage, and balance |
-| `gateways:read` | Read gateway configuration |
-| `gateways:write` | Update gateway settings and custom domains |
+| `aggregators:read` | Read aggregator configuration |
+| `aggregators:write` | Update aggregator settings and custom domains |
 
 <Tip>
   Follow the **principle of least privilege**: only grant the scopes your application needs. A key used solely for reading files should not have `vaults:write` or `members:write` permissions.

@@ -18,7 +18,7 @@ Tusky provides a fully automated migration tool that pulls your data from Amazon
     Tusky begins pulling objects from S3 and uploading them to your chosen vault on the Walrus network. Progress is tracked in real time.
   </Step>
   <Step title="Verify and switch">
-    Once the migration completes, verify your content through your Tusky gateway and update your application to point to the new URLs.
+    Once the migration completes, verify your content through your Tusky aggregator and update your application to point to the new URLs.
   </Step>
 </Steps>
 
@@ -115,8 +115,8 @@ The dashboard shows real-time migration progress including:
 
 After the migration completes:
 
-1. **Verify content** — Spot-check files through your Tusky gateway to confirm integrity.
-2. **Update references** — Replace S3 URLs in your application with Tusky gateway URLs.
+1. **Verify content** — Spot-check files through your Tusky aggregator to confirm integrity.
+2. **Update references** — Replace S3 URLs in your application with Tusky aggregator URLs.
 3. **Revoke IAM credentials** — Delete the migration IAM user from AWS since it is no longer needed.
 4. **Decommission S3** *(optional)* — Once you have verified all content is accessible through Tusky, you can optionally remove the S3 bucket to stop incurring AWS storage costs.
 

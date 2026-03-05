@@ -9,20 +9,20 @@ Tusky lets you serve your decentralized storage content through your own branded
 
 <Steps>
   <Step title="Choose your domain">
-    Decide which domain or subdomain you want to use for your gateway. Common choices include:
+    Decide which domain or subdomain you want to use for your aggregator. Common choices include:
     - `cdn.yourdomain.com`
     - `files.yourdomain.com`
     - `assets.yourdomain.com`
     - `storage.yourdomain.com`
   </Step>
   <Step title="Add a CNAME record">
-    In your DNS provider's management console, create a `CNAME` record pointing your chosen domain to your Tusky gateway:
+    In your DNS provider's management console, create a `CNAME` record pointing your chosen domain to your Tusky aggregator:
 
     | Type | Name | Value | TTL |
     | --- | --- | --- | --- |
     | `CNAME` | `cdn` | `{subdomain}.mytusky.xyz` | 3600 |
 
-    Replace `{subdomain}` with your Tusky gateway subdomain.
+    Replace `{subdomain}` with your Tusky aggregator subdomain.
 
     <Tip>
       If you are using Cloudflare as your DNS provider, set the proxy status to **DNS only** (gray cloud) to allow Tusky to provision the SSL certificate.
@@ -33,18 +33,18 @@ Tusky lets you serve your decentralized storage content through your own branded
 
     <Tabs>
       <Tab title="Dashboard">
-        Navigate to **Settings → Gateway → Custom Domain** and enter your domain (e.g. `cdn.yourdomain.com`).
+        Navigate to **Settings → Aggregator → Custom Domain** and enter your domain (e.g. `cdn.yourdomain.com`).
       </Tab>
       <Tab title="SDK">
         ```typescript
-        await tusky.gateway.update({
+        await tusky.aggregator.update({
           customDomain: "cdn.yourdomain.com",
         });
         ```
       </Tab>
       <Tab title="API">
         ```bash
-        curl -X PATCH https://api.tusky.io/v1/gateway \
+        curl -X PATCH https://api.tusky.io/v1/aggregator \
           -H "Authorization: Bearer tsk_live_abc123" \
           -H "Content-Type: application/json" \
           -d '{"customDomain": "cdn.yourdomain.com"}'
@@ -86,7 +86,7 @@ DNS changes can take up to 48 hours to propagate globally, though most providers
 dig CNAME cdn.yourdomain.com
 ```
 
-The response should show your Tusky gateway as the CNAME target.
+The response should show your Tusky aggregator as the CNAME target.
 
 ## Removing a Custom Domain
 
@@ -94,11 +94,11 @@ To remove a custom domain and revert to your default `*.mytusky.xyz` URL:
 
 <Tabs>
   <Tab title="Dashboard">
-    Navigate to **Settings → Gateway → Custom Domain** and click **Remove**.
+    Navigate to **Settings → Aggregator → Custom Domain** and click **Remove**.
   </Tab>
   <Tab title="SDK">
     ```typescript
-    await tusky.gateway.update({
+    await tusky.aggregator.update({
       customDomain: null,
     });
     ```
@@ -112,10 +112,10 @@ To remove a custom domain and revert to your default `*.mytusky.xyz` URL:
 ## What's Next
 
 <CardGroup cols={2}>
-  <Card title="Gateway Overview" icon="network-wired" href="/gateways/overview">
-    Understand how the full gateway infrastructure works.
+  <Card title="Aggregator Overview" icon="network-wired" href="/aggregators/overview">
+    Understand how the full aggregator infrastructure works.
   </Card>
-  <Card title="Analytics" icon="chart-line" href="/gateways/analytics">
+  <Card title="Analytics" icon="chart-line" href="/aggregators/analytics">
     Monitor traffic on your custom domain.
   </Card>
 </CardGroup>

@@ -1,28 +1,28 @@
 ---
-title: Update Gateway
-api: 'PUT https://api.tusky.io/v2/gateway'
+title: Update Aggregator
+api: 'PUT https://api.tusky.io/v2/aggregator'
 ---
 
-Update the authenticated user's private gateway settings.
+Update the authenticated user's private aggregator settings.
 
 ## Request Body
 
 <ParamField body="subdomain" type="string">
-  The subdomain for the gateway. Must be unique, lowercase, and between 3 and 32 characters. This determines your gateway URL (e.g., `myapp` → `myapp.gateway.tusky.io`).
+  The subdomain for the aggregator. Must be unique, lowercase, and between 3 and 32 characters. This determines your aggregator URL (e.g., `myapp` → `myapp.mytusky.xyz`).
 </ParamField>
 
 <ParamField body="customDomain" type="string">
-  A custom domain to use for the gateway. Set to `null` to remove. You must configure a CNAME record pointing to your gateway URL before setting this.
+  A custom domain to use for the aggregator. Set to `null` to remove. You must configure a CNAME record pointing to your aggregator URL before setting this.
 </ParamField>
 
 <ParamField body="analyticsEnabled" type="boolean">
-  Whether to enable analytics tracking for gateway requests.
+  Whether to enable analytics tracking for aggregator requests.
 </ParamField>
 
 ## Response
 
 <ResponseField name="url" type="string">
-  The full URL of the private gateway.
+  The full URL of the private aggregator.
 </ResponseField>
 
 <ResponseField name="subdomain" type="string">
@@ -42,7 +42,7 @@ Update the authenticated user's private gateway settings.
 <CodeGroup>
 
 ```bash cURL
-curl -X PUT https://api.tusky.io/v2/gateway \
+curl -X PUT https://api.tusky.io/v2/aggregator \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -58,7 +58,7 @@ curl -X PUT https://api.tusky.io/v2/gateway \
 
 ```json
 {
-  "url": "https://myapp.gateway.tusky.io",
+  "url": "https://myapp.mytusky.xyz",
   "subdomain": "myapp",
   "customDomain": "files.example.com",
   "analyticsEnabled": true
@@ -66,5 +66,5 @@ curl -X PUT https://api.tusky.io/v2/gateway \
 ```
 
 <Note>
-  When setting a `customDomain`, ensure you have configured a CNAME DNS record pointing your domain to your gateway subdomain (e.g., `files.example.com` → `myapp.gateway.tusky.io`). SSL certificates are provisioned automatically after DNS propagation.
+  When setting a `customDomain`, ensure you have configured a CNAME DNS record pointing your domain to your aggregator subdomain (e.g., `files.example.com` → `myapp.mytusky.xyz`). SSL certificates are provisioned automatically after DNS propagation.
 </Note>

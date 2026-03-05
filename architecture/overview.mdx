@@ -22,7 +22,7 @@ Tusky is a managed infrastructure layer on top of the Walrus decentralized stora
                                                                        ▼
                                                                 ┌───────────────┐
                                                                 │   CDN (CF)    │
-                                                                │   + Gateway   │
+                                                                │ + Aggregator  │
                                                                 └───────────────┘
 ```
 
@@ -44,7 +44,7 @@ When you upload a file through the SDK or API, this is the journey your data tak
     Queue workers pick up batches and publish them to the Walrus network using the user's **dedicated managed wallet**. The worker handles encoding, storage node coordination, and transaction signing.
   </Step>
   <Step title="Metadata recorded">
-    Once published, the blob ID, quilt patch ID, and storage details are recorded in PostgreSQL. The file is now accessible through your gateway.
+    Once published, the blob ID, quilt patch ID, and storage details are recorded in PostgreSQL. The file is now accessible through your aggregator.
   </Step>
 </Steps>
 
@@ -54,11 +54,11 @@ When you upload a file through the SDK or API, this is the journey your data tak
 
 ## Read Path
 
-When a client requests a file through your gateway:
+When a client requests a file through your aggregator:
 
 <Steps>
   <Step title="Request arrives">
-    The client sends an HTTP request to your private gateway URL (e.g. `https://myproject.mytusky.xyz/qp_abc123`).
+    The client sends an HTTP request to your private aggregator URL (e.g. `https://myproject.mytusky.xyz/qp_abc123`).
   </Step>
   <Step title="CDN edge check">
     Cloudflare's edge network checks for a cached copy. If the file is cached, it is returned immediately from the nearest edge node.
@@ -96,7 +96,7 @@ Background workers that process the write path:
 
 ### Aggregators
 
-Aggregators reconstruct blobs from the Walrus network and serve them through gateways:
+Aggregators reconstruct blobs from the Walrus network and serve them through aggregators:
 
 - Primary aggregator fleet for standard operations
 - **Fallback aggregator** on separate infrastructure for resilience
@@ -119,7 +119,7 @@ Every Tusky user gets a dedicated Sui wallet, managed by Tusky's infrastructure:
 
 ### CDN (Cloudflare)
 
-All gateway traffic passes through Cloudflare:
+All aggregator traffic passes through Cloudflare:
 
 - **Edge caching** at 300+ locations worldwide
 - **WAF** for DDoS protection and request filtering
@@ -151,7 +151,7 @@ All Tusky services run on **Kubernetes**, providing:
   <Card title="Walrus Network" icon="network-wired" href="/architecture/walrus-network">
     Understand the decentralized storage layer that powers Tusky.
   </Card>
-  <Card title="Gateways" icon="globe" href="/gateways/overview">
-    Learn how content is delivered through the CDN and gateway infrastructure.
+  <Card title="Aggregators" icon="globe" href="/aggregators/overview">
+    Learn how content is delivered through the CDN and aggregator infrastructure.
   </Card>
 </CardGroup>

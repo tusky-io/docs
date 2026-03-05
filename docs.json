@@ -58,7 +58,7 @@
           "core-concepts/files",
           "core-concepts/encryption",
           "core-concepts/publishing",
-          "core-concepts/gateways",
+          "core-concepts/aggregators",
           "core-concepts/managed-wallet",
           "core-concepts/prepay",
           "core-concepts/api-keys",
@@ -66,12 +66,12 @@
         ]
       },
       {
-        "group": "Gateways",
+        "group": "Aggregators",
         "pages": [
-          "gateways/overview",
-          "gateways/private-gateways",
-          "gateways/custom-domains",
-          "gateways/analytics"
+          "aggregators/overview",
+          "aggregators/private-aggregators",
+          "aggregators/custom-domains",
+          "aggregators/analytics"
         ]
       },
       {
@@ -139,10 +139,10 @@
             ]
           },
           {
-            "group": "Gateways API",
+            "group": "Aggregators API",
             "pages": [
-              "api-reference/gateways/get-gateway",
-              "api-reference/gateways/update-gateway"
+              "api-reference/aggregators/get-aggregator",
+              "api-reference/aggregators/update-aggregator"
             ]
           },
           {
@@ -177,7 +177,7 @@
               "sdk/vaults",
               "sdk/files",
               "sdk/members",
-              "sdk/gateways",
+              "sdk/aggregators",
               "sdk/account"
             ]
           }

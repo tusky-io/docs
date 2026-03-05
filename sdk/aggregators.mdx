@@ -1,0 +1,102 @@
+---
+title: Aggregators
+description: 'Configure aggregators with the SDK'
+---
+
+Every Tusky user gets a private aggregator — a dedicated HTTP endpoint for serving their content from the Walrus network. The `tusky.aggregator` module lets you view and configure your aggregator settings programmatically.
+
+## Get Aggregator Configuration
+
+Retrieve your current aggregator settings:
+
+```typescript
+const aggregator = await tusky.aggregator.get();
+
+console.log("Subdomain:", aggregator.subdomain);
+console.log("URL:", aggregator.url);
+console.log("Custom domain:", aggregator.customDomain || "Not configured");
+console.log("SSL:", aggregator.sslEnabled);
+```
+
+### Aggregator Object
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | `string` | Unique aggregator identifier. |
+| `subdomain` | `string` | Your aggregator subdomain (e.g. `myproject`). |
+| `url` | `string` | Full aggregator URL (e.g. `https://myproject.mytusky.xyz`). |
+| `customDomain` | `string \| null` | Custom domain if configured, otherwise `null`. |
+| `sslEnabled` | `boolean` | Whether SSL is active on the aggregator. |
+| `createdAt` | `string` | ISO 8601 creation timestamp. |
+
+## Update Aggregator Settings
+
+Customize your aggregator's subdomain or attach a custom domain:
+
+### Change Subdomain
+
+```typescript
+const updated = await tusky.aggregator.update({
+  subdomain: "brand-assets",
+});
+
+console.log("New URL:", updated.url);
+// https://brand-assets.mytusky.xyz
+```
+
+### Attach a Custom Domain
+
+```typescript
+const updated = await tusky.aggregator.update({
+  customDomain: "cdn.example.com",
+});
+
+console.log("Custom domain:", updated.customDomain);
+console.log("SSL:", updated.sslEnabled);
+```
+
+<Note>
+  Before attaching a custom domain, you must add a `CNAME` record pointing your domain to Tusky. See [Custom Domains](/aggregators/custom-domains) for the full setup guide.
+</Note>
+
+## Complete Example
+
+```typescript
+import { Tusky } from "@tusky-io/ts-sdk";
+
+const tusky = new Tusky({ apiKey: process.env.TUSKY_API_KEY });
+
+// View current aggregator
+const aggregator = await tusky.aggregator.get();
+console.log("Current aggregator URL:", aggregator.url);
+
+// Update subdomain
+const updated = await tusky.aggregator.update({
+  subdomain: "my-new-subdomain",
+});
+console.log("Updated aggregator URL:", updated.url);
+
+// Attach custom domain (after DNS setup)
+const withDomain = await tusky.aggregator.update({
+  customDomain: "files.mydomain.com",
+});
+console.log("Custom domain active:", withDomain.customDomain);
+```
+
+<Tip>
+  Your aggregator serves only your own content. Unlike public Walrus aggregators, a Tusky private aggregator will not resolve blobs that belong to other users. This provides security isolation and prevents abuse.
+</Tip>
+
+## What's Next
+
+<CardGroup cols={2}>
+  <Card title="Private Aggregators" icon="shield-halved" href="/aggregators/private-aggregators">
+    Learn more about how private aggregators work.
+  </Card>
+  <Card title="Custom Domains" icon="globe" href="/aggregators/custom-domains">
+    Set up your own domain for content delivery.
+  </Card>
+  <Card title="Analytics" icon="chart-line" href="/aggregators/analytics">
+    Monitor traffic and usage on your aggregator.
+  </Card>
+</CardGroup>

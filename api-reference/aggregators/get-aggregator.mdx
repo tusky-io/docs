@@ -1,0 +1,46 @@
+---
+title: Get Aggregator
+api: 'GET https://api.tusky.io/v2/aggregator'
+---
+
+Retrieve the authenticated user's private aggregator configuration. Private aggregators provide a dedicated URL for accessing vault files.
+
+## Response
+
+<ResponseField name="url" type="string">
+  The full URL of the private aggregator.
+</ResponseField>
+
+<ResponseField name="subdomain" type="string">
+  The subdomain assigned to the aggregator (e.g., `myapp` for `myapp.mytusky.xyz`).
+</ResponseField>
+
+<ResponseField name="customDomain" type="string">
+  Custom domain configured for the aggregator, if any. `null` if not configured.
+</ResponseField>
+
+<ResponseField name="analyticsEnabled" type="boolean">
+  Whether aggregator analytics are enabled.
+</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl https://api.tusky.io/v2/aggregator \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "url": "https://myapp.mytusky.xyz",
+  "subdomain": "myapp",
+  "customDomain": "files.example.com",
+  "analyticsEnabled": true
+}
+```

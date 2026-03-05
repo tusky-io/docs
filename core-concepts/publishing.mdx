@@ -48,7 +48,7 @@ Every Tusky user is assigned a **dedicated managed wallet** on the Sui network. 
     Your dedicated managed wallet submits a transaction to the Sui blockchain, registering the blob and locking the required WAL tokens for the chosen number of storage epochs.
   </Step>
   <Step title="Confirmation">
-    Once the Sui transaction is finalized, Tusky records the blob ID, quilt patch IDs, and storage metadata. The file is now live and retrievable through your gateway.
+    Once the Sui transaction is finalized, Tusky records the blob ID, quilt patch IDs, and storage metadata. The file is now live and retrievable through your aggregator.
   </Step>
 </Steps>
 
@@ -121,19 +121,19 @@ Once blobs are ejected to your wallet:
 | Capability | Status |
 |---|---|
 | **Retrieve via Walrus** | Available — use any Walrus aggregator with the blob ID. |
-| **Retrieve via Tusky gateway** | No longer served — Tusky gateways only serve content from your managed wallet. |
+| **Retrieve via Tusky aggregator** | No longer served — Tusky aggregators only serve content from your managed wallet. |
 | **Extend storage** | Your responsibility — interact with Walrus directly. |
 | **Auto-extend** | No longer managed by Tusky. |
 
 <Warning>
-  Ejected blobs are removed from your Tusky gateway. If you rely on Tusky gateway URLs for serving content, plan a migration to a self-hosted Walrus aggregator or alternative gateway before ejecting.
+  Ejected blobs are removed from your Tusky aggregator. If you rely on Tusky aggregator URLs for serving content, plan a migration to a self-hosted Walrus aggregator or alternative before ejecting.
 </Warning>
 
 ## What's next?
 
 <CardGroup cols={2}>
-  <Card title="Gateways" icon="network-wired" href="/core-concepts/gateways">
-    Learn how your published content is served through dedicated gateways.
+  <Card title="Aggregators" icon="network-wired" href="/core-concepts/aggregators">
+    Learn how your published content is served through dedicated aggregators.
   </Card>
   <Card title="Files" icon="file" href="/core-concepts/files">
     Understand file metadata, supported types, and lifecycle.

@@ -1,0 +1,149 @@
+---
+title: Aggregators
+description: 'Access your stored content through dedicated aggregators'
+---
+
+Aggregators are the retrieval layer of Tusky — they fetch your content from the Walrus network and serve it over standard HTTPS. Every Tusky user gets a **private aggregator** that serves only their own uploaded content, complete with CDN edge caching, DDoS protection, and optional custom domains.
+
+## What is an aggregator?
+
+In the Walrus ecosystem, an **aggregator** is a service that retrieves blob data from Walrus storage nodes and assembles it for the requesting client. Tusky wraps this aggregator functionality into a fully managed **aggregator** service that adds access control, caching, analytics, and custom domain support on top.
+
+<CardGroup cols={2}>
+  <Card title="Private by default" icon="lock">
+    Your aggregator serves **only** content uploaded through your Tusky account. It will not resolve blob IDs belonging to other users, preventing unauthorized content from being served under your domain.
+  </Card>
+  <Card title="Edge-cached" icon="bolt">
+    Content is cached at CDN edge locations worldwide, ensuring low-latency delivery regardless of where your users are located.
+  </Card>
+  <Card title="DDoS protected" icon="shield">
+    Every aggregator includes built-in DDoS mitigation, so traffic spikes and malicious attacks don't take your content offline.
+  </Card>
+  <Card title="Analytics included" icon="chart-line">
+    Track requests, bandwidth, geographic distribution, and top content — all from the Tusky dashboard.
+  </Card>
+</CardGroup>
+
+## Your aggregator URL
+
+When you create a Tusky account, a private aggregator is automatically provisioned with a unique subdomain:
+
+```
+https://<your-subdomain>.mytusky.xyz
+```
+
+This URL is immediately usable — no configuration required. You can find your aggregator URL in the Tusky dashboard under **Settings → Aggregator**.
+
+<Tip>
+  You can connect a **custom domain** (e.g., `cdn.yourdomain.com`) to your aggregator for a branded experience. See the [Custom Domains](/aggregators/custom-domains) guide for setup instructions.
+</Tip>
+
+## Standard URL schemes
+
+Tusky aggregators follow a standard URL scheme for retrieving content. All files are accessible using either their **blob ID** or their **quilt patch ID**.
+
+<Tabs>
+  <Tab title="By blob ID">
+    Retrieve a file (or an entire quilt) using its Walrus blob ID:
+
+    ```
+    GET /v1/blobs/{blobId}
+    ```
+
+    **Example:**
+
+    ```
+    https://acme.mytusky.xyz/v1/blobs/5Gk9pM3Nh...
+    ```
+
+    Use this when you have the raw Walrus blob identifier — for standalone files or when accessing a full quilt.
+  </Tab>
+  <Tab title="By quilt patch ID">
+    Retrieve an individual file from a quilt using its quilt patch ID:
+
+    ```
+    GET /v1/blobs/by-quilt-patch-id/{quiltPatchId}
+    ```
+
+    **Example:**
+
+    ```
+    https://acme.mytusky.xyz/v1/blobs/by-quilt-patch-id/qp_8Xr2nZ...
+    ```
+
+    Use this to address a specific file within a batched quilt without downloading the entire quilt.
+  </Tab>
+</Tabs>
+
+<Info>
+  Both URL schemes return the raw file data with the correct `Content-Type` header, making them suitable for direct embedding in web pages, API responses, and applications.
+</Info>
+
+## Aggregator architecture
+
+```
+┌────────────┐     ┌────────────────┐     ┌──────────────┐     ┌─────────────┐
+│   Client    │────▶│  CDN / Edge    │────▶│    Tusky     │────▶│   Walrus    │
+│  (browser)  │◀────│  Cache         │◀────│  Aggregator  │◀────│   Network   │
+└────────────┘     └────────────────┘     └──────────────┘     └─────────────┘
+```
+
+1. **Client request** — A user or application requests content via your aggregator URL.
+2. **CDN check** — If the content is cached at an edge location, it's returned immediately with minimal latency.
+3. **Aggregator fetch** — On a cache miss, the Tusky aggregator verifies the blob belongs to your account, then fetches it from Walrus.
+4. **Walrus retrieval** — The aggregator contacts Walrus storage nodes, reassembles the erasure-coded data, and returns the file.
+5. **Cache and respond** — The response is cached at the edge and delivered to the client.
+
+## Private aggregator access control
+
+Unlike public Walrus aggregators, your Tusky aggregator enforces **account-scoped access control**:
+
+- Only blobs published through your managed wallet are served.
+- Requests for blob IDs not associated with your account return a `404 Not Found`.
+- This prevents your aggregator (and custom domain) from being used to serve arbitrary Walrus content.
+
+<Note>
+  If you need to serve content publicly without account scoping (e.g., for a fully open data project), you can use a public Walrus aggregator directly with your blob IDs. Your Tusky aggregator is designed for controlled, account-scoped delivery.
+</Note>
+
+## Custom domains and subdomains
+
+You can map your own domain or subdomain to your Tusky aggregator:
+
+| Feature | Details |
+|---|---|
+| **Custom subdomain** | Point `cdn.yourdomain.com` to your aggregator via CNAME. |
+| **Apex domain** | Use an ALIAS or ANAME record for root domains (provider-dependent). |
+| **Automatic TLS** | Tusky provisions and renews TLS certificates automatically. |
+| **Multiple domains** | Attach more than one domain to a single aggregator. |
+
+For step-by-step instructions, see [Custom Domains](/aggregators/custom-domains).
+
+## Analytics
+
+Every aggregator includes built-in analytics accessible from the Tusky dashboard:
+
+- **Request volume** — Total requests over time.
+- **Bandwidth** — Data transferred per period.
+- **Top content** — Most-requested blob IDs and files.
+- **Geographic distribution** — Where your users are accessing content from.
+- **Cache hit rate** — Percentage of requests served from CDN cache.
+
+For details, see [Aggregator Analytics](/aggregators/analytics).
+
+## What's next?
+
+<CardGroup cols={2}>
+  <Card title="Private Aggregators" icon="lock" href="/aggregators/private-aggregators">
+    Deep dive into private aggregator configuration and access control.
+  </Card>
+  <Card title="Custom Domains" icon="globe" href="/aggregators/custom-domains">
+    Connect your own domain to your Tusky aggregator.
+  </Card>
+  <Card title="Aggregator Analytics" icon="chart-bar" href="/aggregators/analytics">
+    Monitor traffic, bandwidth, and content performance.
+  </Card>
+  <Card title="Publishing" icon="cloud-arrow-up" href="/core-concepts/publishing">
+    Understand how content is published before it reaches your aggregator.
+  </Card>
+</CardGroup>

@@ -39,7 +39,7 @@ Each file within a quilt is tracked by a **quilt patch** — a reference that ma
 
 ### Quilt Patch IDs
 
-A **quilt patch ID** identifies a specific file within a quilt. When you access a file through your Tusky gateway using `/{quiltPatchId}`, the system locates the parent quilt blob, extracts the relevant byte range, and returns the file.
+A **quilt patch ID** identifies a specific file within a quilt. When you access a file through your Tusky aggregator using `/{quiltPatchId}`, the system locates the parent quilt blob, extracts the relevant byte range, and returns the file.
 
 ```
 Quilt (blob)
@@ -111,7 +111,7 @@ When a file's storage is approaching expiry (and auto-extend is enabled), Tusky:
 
 ### Reading
 
-When a file is requested through your gateway, Tusky's aggregators:
+When a file is requested through your aggregator, Tusky's aggregators:
 
 1. Look up the blob ID (or quilt patch ID) from the database
 2. Contact Walrus storage nodes to retrieve the encoded fragments

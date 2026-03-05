@@ -34,7 +34,7 @@ The Walrus network is designed for durability through redundant encoding across 
     Once enabled, every file uploaded to the vault is automatically copied to Tusky's centralized blobstore in addition to being published to Walrus.
   </Step>
   <Step title="Transparent access">
-    File retrieval works exactly the same whether backup is enabled or not. If the primary Walrus path is unavailable, the gateway can fall back to the backup copy.
+    File retrieval works exactly the same whether backup is enabled or not. If the primary Walrus path is unavailable, the aggregator can fall back to the backup copy.
   </Step>
 </Steps>
 
@@ -88,7 +88,7 @@ Backup is a **paid feature** with a per-GB monthly cost on top of your standard 
 | --- | --- |
 | File content (encrypted if vault is encrypted) | Vault metadata (stored in Tusky's database) |
 | Original file names and structure | Member access control lists |
-| MIME types and custom metadata | Gateway configuration |
+| MIME types and custom metadata | Aggregator configuration |
 
 <Info>
   For encrypted vaults, the backup stores the **encrypted** file content. Tusky never has access to your unencrypted data, even in the backup.
