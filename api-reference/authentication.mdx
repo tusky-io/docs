@@ -1,0 +1,85 @@
+---
+title: Authentication
+description: 'Authenticate your API requests'
+---
+
+## Bearer Token Authentication
+
+The Tusky API uses Bearer token authentication. Include your API key in the `Authorization` header of every request:
+
+```bash
+Authorization: Bearer YOUR_API_KEY
+```
+
+### Example Request
+
+```bash
+curl https://api.tusky.io/v2/vaults \
+  -H "Authorization: Bearer tsk_live_abc123def456"
+```
+
+## Generating API Keys
+
+API keys are created and managed from the [Tusky Dashboard](https://app.tusky.io):
+
+1. Sign in at [app.tusky.io](https://app.tusky.io).
+2. Navigate to **Settings** → **API Keys**.
+3. Click **Create API Key**.
+4. Give your key a descriptive name and select the desired scope.
+5. Copy the key immediately — it will only be displayed once.
+
+<Warning>
+  Store your API key securely. Do not commit it to version control or expose it in client-side code.
+</Warning>
+
+## Key Scoping
+
+API keys can be scoped to limit their access:
+
+| Scope         | Description                                      |
+| ------------- | ------------------------------------------------ |
+| `full_access` | Read and write access to all resources           |
+| `read_only`   | Read-only access to vaults, files, and metadata  |
+| `vault:{id}`  | Access restricted to a specific vault            |
+
+Scoped keys follow the principle of least privilege. Use the narrowest scope that satisfies your use case.
+
+## Authentication Errors
+
+| Status Code | Error Code          | Description                                            |
+| ----------- | ------------------- | ------------------------------------------------------ |
+| `401`       | `UNAUTHORIZED`      | No API key provided, or the key is invalid or expired  |
+| `403`       | `FORBIDDEN`         | The API key does not have permission for this action   |
+
+### 401 Unauthorized
+
+Returned when the `Authorization` header is missing, malformed, or contains an invalid key.
+
+```json
+{
+  "error": {
+    "code": "UNAUTHORIZED",
+    "message": "Invalid or missing API key"
+  }
+}
+```
+
+### 403 Forbidden
+
+Returned when the API key is valid but does not have sufficient permissions for the requested operation or resource.
+
+```json
+{
+  "error": {
+    "code": "FORBIDDEN",
+    "message": "API key does not have access to this resource"
+  }
+}
+```
+
+## Best Practices
+
+- **Rotate keys regularly** — delete old keys and generate new ones periodically.
+- **Use scoped keys** — limit each key to only the permissions it needs.
+- **Use environment variables** — store keys in environment variables, not in source code.
+- **Monitor usage** — review API key activity in the dashboard to detect anomalies.

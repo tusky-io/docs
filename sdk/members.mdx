@@ -1,0 +1,127 @@
+---
+title: Members
+description: 'Manage vault access and members with the SDK'
+---
+
+Vaults support collaborative access through role-based membership. The `tusky.vault` module includes methods to add, list, update, and remove members from any vault you own or manage.
+
+## Roles
+
+Tusky uses three roles with escalating permissions:
+
+| Role | Permissions |
+| --- | --- |
+| **Viewer** | Download and view files. Cannot upload, delete, or manage members. |
+| **Contributor** | Everything a Viewer can do, plus upload and delete files. |
+| **Admin** | Full control — upload, delete, manage members, and modify vault settings. |
+
+<Info>
+  The vault **owner** always has full control and cannot be removed. Admin, Contributor, and Viewer roles apply to additional members.
+</Info>
+
+## Add a Member
+
+Invite a user by their Sui wallet address:
+
+```typescript
+const member = await tusky.vault.addMember("vault_abc123", {
+  address: "0x1a2b3c...user_wallet_address",
+  role: "contributor",
+});
+
+console.log("Added member:", member.id);
+console.log("Role:", member.role);
+```
+
+<Note>
+  For encrypted vaults, adding a member automatically shares the decryption capability with the new member's wallet through [Seal](https://docs.sui.io/standards/seal). The member can decrypt vault content using their wallet — no encryption keys are ever exposed.
+</Note>
+
+## List Members
+
+Retrieve all members of a vault:
+
+```typescript
+const members = await tusky.vault.members("vault_abc123");
+
+for (const member of members) {
+  console.log(`${member.address} — ${member.role}`);
+}
+```
+
+### Member Object
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | `string` | Unique member ID. |
+| `address` | `string` | Sui wallet address of the member. |
+| `role` | `string` | One of `viewer`, `contributor`, or `admin`. |
+| `createdAt` | `string` | ISO 8601 timestamp of when the member was added. |
+
+## Update a Member's Role
+
+Change a member's role:
+
+```typescript
+const updated = await tusky.vault.updateMember("member_def456", "admin");
+
+console.log("Updated role:", updated.role);
+```
+
+<Tip>
+  Promoting a member to `admin` grants them the ability to manage other members. Only vault owners and existing admins can promote members.
+</Tip>
+
+## Remove a Member
+
+Revoke a member's access to the vault:
+
+```typescript
+await tusky.vault.removeMember("member_def456");
+console.log("Member removed");
+```
+
+<Warning>
+  Removing a member from an encrypted vault revokes their decryption capability. They will no longer be able to decrypt any files in the vault, even if they previously downloaded encrypted content.
+</Warning>
+
+## Complete Example
+
+```typescript
+import { Tusky } from "@tusky-io/ts-sdk";
+
+const tusky = new Tusky({ apiKey: process.env.TUSKY_API_KEY });
+
+const vaultId = "vault_abc123";
+
+// Add a contributor
+const member = await tusky.vault.addMember(vaultId, {
+  address: "0xAliceWalletAddress",
+  role: "contributor",
+});
+
+// List all members
+const members = await tusky.vault.members(vaultId);
+console.log("Vault members:");
+for (const m of members) {
+  console.log(`  ${m.address} [${m.role}]`);
+}
+
+// Promote to admin
+await tusky.vault.updateMember(member.id, "admin");
+
+// Remove the member
+await tusky.vault.removeMember(member.id);
+console.log("Member removed from vault");
+```
+
+## What's Next
+
+<CardGroup cols={2}>
+  <Card title="Vaults" icon="vault" href="/sdk/vaults">
+    Create and configure the vaults members collaborate in.
+  </Card>
+  <Card title="Encryption" icon="lock" href="/core-concepts/encryption">
+    Learn how encryption keys are shared with vault members.
+  </Card>
+</CardGroup>

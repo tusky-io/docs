@@ -1,0 +1,159 @@
+---
+title: Files
+description: 'Upload and manage files with the SDK'
+---
+
+The `tusky.file` module handles uploading, downloading, listing, and deleting files within vaults. Files uploaded to encrypted vaults are automatically encrypted client-side before being published to the Walrus network.
+
+## Upload a File
+
+### From a File Path (Node.js)
+
+The simplest way to upload in a Node.js environment:
+
+```typescript
+const file = await tusky.file.upload("vault_abc123", "./documents/report.pdf", {
+  name: "Q4 Report.pdf",
+});
+
+console.log("Uploaded:", file.id);
+console.log("Size:", file.size, "bytes");
+```
+
+### From a Buffer
+
+Upload file content directly from a `Buffer` or `Uint8Array`:
+
+```typescript
+const buffer = Buffer.from("Hello, Walrus!");
+
+const file = await tusky.file.upload("vault_abc123", buffer, {
+  name: "greeting.txt",
+  mimeType: "text/plain",
+});
+```
+
+### From a ReadableStream
+
+Stream large files without loading them entirely into memory:
+
+```typescript
+import { createReadStream } from "fs";
+
+const stream = createReadStream("./large-video.mp4");
+
+const file = await tusky.file.upload("vault_abc123", stream, {
+  name: "presentation.mp4",
+  mimeType: "video/mp4",
+});
+```
+
+### Upload Options
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `name` | `string` | Filename from path | Display name for the file. |
+| `mimeType` | `string` | Auto-detected | MIME type of the file content. |
+| `epochs` | `number` | Vault default | Number of Walrus storage epochs for this file. |
+| `autoExtend` | `boolean` | Vault default | Automatically renew storage before expiry. |
+
+<Tip>
+  Use the [cost estimation endpoint](/api-reference/files/upload-file) to preview the storage cost in SUI before uploading. Cost = Walrus storage cost + 10% Tusky fee.
+</Tip>
+
+## Get File Metadata
+
+Retrieve metadata for a specific file:
+
+```typescript
+const file = await tusky.file.get("file_xyz789");
+
+console.log(file.name);        // "Q4 Report.pdf"
+console.log(file.size);        // 2048576
+console.log(file.mimeType);    // "application/pdf"
+console.log(file.vaultId);     // "vault_abc123"
+console.log(file.blobId);      // Walrus blob identifier
+console.log(file.createdAt);   // ISO 8601 timestamp
+```
+
+## List Files
+
+List all files in a vault:
+
+```typescript
+const files = await tusky.file.list("vault_abc123");
+
+for (const file of files) {
+  console.log(`${file.name} (${file.size} bytes)`);
+}
+```
+
+## Download a File
+
+Retrieve the file content as an `ArrayBuffer`:
+
+```typescript
+const content = await tusky.file.arrayBuffer("file_xyz789");
+
+// Write to disk in Node.js
+import { writeFileSync } from "fs";
+writeFileSync("./downloaded-report.pdf", Buffer.from(content));
+```
+
+<Note>
+  For encrypted vaults, the SDK automatically decrypts the file content using keys derived from your wallet or API key. No additional steps are required.
+</Note>
+
+## Delete a File
+
+Remove a file from a vault:
+
+```typescript
+await tusky.file.delete("file_xyz789");
+console.log("File deleted");
+```
+
+<Warning>
+  Deleting a file removes it from Tusky and your gateway. The underlying Walrus blob persists until its storage epochs expire.
+</Warning>
+
+## Complete Example
+
+```typescript
+import { Tusky } from "@tusky-io/ts-sdk";
+import { readFileSync, writeFileSync } from "fs";
+
+const tusky = new Tusky({ apiKey: process.env.TUSKY_API_KEY });
+
+// Upload a file
+const file = await tusky.file.upload("vault_abc123", "./photo.jpg", {
+  name: "vacation.jpg",
+  epochs: 5,
+  autoExtend: true,
+});
+
+console.log("Uploaded:", file.id);
+
+// List all files in the vault
+const files = await tusky.file.list("vault_abc123");
+console.log("Files in vault:", files.length);
+
+// Download the file
+const content = await tusky.file.arrayBuffer(file.id);
+writeFileSync("./downloaded-photo.jpg", Buffer.from(content));
+console.log("Downloaded successfully");
+
+// Clean up
+await tusky.file.delete(file.id);
+```
+
+## What's Next
+
+<CardGroup cols={2}>
+  <Card title="Vaults" icon="vault" href="/sdk/vaults">
+    Manage the vaults that contain your files.
+  </Card>
+  <Card title="Gateways" icon="globe" href="/sdk/gateways">
+    Configure how your files are served over HTTP.
+  </Card>
+</CardGroup>

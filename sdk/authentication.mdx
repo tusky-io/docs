@@ -1,0 +1,130 @@
+---
+title: Authentication
+description: 'Configure authentication for the SDK'
+---
+
+Tusky supports two authentication methods, each designed for different environments. You can authenticate with an **API key** for server-side applications and scripts, or with a **Sui wallet** for browser-based dApps.
+
+## API Key Authentication
+
+API keys are the simplest way to authenticate. Generate a key from the [Tusky dashboard](https://app.tusky.io) and pass it when initializing the client.
+
+```typescript
+import { Tusky } from "@tusky-io/ts-sdk";
+
+const tusky = new Tusky({
+  apiKey: "tsk_live_abc123...",
+});
+```
+
+<Warning>
+  API keys carry the full permissions of your account. Never expose them in client-side code or commit them to version control. Use environment variables or a secrets manager instead.
+</Warning>
+
+### Best Practices for API Keys
+
+- Store keys in environment variables (e.g. `TUSKY_API_KEY`).
+- Rotate keys periodically from the dashboard.
+- Use separate keys for development and production.
+
+```typescript
+const tusky = new Tusky({
+  apiKey: process.env.TUSKY_API_KEY,
+});
+```
+
+## Sui Wallet Authentication
+
+For browser applications, authenticate users through their connected Sui wallet. Tusky uses wallet signatures to prove ownership without ever accessing private keys.
+
+### Browser Extension Wallet
+
+If your users have a Sui-compatible browser extension (such as Sui Wallet, Suiet, or Ethos), pass the wallet adapter directly:
+
+```typescript
+import { Tusky } from "@tusky-io/ts-sdk/web";
+
+// Assumes a wallet adapter from @mysten/wallet-standard or similar
+const tusky = new Tusky({
+  wallet: walletAdapter,
+});
+```
+
+<Tip>
+  Most Sui wallet libraries expose a standard `WalletAdapter` interface. Tusky's SDK accepts any adapter that implements `signPersonalMessage`.
+</Tip>
+
+### Connecting with dApp Kit
+
+If you are using `@mysten/dapp-kit`, you can integrate Tusky after the user connects their wallet:
+
+```typescript
+import { Tusky } from "@tusky-io/ts-sdk/web";
+import { useCurrentWallet } from "@mysten/dapp-kit";
+
+function MyComponent() {
+  const { currentWallet } = useCurrentWallet();
+
+  async function initTusky() {
+    const tusky = new Tusky({
+      wallet: currentWallet,
+    });
+
+    const account = await tusky.account.get();
+    console.log("Authenticated as:", account.address);
+  }
+
+  return <button onClick={initTusky}>Connect to Tusky</button>;
+}
+```
+
+### Server-Side Keypair
+
+For server-side applications that need wallet-based auth (e.g. automated signing without an API key), you can pass a Sui keypair:
+
+```typescript
+import { Tusky } from "@tusky-io/ts-sdk";
+import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
+
+const keypair = Ed25519Keypair.fromSecretKey(process.env.SUI_PRIVATE_KEY);
+
+const tusky = new Tusky({
+  wallet: keypair,
+});
+```
+
+<Note>
+  Server-side keypair authentication is useful for automated pipelines, CI/CD, and backend services that need to interact with Tusky on behalf of a specific wallet address.
+</Note>
+
+## Authentication Comparison
+
+| Method | Environment | Use Case |
+| --- | --- | --- |
+| **API Key** | Server / Scripts | Backend services, CI/CD, automation |
+| **Browser Wallet** | Browser | User-facing dApps with wallet connect |
+| **Server-Side Keypair** | Server | Automated wallet-based operations |
+
+## Managed Wallets
+
+When you create a Tusky account, a **managed wallet** is automatically provisioned for you. This wallet is used to publish blobs to the Walrus network and handle on-chain transactions. You fund this wallet through [prepaid deposits](/billing/prepaid) or pay-as-you-go via the [x402 protocol](/billing/pay-as-you-go).
+
+You can check your managed wallet details at any time:
+
+```typescript
+const account = await tusky.account.get();
+console.log("Managed wallet:", account.managedWallet.address);
+console.log("SUI balance:", account.managedWallet.suiBalance);
+console.log("WAL balance:", account.managedWallet.walBalance);
+```
+
+## What's Next
+
+<CardGroup cols={2}>
+  <Card title="Account" icon="user" href="/sdk/account">
+    Access your account info, usage, and managed wallet balance.
+  </Card>
+  <Card title="API Keys" icon="key" href="/getting-started/api-keys">
+    Generate and manage API keys from the dashboard.
+  </Card>
+</CardGroup>

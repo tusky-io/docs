@@ -1,0 +1,70 @@
+---
+title: Update Gateway
+api: 'PUT https://api.tusky.io/v2/gateway'
+---
+
+Update the authenticated user's private gateway settings.
+
+## Request Body
+
+<ParamField body="subdomain" type="string">
+  The subdomain for the gateway. Must be unique, lowercase, and between 3 and 32 characters. This determines your gateway URL (e.g., `myapp` → `myapp.gateway.tusky.io`).
+</ParamField>
+
+<ParamField body="customDomain" type="string">
+  A custom domain to use for the gateway. Set to `null` to remove. You must configure a CNAME record pointing to your gateway URL before setting this.
+</ParamField>
+
+<ParamField body="analyticsEnabled" type="boolean">
+  Whether to enable analytics tracking for gateway requests.
+</ParamField>
+
+## Response
+
+<ResponseField name="url" type="string">
+  The full URL of the private gateway.
+</ResponseField>
+
+<ResponseField name="subdomain" type="string">
+  The updated subdomain.
+</ResponseField>
+
+<ResponseField name="customDomain" type="string">
+  The updated custom domain, or `null` if not configured.
+</ResponseField>
+
+<ResponseField name="analyticsEnabled" type="boolean">
+  Whether analytics are enabled.
+</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X PUT https://api.tusky.io/v2/gateway \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "subdomain": "myapp",
+    "customDomain": "files.example.com",
+    "analyticsEnabled": true
+  }'
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "url": "https://myapp.gateway.tusky.io",
+  "subdomain": "myapp",
+  "customDomain": "files.example.com",
+  "analyticsEnabled": true
+}
+```
+
+<Note>
+  When setting a `customDomain`, ensure you have configured a CNAME DNS record pointing your domain to your gateway subdomain (e.g., `files.example.com` → `myapp.gateway.tusky.io`). SSL certificates are provisioned automatically after DNS propagation.
+</Note>

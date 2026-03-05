@@ -2,10 +2,10 @@
 
 ## Cursor Cloud specific instructions
 
-This repository (`tusky-io/docs`) is a documentation-only repo for "Tusky — super simple decentralised storage." As of now, it contains only a placeholder `README.md` with no documentation framework, source code, package manifests, tests, or CI/CD configuration.
+This repository (`tusky-io/docs`) is a [Mintlify](https://mintlify.com) documentation site for "Tusky — super simple decentralised storage." The config lives in `docs.json`.
 
-- **No dependencies to install** — no `package.json`, `requirements.txt`, or similar files exist.
-- **No build/lint/test commands** — there are no configured tools.
-- **No services to run** — this is a static docs repo with no runnable application.
-
-If a documentation framework (e.g., MkDocs, Docusaurus, VitePress) is added in the future, update this file with the relevant dev server, build, and lint commands.
+- **Dev server**: `mintlify dev` (runs on port 3333 by default). Requires Node.js 20+.
+- **No lint/test/build commands**: Mintlify is a hosted platform; there are no separate build, lint, or test scripts. Validate changes by running the dev server and checking pages return HTTP 200.
+- **API reference pages** use Mintlify's API page format with `api:` frontmatter for the built-in playground. Components like `<ParamField>`, `<ResponseField>`, `<Expandable>`, `<CodeGroup>`, `<Note>`, and `<Warning>` are Mintlify built-ins.
+- **Navigation** is defined in `docs.json` under the `navigation` array. Any new page must be added there.
+- The `favicon.svg` and logo files referenced in `docs.json` are not yet present; the dev server logs a non-blocking error for missing favicons.

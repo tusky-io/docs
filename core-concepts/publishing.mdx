@@ -1,0 +1,141 @@
+---
+title: Publishing
+description: 'How Tusky publishes your data to the Walrus network'
+---
+
+Publishing is the process of writing your file data to the [Walrus](https://walrus.xyz) decentralized storage network. Tusky manages the entire publishing pipeline — from receiving your upload, to batching files for cost efficiency, to executing storage transactions on Sui — so you never need to interact with Walrus directly.
+
+## The dedicated wallet model
+
+Every Tusky user is assigned a **dedicated managed wallet** on the Sui network. This wallet is the on-chain identity that publishes your blobs to Walrus and owns the resulting Sui storage objects.
+
+<CardGroup cols={2}>
+  <Card title="Your managed wallet" icon="wallet">
+    A Sui wallet created and managed by Tusky on your behalf. It holds the WAL tokens needed to pay for Walrus storage and owns all Walrus blob objects created from your uploads.
+  </Card>
+  <Card title="Isolated ownership" icon="user-shield">
+    Your blobs are owned by **your** wallet — not a shared pool. This gives you a clear, auditable on-chain record of every blob you've published and the option to eject blobs to your personal wallet at any time.
+  </Card>
+</CardGroup>
+
+<Info>
+  In Tusky v1, all users shared a single publisher wallet. v2's per-user wallet model provides stronger isolation, clearer ownership, and the ability to self-custody your data on-chain.
+</Info>
+
+### v1 vs v2 comparison
+
+| Aspect | v1 (shared wallet) | v2 (dedicated wallet) |
+|---|---|---|
+| **Blob ownership** | Shared across all users | Individual per user |
+| **On-chain auditability** | Difficult to attribute blobs | Full per-user transparency |
+| **Ejection / self-custody** | Not supported | Supported — transfer blobs to your own wallet |
+| **Cost accounting** | Pooled | Per-user metering |
+| **Isolation** | Shared risk | Fully isolated |
+
+## Publishing flow
+
+<Steps>
+  <Step title="Upload to Tusky">
+    Files are uploaded to Tusky through the dashboard, API, or SDK. For encrypted vaults, data is encrypted client-side before upload.
+  </Step>
+  <Step title="Batching into quilts">
+    To optimize cost and on-chain efficiency, Tusky batches multiple small files into a single **quilt**. Each file in the quilt receives a unique **quilt patch ID** for individual addressability. Large files may be published as standalone blobs.
+  </Step>
+  <Step title="Walrus encoding">
+    The quilt (or standalone blob) is sent to a Walrus publisher node. Walrus applies **erasure coding** — splitting the data into redundant shards distributed across storage nodes — ensuring availability even if some nodes go offline.
+  </Step>
+  <Step title="Sui storage transaction">
+    Your dedicated managed wallet submits a transaction to the Sui blockchain, registering the blob and locking the required WAL tokens for the chosen number of storage epochs.
+  </Step>
+  <Step title="Confirmation">
+    Once the Sui transaction is finalized, Tusky records the blob ID, quilt patch IDs, and storage metadata. The file is now live and retrievable through your gateway.
+  </Step>
+</Steps>
+
+## Storage epochs
+
+Walrus storage is purchased in discrete units of time called **epochs**. When publishing, you choose how many epochs your data should be stored.
+
+<Tabs>
+  <Tab title="Choosing epochs">
+    Select the number of storage epochs at upload time, either per-file or using your vault's default. Longer durations cost proportionally more WAL tokens. Consider how long you need the data to remain available when choosing.
+  </Tab>
+  <Tab title="Auto-extend">
+    Enable **auto-extend** to have Tusky automatically renew your storage before epochs expire. This ensures uninterrupted availability without manual intervention. Auto-extend renewals are billed to your Tusky account.
+  </Tab>
+  <Tab title="Expiration">
+    If storage epochs expire without renewal, Walrus storage nodes are no longer obligated to retain your data. The blob may become unavailable. Always monitor expiration dates for critical data, or use auto-extend.
+  </Tab>
+</Tabs>
+
+<Warning>
+  Once storage epochs expire, data recovery is **not guaranteed**. Treat expiration seriously — enable auto-extend for any data you cannot afford to lose.
+</Warning>
+
+## Quilts and cost efficiency
+
+Publishing individual small files to Walrus incurs per-transaction overhead on Sui. Tusky's **quilt** system mitigates this by combining multiple files into a single blob:
+
+- **Reduced gas costs** — One Sui transaction covers many files.
+- **Lower storage overhead** — Walrus erasure coding is more efficient on larger blobs.
+- **Individual addressability** — Each file retains its own quilt patch ID for independent retrieval.
+
+```
+┌──────────────────────────────────────────────┐
+│                   Quilt (single Walrus blob)  │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐   │
+│  │ Patch #1  │  │ Patch #2  │  │ Patch #3  │   │
+│  │ file-a.md │  │ img.png   │  │ data.json │   │
+│  └──────────┘  └──────────┘  └──────────┘   │
+└──────────────────────────────────────────────┘
+```
+
+<Note>
+  Quilt batching is automatic and transparent. You upload files normally; Tusky decides the optimal batching strategy behind the scenes.
+</Note>
+
+## Ejecting to self-custody
+
+One of the most powerful features of Tusky v2 is the ability to **eject** your Walrus blobs from the managed wallet to your own Sui wallet. This gives you full, sovereign control over your on-chain storage objects.
+
+<Steps>
+  <Step title="Initiate ejection">
+    From the Tusky dashboard or API, select the blobs you want to eject and provide your destination Sui wallet address.
+  </Step>
+  <Step title="Transfer on-chain">
+    Tusky's managed wallet executes a Sui transaction transferring the Walrus blob objects (and their associated storage reservations) to your wallet.
+  </Step>
+  <Step title="Self-manage">
+    Once transferred, you own the blobs directly on Sui. You can extend storage, transfer ownership, or interact with the Walrus network independently — Tusky is no longer in the loop.
+  </Step>
+</Steps>
+
+<Tip>
+  Ejection is non-destructive. After ejecting, the blob data remains available on Walrus for the remainder of its storage epochs. You simply gain direct on-chain ownership instead of Tusky's managed wallet holding it on your behalf.
+</Tip>
+
+### After ejection
+
+Once blobs are ejected to your wallet:
+
+| Capability | Status |
+|---|---|
+| **Retrieve via Walrus** | Available — use any Walrus aggregator with the blob ID. |
+| **Retrieve via Tusky gateway** | No longer served — Tusky gateways only serve content from your managed wallet. |
+| **Extend storage** | Your responsibility — interact with Walrus directly. |
+| **Auto-extend** | No longer managed by Tusky. |
+
+<Warning>
+  Ejected blobs are removed from your Tusky gateway. If you rely on Tusky gateway URLs for serving content, plan a migration to a self-hosted Walrus aggregator or alternative gateway before ejecting.
+</Warning>
+
+## What's next?
+
+<CardGroup cols={2}>
+  <Card title="Gateways" icon="network-wired" href="/core-concepts/gateways">
+    Learn how your published content is served through dedicated gateways.
+  </Card>
+  <Card title="Files" icon="file" href="/core-concepts/files">
+    Understand file metadata, supported types, and lifecycle.
+  </Card>
+</CardGroup>

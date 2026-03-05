@@ -1,0 +1,94 @@
+---
+title: Create an Account
+description: 'Set up your Tusky account and connect your wallet'
+---
+
+Tusky accounts are tied to Sui wallets. There are no usernames, passwords, or email sign-ups — your wallet is your identity.
+
+## Connect Your Sui Wallet
+
+<Steps>
+  <Step title="Install a Sui wallet">
+    If you don't already have one, install a Sui-compatible browser wallet extension. Tusky supports any wallet that implements the [Sui Wallet Standard](https://docs.sui.io/standards/wallet-standard):
+
+    - [Sui Wallet](https://chrome.google.com/webstore/detail/sui-wallet/) — official wallet from Mysten Labs
+    - [Suiet](https://suiet.app/) — popular community wallet
+    - [Ethos Wallet](https://ethoswallet.xyz/) — developer-friendly option
+
+    <Tip>
+      Make sure your wallet is connected to the Sui **mainnet** network for production use, or **testnet** for development.
+    </Tip>
+  </Step>
+
+  <Step title="Sign in to Tusky">
+    Go to [app.tusky.io](https://app.tusky.io) and click **Connect Wallet**. Select your wallet from the connection prompt and approve the sign-in request.
+
+    Tusky will ask your wallet to sign a message to verify ownership. This does not cost any gas and does not submit a transaction to the chain.
+  </Step>
+
+  <Step title="Account provisioned">
+    Once your wallet is connected, Tusky automatically provisions your account with:
+
+    - A **dedicated managed wallet** for publishing to the Walrus network
+    - A **prepaid wallet balance** (initially unfunded — you will add SUI and WAL in the next step)
+    - A **private gateway** endpoint for serving your content
+    - Access to the **dashboard** for managing vaults, files, and settings
+  </Step>
+</Steps>
+
+## Your Managed Publishing Wallet
+
+When you create a Tusky account, Tusky generates a **dedicated managed wallet** on your behalf. This wallet is used exclusively for publishing blobs to the Walrus network.
+
+<Note>
+  The managed wallet is distinct from the Sui wallet you connect with. Your connected wallet is used for **authentication and encryption**. The managed wallet is used for **Walrus publishing transactions**.
+</Note>
+
+### Why a managed wallet?
+
+Publishing to Walrus requires submitting on-chain transactions — registering blobs, paying storage fees, and managing epochs. Running these transactions from your personal wallet would require you to approve every upload individually.
+
+The managed wallet removes this friction:
+
+- **Automatic publishing** — uploads happen without manual transaction approval
+- **Funded from your prepaid balance** — SUI and WAL are transferred from your prepaid wallet to the managed wallet as needed
+- **Isolated** — the managed wallet is only used for Walrus storage operations and cannot access other assets in your personal wallet
+- **Transparent** — you can view all managed wallet transactions in the dashboard or on a Sui explorer
+
+### Ejecting to self-management
+
+If you decide to leave Tusky or manage your Walrus blobs directly, you can **eject** your data at any time:
+
+1. Export a list of all blob IDs associated with your account
+2. Transfer blob ownership to your personal wallet
+3. Manage renewals, deletions, and access independently on Walrus
+
+<Info>
+  Ejection is a one-way operation per blob. Once a blob is transferred to your personal wallet, Tusky no longer manages its lifecycle. You are responsible for renewals and storage epoch management.
+</Info>
+
+## Account Security
+
+Your Tusky account inherits the security of your Sui wallet:
+
+| Layer | Mechanism |
+| --- | --- |
+| **Authentication** | Wallet signature verification — no passwords stored |
+| **Encryption keys** | Derived from your connected wallet or managed via [Seal](https://docs.sui.io/standards/seal) |
+| **API access** | Scoped API keys with rotation support |
+| **Publishing** | Isolated managed wallet with view-only access for you |
+
+<Warning>
+  Never share your wallet seed phrase or private keys. Tusky will never ask for them. If your wallet is compromised, revoke all API keys immediately from the dashboard.
+</Warning>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Fund Your Wallet" icon="wallet" href="/getting-started/wallets">
+    Deposit SUI and WAL to start uploading files.
+  </Card>
+  <Card title="Generate API Keys" icon="key" href="/getting-started/api-keys">
+    Create API keys for programmatic access.
+  </Card>
+</CardGroup>

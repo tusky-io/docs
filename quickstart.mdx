@@ -1,0 +1,128 @@
+---
+title: Quickstart
+description: 'Start uploading to Walrus in under 5 minutes'
+---
+
+This guide walks you through creating an account, funding your wallet, and uploading your first file to the Walrus network using the Tusky SDK.
+
+## Prerequisites
+
+- A [Sui-compatible wallet](https://sui.io/ecosystem?tags=Wallets) (such as Sui Wallet or Suiet) installed as a browser extension
+- SUI and WAL tokens for storage funding
+- Node.js 18+ and npm (or yarn/pnpm)
+
+<Steps>
+  <Step title="Create your account">
+    Go to [app.tusky.io](https://app.tusky.io) and connect your Sui wallet. Tusky will create your account and provision a dedicated managed wallet for publishing to the Walrus network.
+
+    <Tip>
+      Your connected Sui wallet is used for authentication and encryption key derivation. Tusky never has access to your private keys.
+    </Tip>
+  </Step>
+
+  <Step title="Fund your prepaid wallet">
+    Navigate to **Account → Wallet** in the dashboard. Deposit SUI and WAL tokens to your Tusky prepaid wallet. These funds cover Walrus storage costs and the Tusky infrastructure fee.
+
+    Storage costs are based on current Walrus network rates. Tusky charges a 10% infrastructure fee in SUI on top of the base storage cost.
+
+    <Info>
+      You need both **SUI** (for gas and Tusky fees) and **WAL** (for Walrus storage epochs). Check the dashboard for current rate estimates.
+    </Info>
+  </Step>
+
+  <Step title="Generate an API key">
+    Go to [app.tusky.io/account/api-keys](https://app.tusky.io/account/api-keys) and create a new API key. Copy the key — you will only see it once.
+
+    ```bash
+    export TUSKY_API_KEY="your-api-key-here"
+    ```
+
+    <Warning>
+      Keep your API key secret. Never commit it to version control or expose it in client-side code.
+    </Warning>
+  </Step>
+
+  <Step title="Install the SDK">
+    Install the Tusky TypeScript SDK in your project:
+
+    <CodeGroup>
+      ```bash npm
+      npm install @tusky-io/ts-sdk
+      ```
+
+      ```bash yarn
+      yarn add @tusky-io/ts-sdk
+      ```
+
+      ```bash pnpm
+      pnpm add @tusky-io/ts-sdk
+      ```
+    </CodeGroup>
+  </Step>
+
+  <Step title="Upload your first file">
+    Create a new file (for example, `upload.ts`) and add the following code:
+
+    ```typescript upload.ts
+    import Tusky from "@tusky-io/ts-sdk";
+
+    async function main() {
+      // Initialize the SDK with your API key
+      const tusky = new Tusky({ apiKey: process.env.TUSKY_API_KEY });
+
+      // Create a vault to organize your files
+      const vault = await tusky.vaults.create({
+        name: "My First Vault",
+      });
+      console.log("Vault created:", vault.id);
+
+      // Upload a file to the vault
+      const file = await tusky.files.upload(vault.id, {
+        data: Buffer.from("Hello, Walrus! Stored with Tusky."),
+        name: "hello.txt",
+        mimeType: "text/plain",
+      });
+      console.log("File uploaded:", file.id);
+
+      // Retrieve the file
+      const downloaded = await tusky.files.download(file.id);
+      console.log("Downloaded content:", downloaded.toString());
+    }
+
+    main().catch(console.error);
+    ```
+
+    Run it:
+
+    ```bash
+    npx tsx upload.ts
+    ```
+
+    You should see your vault ID, file ID, and the downloaded content printed to the console. Your file is now stored on the Walrus decentralized network.
+  </Step>
+</Steps>
+
+## What Just Happened?
+
+Behind the scenes, Tusky:
+
+1. **Encrypted** your file using keys derived from your connected wallet
+2. **Encoded** the data into Walrus blob format using your dedicated publisher
+3. **Stored** the blob across Walrus storage nodes for the configured number of epochs
+4. **Indexed** the file metadata in your vault for easy retrieval
+
+The file is now persistently stored on the decentralized Walrus network. You can access it through the SDK, REST API, or your private gateway.
+
+## Next Steps
+
+<CardGroup cols={3}>
+  <Card title="SDK Guide" icon="code" href="/sdk/getting-started">
+    Explore the full SDK — vaults, files, members, encryption, and more.
+  </Card>
+  <Card title="API Reference" icon="terminal" href="/api-reference/introduction">
+    Use the REST API directly for maximum control.
+  </Card>
+  <Card title="Private Gateways" icon="globe" href="/gateways/overview">
+    Serve files through your own custom domain with a private gateway.
+  </Card>
+</CardGroup>

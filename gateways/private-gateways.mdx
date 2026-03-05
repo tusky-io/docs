@@ -1,0 +1,100 @@
+---
+title: Private Gateways
+description: 'Dedicated gateways scoped to your content'
+---
+
+Every Tusky user is automatically assigned a **private gateway** — a dedicated HTTP endpoint that serves only content from your vaults. Unlike public Walrus aggregators that resolve any blob on the network, your private gateway is scoped exclusively to your account.
+
+## How It Works
+
+When you create a Tusky account, a private gateway is provisioned automatically. No setup required.
+
+<Steps>
+  <Step title="Account created">
+    Upon account creation, Tusky provisions a gateway with a unique subdomain on the `mytusky.xyz` domain.
+  </Step>
+  <Step title="Subdomain assigned">
+    Your default gateway URL follows the pattern `https://{subdomain}.mytusky.xyz`. You can customize the subdomain at any time.
+  </Step>
+  <Step title="Content scoped">
+    The gateway is linked to your account. It only resolves files that you have uploaded — requests for content belonging to other users return a `404`.
+  </Step>
+</Steps>
+
+## Default URL
+
+Your gateway URL is:
+
+```
+https://{subdomain}.mytusky.xyz
+```
+
+For example, if your subdomain is `acme-corp`, your gateway URL is `https://acme-corp.mytusky.xyz`. All standard [URL schemes](/gateways/overview#url-schemes) work under this domain.
+
+## Security Benefits
+
+<AccordionGroup>
+  <Accordion title="Content isolation">
+    Your gateway will not resolve blobs that belong to other users, even if you know their blob IDs. This prevents unauthorized hotlinking and ensures your gateway only serves your own content.
+  </Accordion>
+  <Accordion title="Abuse prevention">
+    Since your gateway only serves your own content, it cannot be used as an open proxy. This eliminates the risk of your gateway being exploited to serve malicious content uploaded by third parties.
+  </Accordion>
+  <Accordion title="Predictable traffic">
+    All traffic to your gateway is driven by your own applications and users. This makes it easier to monitor, forecast, and scale your content delivery.
+  </Accordion>
+  <Accordion title="Audit trail">
+    Every request to your gateway is logged and available through [Gateway Analytics](/gateways/analytics), providing a complete picture of who is accessing your content.
+  </Accordion>
+</AccordionGroup>
+
+## Configuration
+
+You can configure your gateway through the [Tusky dashboard](https://app.tusky.io) or the [SDK](/sdk/gateways).
+
+### Change Your Subdomain
+
+<Tabs>
+  <Tab title="Dashboard">
+    Navigate to **Settings → Gateway** in the Tusky dashboard and enter your desired subdomain.
+  </Tab>
+  <Tab title="SDK">
+    ```typescript
+    const updated = await tusky.gateway.update({
+      subdomain: "my-brand",
+    });
+    console.log("New URL:", updated.url);
+    // https://my-brand.mytusky.xyz
+    ```
+  </Tab>
+  <Tab title="API">
+    ```bash
+    curl -X PATCH https://api.tusky.io/v1/gateway \
+      -H "Authorization: Bearer tsk_live_abc123" \
+      -H "Content-Type: application/json" \
+      -d '{"subdomain": "my-brand"}'
+    ```
+  </Tab>
+</Tabs>
+
+<Note>
+  Subdomain changes take effect immediately. The previous subdomain becomes available for other users after a short cooldown period.
+</Note>
+
+### Custom Domain
+
+For a fully branded experience, you can attach your own domain to the gateway. See [Custom Domains](/gateways/custom-domains) for the full setup guide.
+
+## What's Next
+
+<CardGroup cols={2}>
+  <Card title="Custom Domains" icon="globe" href="/gateways/custom-domains">
+    Serve content from your own domain with automatic SSL.
+  </Card>
+  <Card title="Gateway Analytics" icon="chart-line" href="/gateways/analytics">
+    Monitor requests, bandwidth, and geographic distribution.
+  </Card>
+  <Card title="SDK: Gateways" icon="code" href="/sdk/gateways">
+    Configure your gateway programmatically.
+  </Card>
+</CardGroup>

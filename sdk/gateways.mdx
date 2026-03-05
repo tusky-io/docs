@@ -1,0 +1,102 @@
+---
+title: Gateways
+description: 'Configure gateways with the SDK'
+---
+
+Every Tusky user gets a private gateway — a dedicated HTTP endpoint for serving their content from the Walrus network. The `tusky.gateway` module lets you view and configure your gateway settings programmatically.
+
+## Get Gateway Configuration
+
+Retrieve your current gateway settings:
+
+```typescript
+const gateway = await tusky.gateway.get();
+
+console.log("Subdomain:", gateway.subdomain);
+console.log("URL:", gateway.url);
+console.log("Custom domain:", gateway.customDomain || "Not configured");
+console.log("SSL:", gateway.sslEnabled);
+```
+
+### Gateway Object
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | `string` | Unique gateway identifier. |
+| `subdomain` | `string` | Your gateway subdomain (e.g. `myproject`). |
+| `url` | `string` | Full gateway URL (e.g. `https://myproject.mytusky.xyz`). |
+| `customDomain` | `string \| null` | Custom domain if configured, otherwise `null`. |
+| `sslEnabled` | `boolean` | Whether SSL is active on the gateway. |
+| `createdAt` | `string` | ISO 8601 creation timestamp. |
+
+## Update Gateway Settings
+
+Customize your gateway's subdomain or attach a custom domain:
+
+### Change Subdomain
+
+```typescript
+const updated = await tusky.gateway.update({
+  subdomain: "brand-assets",
+});
+
+console.log("New URL:", updated.url);
+// https://brand-assets.mytusky.xyz
+```
+
+### Attach a Custom Domain
+
+```typescript
+const updated = await tusky.gateway.update({
+  customDomain: "cdn.example.com",
+});
+
+console.log("Custom domain:", updated.customDomain);
+console.log("SSL:", updated.sslEnabled);
+```
+
+<Note>
+  Before attaching a custom domain, you must add a `CNAME` record pointing your domain to Tusky. See [Custom Domains](/gateways/custom-domains) for the full setup guide.
+</Note>
+
+## Complete Example
+
+```typescript
+import { Tusky } from "@tusky-io/ts-sdk";
+
+const tusky = new Tusky({ apiKey: process.env.TUSKY_API_KEY });
+
+// View current gateway
+const gateway = await tusky.gateway.get();
+console.log("Current gateway URL:", gateway.url);
+
+// Update subdomain
+const updated = await tusky.gateway.update({
+  subdomain: "my-new-subdomain",
+});
+console.log("Updated gateway URL:", updated.url);
+
+// Attach custom domain (after DNS setup)
+const withDomain = await tusky.gateway.update({
+  customDomain: "files.mydomain.com",
+});
+console.log("Custom domain active:", withDomain.customDomain);
+```
+
+<Tip>
+  Your gateway serves only your own content. Unlike public Walrus aggregators, a Tusky private gateway will not resolve blobs that belong to other users. This provides security isolation and prevents abuse.
+</Tip>
+
+## What's Next
+
+<CardGroup cols={2}>
+  <Card title="Private Gateways" icon="shield-halved" href="/gateways/private-gateways">
+    Learn more about how private gateways work.
+  </Card>
+  <Card title="Custom Domains" icon="globe" href="/gateways/custom-domains">
+    Set up your own domain for content delivery.
+  </Card>
+  <Card title="Analytics" icon="chart-line" href="/gateways/analytics">
+    Monitor traffic and usage on your gateway.
+  </Card>
+</CardGroup>

@@ -1,0 +1,142 @@
+---
+title: Wallets & Funding
+description: 'Fund your Tusky wallet with SUI and WAL tokens'
+---
+
+Tusky uses a **prepaid wallet** system. You deposit SUI and WAL tokens into your Tusky wallet, and storage operations draw from that balance automatically. There is no free tier — all storage is paid at current Walrus network rates plus a Tusky infrastructure fee.
+
+## How Billing Works
+
+Every file you upload through Tusky involves two costs:
+
+| Cost Component | Token | Description |
+| --- | --- | --- |
+| **Walrus storage** | WAL | Paid to Walrus storage nodes for blob storage across epochs. Rate determined by the Walrus network. |
+| **Tusky infrastructure fee** | SUI | A 10% fee on top of the base storage cost, covering managed publishing, aggregation, encryption, indexing, and gateway services. |
+
+<Info>
+  Storage costs scale with file size and the number of storage epochs. The Walrus network sets base rates — Tusky passes these through directly with no markup on the WAL component.
+</Info>
+
+## Funding Your Wallet
+
+<Steps>
+  <Step title="Open the wallet page">
+    Navigate to **Account → Wallet** in the [Tusky dashboard](https://app.tusky.io), or go directly to [app.tusky.io/account/wallet](https://app.tusky.io/account/wallet).
+  </Step>
+
+  <Step title="Deposit SUI">
+    Click **Deposit SUI** and approve the transfer from your connected Sui wallet. SUI is used for gas fees and the Tusky infrastructure fee.
+  </Step>
+
+  <Step title="Deposit WAL">
+    Click **Deposit WAL** and approve the transfer. WAL is used to pay Walrus storage nodes for blob storage.
+
+    <Tip>
+      You can acquire WAL tokens on supported Sui DEXes or through the Walrus staking mechanism. Check the [Walrus documentation](https://docs.walrus.site) for current token distribution details.
+    </Tip>
+  </Step>
+</Steps>
+
+## Checking Your Balance
+
+View your current SUI and WAL balances on the wallet page in the dashboard. The page shows:
+
+- **Available balance** — funds ready for storage operations
+- **Reserved balance** — funds earmarked for in-progress uploads
+- **Estimated remaining storage** — approximate storage capacity at current rates
+
+### Programmatic balance check
+
+Use the SDK or API to check your balance programmatically:
+
+<CodeGroup>
+  ```typescript SDK
+  const account = await tusky.account.get();
+  console.log("SUI balance:", account.wallet.sui);
+  console.log("WAL balance:", account.wallet.wal);
+  ```
+
+  ```bash cURL
+  curl https://api.tusky.io/v1/account \
+    -H "Authorization: Bearer $TUSKY_API_KEY"
+  ```
+</CodeGroup>
+
+## Low Balance Notifications
+
+Tusky sends notifications when your wallet balance drops below the threshold needed for continued operations:
+
+- **Warning** — balance is running low, top up soon to avoid upload failures
+- **Critical** — balance is insufficient for new uploads; existing stored files are unaffected
+
+<Warning>
+  If your WAL balance runs out, you will not be able to upload new files or renew expiring blobs. **Existing stored files remain available** on the Walrus network until their storage epochs expire. Top up before epoch expiration to ensure continuity.
+</Warning>
+
+Configure notification preferences (email, webhook) in the dashboard under **Account → Notifications**.
+
+## Pay-As-You-Go with x402
+
+For applications that prefer per-request billing over prepaid balances, Tusky supports the **x402 protocol** — a standard for HTTP-native micropayments.
+
+With x402, each API request includes a payment header, and Tusky charges the exact cost of the operation in real time. This eliminates the need to maintain a prepaid balance.
+
+<Tabs>
+  <Tab title="How it works">
+    1. Your application sends an API request to Tusky
+    2. If the request requires payment, Tusky responds with a `402 Payment Required` status and a payment specification
+    3. Your application signs a micropayment using your Sui wallet
+    4. The request is retried with the payment proof in the header
+    5. Tusky processes the request and settles the payment
+
+    The x402-compatible SDK handles this flow automatically.
+  </Tab>
+  <Tab title="When to use x402">
+    - **Serverless functions** — avoid maintaining a prepaid balance for ephemeral compute
+    - **Multi-tenant platforms** — pass storage costs through to your end users per request
+    - **Low-volume or sporadic usage** — pay only when you use the service
+    - **Fine-grained cost attribution** — track costs per request for precise billing
+
+    For high-volume, predictable usage, the prepaid wallet is typically more efficient due to lower per-transaction overhead.
+  </Tab>
+</Tabs>
+
+## Cost Estimation
+
+Use the dashboard cost calculator or the API to estimate costs before uploading:
+
+```typescript
+const estimate = await tusky.account.estimateCost({
+  fileSizeBytes: 10 * 1024 * 1024, // 10 MB
+  epochs: 5,
+});
+
+console.log("WAL cost:", estimate.wal);
+console.log("SUI fee:", estimate.sui);
+console.log("Total USD estimate:", estimate.usdEstimate);
+```
+
+<Note>
+  Cost estimates are based on current Walrus network rates and may fluctuate. The actual cost is determined at the time of the storage transaction.
+</Note>
+
+## Summary
+
+| Feature | Prepaid Wallet | x402 Pay-As-You-Go |
+| --- | --- | --- |
+| **Funding model** | Deposit SUI + WAL upfront | Pay per request via micropayment |
+| **Best for** | High-volume, predictable usage | Sporadic, per-request billing |
+| **Overhead** | Single deposit transaction | Payment header per request |
+| **Balance management** | Manual top-ups with notifications | No balance to manage |
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Generate API Keys" icon="key" href="/getting-started/api-keys">
+    Create API keys for programmatic access.
+  </Card>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Upload your first file to Walrus.
+  </Card>
+</CardGroup>

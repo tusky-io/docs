@@ -1,0 +1,41 @@
+---
+title: Remove Member
+api: 'DELETE https://api.tusky.io/v2/vaults/{vaultId}/members/{memberId}'
+---
+
+Remove a member from a vault, revoking their access.
+
+## Path Parameters
+
+<ParamField path="vaultId" type="string" required>
+  The unique identifier of the vault.
+</ParamField>
+
+<ParamField path="memberId" type="string" required>
+  The unique identifier of the member to remove.
+</ParamField>
+
+## Response
+
+Returns a `204 No Content` response on success.
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X DELETE https://api.tusky.io/v2/vaults/vault_abc123def456/members/member_stu901vwx234 \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+</CodeGroup>
+
+### Response
+
+```
+204 No Content
+```
+
+<Note>
+  Only vault owners and admins can remove members. The vault owner cannot be removed. For encrypted vaults, removing a member revokes their decryption access.
+</Note>

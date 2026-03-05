@@ -1,0 +1,88 @@
+---
+title: List Vaults
+api: 'GET https://api.tusky.io/v2/vaults'
+---
+
+List all vaults accessible to the authenticated user. Results are returned in reverse chronological order and paginated using cursor-based pagination.
+
+## Query Parameters
+
+<ParamField query="cursor" type="string">
+  Opaque cursor from a previous response to fetch the next page of results.
+</ParamField>
+
+<ParamField query="limit" type="number" default="20">
+  Number of vaults to return per page. Minimum `1`, maximum `100`.
+</ParamField>
+
+## Response
+
+<ResponseField name="data" type="array">
+  Array of vault objects.
+
+  <Expandable title="Vault object properties">
+    <ResponseField name="id" type="string">
+      Unique identifier for the vault.
+    </ResponseField>
+
+    <ResponseField name="name" type="string">
+      The name of the vault.
+    </ResponseField>
+
+    <ResponseField name="encrypted" type="boolean">
+      Whether the vault is encrypted.
+    </ResponseField>
+
+    <ResponseField name="createdAt" type="string">
+      ISO 8601 timestamp of when the vault was created.
+    </ResponseField>
+
+    <ResponseField name="updatedAt" type="string">
+      ISO 8601 timestamp of when the vault was last updated.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="nextCursor" type="string">
+  Cursor to pass as a query parameter to retrieve the next page. `null` if there are no more results.
+</ResponseField>
+
+<ResponseField name="hasMore" type="boolean">
+  Whether there are more results beyond this page.
+</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl "https://api.tusky.io/v2/vaults?limit=10" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "data": [
+    {
+      "id": "vault_abc123def456",
+      "name": "My First Vault",
+      "encrypted": false,
+      "createdAt": "2025-07-01T12:00:00.000Z",
+      "updatedAt": "2025-07-01T12:00:00.000Z"
+    },
+    {
+      "id": "vault_ghi789jkl012",
+      "name": "Encrypted Vault",
+      "encrypted": true,
+      "createdAt": "2025-06-15T08:30:00.000Z",
+      "updatedAt": "2025-06-20T14:00:00.000Z"
+    }
+  ],
+  "nextCursor": "eyJpZCI6InZhdWx0X2doaTc4OWprbDAxMiJ9",
+  "hasMore": true
+}
+```

@@ -1,0 +1,121 @@
+---
+title: Pay As You Go
+description: 'Pay only for what you use with micropayments'
+---
+
+Tusky's default billing model is **pay-as-you-go** — you pay only for the storage you consume, with no upfront commitments, no subscriptions, and no KYC requirements. Payments are processed through the **x402 protocol**, enabling HTTP-native cryptocurrency micropayments.
+
+## How It Works
+
+<Steps>
+  <Step title="Estimate cost">
+    Before uploading, use the cost estimation endpoint to preview the exact cost in SUI for your file:
+
+    ```bash
+    curl https://api.tusky.io/v1/files/estimate \
+      -H "Authorization: Bearer tsk_live_abc123" \
+      -G \
+      -d "size=10485760" \
+      -d "epochs=5"
+    ```
+
+    ```json
+    {
+      "walrusCost": "0.045 SUI",
+      "tuskyFee": "0.0045 SUI",
+      "totalCost": "0.0495 SUI",
+      "epochs": 5
+    }
+    ```
+  </Step>
+  <Step title="Upload your file">
+    When you upload a file, the payment is processed automatically. If you have a prepaid balance, it is deducted first. Otherwise, the x402 protocol handles the micropayment inline with the HTTP request.
+  </Step>
+  <Step title="Payment settled">
+    The cost is settled on-chain. You receive a receipt with the transaction hash for full transparency.
+  </Step>
+</Steps>
+
+## Pricing
+
+The cost of storing a file on Tusky is:
+
+```
+Total Cost = Walrus Storage Cost + 10% Tusky Fee
+```
+
+| Component | Description |
+| --- | --- |
+| **Walrus Storage Cost** | The on-chain cost to store your blob on the Walrus network for the specified number of epochs. This varies based on file size and storage duration. |
+| **Tusky Fee** | A 10% fee on top of the Walrus cost, covering infrastructure, encryption, gateway hosting, and API services. |
+
+<Note>
+  Tusky's 10% fee is applied to the Walrus storage cost, not the total. For example, if the Walrus cost is 1 SUI, the Tusky fee is 0.1 SUI, for a total of 1.1 SUI.
+</Note>
+
+## x402 Protocol
+
+Tusky uses the **x402 protocol** for HTTP-native cryptocurrency payments. This means payments happen inline with your API requests — no separate payment step, no payment gateway, no accounts.
+
+### How x402 Works
+
+1. The client sends a standard HTTP request.
+2. If payment is required, the server responds with `402 Payment Required` and payment instructions.
+3. The client (or SDK) automatically signs and submits the payment.
+4. The server processes the request after payment confirmation.
+
+<Info>
+  The Tusky SDK handles x402 payment flows automatically. You don't need to interact with the protocol directly unless you are building a custom integration.
+</Info>
+
+### Key Benefits
+
+<CardGroup cols={2}>
+  <Card title="No Accounts Required" icon="user-slash">
+    Pay per request without creating billing accounts or providing personal information.
+  </Card>
+  <Card title="No KYC" icon="id-card">
+    Cryptocurrency payments eliminate the need for identity verification.
+  </Card>
+  <Card title="Instant Settlement" icon="bolt">
+    Payments settle on-chain in seconds, not days.
+  </Card>
+  <Card title="Transparent Pricing" icon="receipt">
+    Every payment is recorded on-chain with a verifiable transaction hash.
+  </Card>
+</CardGroup>
+
+## Supported Tokens
+
+| Token | Description |
+| --- | --- |
+| **SUI** | The native token of the Sui network. Used for all Tusky fees and Walrus storage costs. |
+| **WAL** | The Walrus utility token. Can be used for storage payments where accepted. |
+
+## SDK Example
+
+```typescript
+import { Tusky } from "@tusky-io/ts-sdk";
+
+const tusky = new Tusky({ apiKey: process.env.TUSKY_API_KEY });
+
+// Upload with pay-as-you-go — payment is handled automatically
+const file = await tusky.file.upload("vault_abc123", "./data.csv", {
+  name: "dataset.csv",
+  epochs: 5,
+});
+
+console.log("File uploaded:", file.id);
+console.log("Cost:", file.cost);
+```
+
+## What's Next
+
+<CardGroup cols={2}>
+  <Card title="Prepaid" icon="wallet" href="/billing/prepaid">
+    Fund your wallet in advance for seamless uploads without per-request payments.
+  </Card>
+  <Card title="Enterprise" icon="building" href="/billing/enterprise">
+    Custom pricing for high-volume use cases.
+  </Card>
+</CardGroup>

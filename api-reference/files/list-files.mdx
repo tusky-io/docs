@@ -1,0 +1,111 @@
+---
+title: List Files
+api: 'GET https://api.tusky.io/v2/vaults/{vaultId}/files'
+---
+
+List all files within a specific vault. Results are returned in reverse chronological order and paginated using cursor-based pagination.
+
+## Path Parameters
+
+<ParamField path="vaultId" type="string" required>
+  The unique identifier of the vault.
+</ParamField>
+
+## Query Parameters
+
+<ParamField query="cursor" type="string">
+  Opaque cursor from a previous response to fetch the next page of results.
+</ParamField>
+
+<ParamField query="limit" type="number" default="20">
+  Number of files to return per page. Minimum `1`, maximum `100`.
+</ParamField>
+
+<ParamField query="mimeType" type="string">
+  Filter files by MIME type. For example, `image/png` or `application/pdf`.
+</ParamField>
+
+## Response
+
+<ResponseField name="data" type="array">
+  Array of file objects.
+
+  <Expandable title="File object properties">
+    <ResponseField name="id" type="string">
+      Unique identifier for the file.
+    </ResponseField>
+
+    <ResponseField name="name" type="string">
+      Original filename.
+    </ResponseField>
+
+    <ResponseField name="mimeType" type="string">
+      MIME type of the file.
+    </ResponseField>
+
+    <ResponseField name="size" type="number">
+      File size in bytes.
+    </ResponseField>
+
+    <ResponseField name="blobId" type="string">
+      Walrus blob identifier for the stored file.
+    </ResponseField>
+
+    <ResponseField name="quiltPatchId" type="string">
+      Quilt patch identifier for the file metadata on Sui.
+    </ResponseField>
+
+    <ResponseField name="vaultId" type="string">
+      The vault this file belongs to.
+    </ResponseField>
+
+    <ResponseField name="createdAt" type="string">
+      ISO 8601 timestamp of when the file was uploaded.
+    </ResponseField>
+
+    <ResponseField name="expiresAt" type="string">
+      ISO 8601 timestamp of when the file's storage expires.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="nextCursor" type="string">
+  Cursor to pass as a query parameter to retrieve the next page. `null` if there are no more results.
+</ResponseField>
+
+<ResponseField name="hasMore" type="boolean">
+  Whether there are more results beyond this page.
+</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl "https://api.tusky.io/v2/vaults/vault_abc123def456/files?limit=10&mimeType=application/pdf" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "data": [
+    {
+      "id": "file_mno345pqr678",
+      "name": "document.pdf",
+      "mimeType": "application/pdf",
+      "size": 1048576,
+      "blobId": "walrus_blob_abc123",
+      "quiltPatchId": "qp_def456",
+      "vaultId": "vault_abc123def456",
+      "createdAt": "2025-07-01T12:30:00.000Z",
+      "expiresAt": "2025-07-11T12:30:00.000Z"
+    }
+  ],
+  "nextCursor": null,
+  "hasMore": false
+}
+```

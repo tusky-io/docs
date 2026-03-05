@@ -1,0 +1,130 @@
+---
+title: Getting Started
+description: 'Install and configure the Tusky TypeScript SDK'
+---
+
+The Tusky TypeScript SDK (`@tusky-io/ts-sdk`) gives you full programmatic access to the Tusky platform — create vaults, upload files, manage members, and configure gateways from any JavaScript or TypeScript application.
+
+## Prerequisites
+
+- **Node.js** 18 or later
+- A Tusky account with an [API key](/getting-started/api-keys) or a [Sui wallet](/getting-started/wallets)
+
+## Installation
+
+<CodeGroup>
+
+```bash npm
+npm install @tusky-io/ts-sdk
+```
+
+```bash yarn
+yarn add @tusky-io/ts-sdk
+```
+
+```bash pnpm
+pnpm add @tusky-io/ts-sdk
+```
+
+</CodeGroup>
+
+## Import the SDK
+
+The SDK ships with separate entry points for server and browser environments.
+
+<Tabs>
+  <Tab title="Node.js">
+    ```typescript
+    import { Tusky } from "@tusky-io/ts-sdk";
+    ```
+  </Tab>
+  <Tab title="Browser">
+    ```typescript
+    import { Tusky } from "@tusky-io/ts-sdk/web";
+    ```
+  </Tab>
+</Tabs>
+
+<Info>
+  The browser entry point excludes Node-specific dependencies (such as `fs` and `path`) so your bundler does not pull in unnecessary polyfills.
+</Info>
+
+## Initialize the Client
+
+The fastest way to get started is with an API key. You can generate one from the [Tusky dashboard](https://app.tusky.io).
+
+```typescript
+const tusky = new Tusky({ apiKey: "your-api-key" });
+```
+
+For browser applications you can authenticate with a connected Sui wallet instead. See [Authentication](/sdk/authentication) for all supported methods.
+
+## Quick Example
+
+The following snippet creates a vault and uploads a file in just a few lines:
+
+```typescript
+import { Tusky } from "@tusky-io/ts-sdk";
+
+const tusky = new Tusky({ apiKey: "your-api-key" });
+
+// Create a new vault
+const vault = await tusky.vault.create("My First Vault", {
+  encrypted: true,
+});
+
+console.log("Vault created:", vault.id);
+
+// Upload a file to the vault
+const file = await tusky.file.upload(vault.id, "./hello.txt", {
+  name: "hello.txt",
+});
+
+console.log("File uploaded:", file.id);
+
+// Retrieve the file content
+const content = await tusky.file.arrayBuffer(file.id);
+console.log("Downloaded", content.byteLength, "bytes");
+```
+
+<Steps>
+  <Step title="Install the SDK">
+    Run `npm install @tusky-io/ts-sdk` in your project directory.
+  </Step>
+  <Step title="Generate an API key">
+    Open the [Tusky dashboard](https://app.tusky.io), navigate to **Settings → API Keys**, and create a new key.
+  </Step>
+  <Step title="Initialize Tusky">
+    Import and instantiate the client with your API key.
+  </Step>
+  <Step title="Create a vault and upload">
+    Use `tusky.vault.create()` and `tusky.file.upload()` to store your first file on Walrus.
+  </Step>
+</Steps>
+
+## Configuration Options
+
+The `Tusky` constructor accepts an options object:
+
+| Option | Type | Description |
+| --- | --- | --- |
+| `apiKey` | `string` | API key for server-side authentication. |
+| `wallet` | `WalletAdapter` | Sui wallet adapter for browser-based authentication. |
+| `baseUrl` | `string` | Override the API base URL (defaults to `https://api.tusky.io`). |
+
+## What's Next
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key" href="/sdk/authentication">
+    Explore all authentication methods including Sui wallet integration.
+  </Card>
+  <Card title="Vaults" icon="vault" href="/sdk/vaults">
+    Learn how to create, list, and manage vaults programmatically.
+  </Card>
+  <Card title="Files" icon="file" href="/sdk/files">
+    Upload, download, and manage files with the SDK.
+  </Card>
+  <Card title="API Reference" icon="terminal" href="/api-reference/introduction">
+    See the full REST API that powers the SDK.
+  </Card>
+</CardGroup>

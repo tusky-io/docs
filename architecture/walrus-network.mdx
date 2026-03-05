@@ -1,0 +1,167 @@
+---
+title: Walrus Network
+description: 'Understanding the Walrus decentralized storage layer'
+---
+
+Tusky is built on top of **Walrus**, a decentralized storage network powered by the [Sui blockchain](https://sui.io). Understanding Walrus concepts helps you make informed decisions about storage duration, costs, and data lifecycle.
+
+## What is Walrus?
+
+Walrus is a decentralized blob storage protocol that uses erasure coding to distribute data across a network of independent storage nodes. Unlike traditional cloud storage, no single entity controls your data — it is split, encoded, and distributed across the network so that it can be reconstructed even if a significant fraction of nodes go offline.
+
+<Info>
+  Walrus is developed by Mysten Labs, the team behind the Sui blockchain. Learn more at [walrus.xyz](https://walrus.xyz).
+</Info>
+
+## Key Concepts
+
+### Blobs
+
+A **blob** is the fundamental storage unit in Walrus — a raw binary object identified by a globally unique **blob ID**. When you upload a file to Tusky, it is ultimately stored as one or more blobs on the Walrus network.
+
+```
+File → Encrypt (if private vault) → Encode → Blob → Walrus Network
+```
+
+### Blob IDs
+
+Every blob on Walrus has a unique **blob ID** derived from its content. This ID is deterministic — the same content always produces the same blob ID, enabling deduplication and content verification.
+
+```
+blob_0x7f3a...  →  unique identifier for a specific blob
+```
+
+### Quilts
+
+A **quilt** is a composite blob that bundles multiple small files into a single Walrus blob. Quilts optimize for cost and throughput by reducing the number of individual on-chain transactions.
+
+Each file within a quilt is tracked by a **quilt patch** — a reference that maps a specific byte range within the quilt blob back to the original file.
+
+### Quilt Patch IDs
+
+A **quilt patch ID** identifies a specific file within a quilt. When you access a file through your Tusky gateway using `/{quiltPatchId}`, the system locates the parent quilt blob, extracts the relevant byte range, and returns the file.
+
+```
+Quilt (blob)
+├── Patch 1 → file_a.jpg (bytes 0–4095)
+├── Patch 2 → file_b.txt (bytes 4096–4200)
+└── Patch 3 → file_c.png (bytes 4201–12000)
+```
+
+### Epochs
+
+Walrus uses **epochs** as its unit of storage duration. Each epoch represents a fixed time period on the Walrus network. When you upload a file, you specify how many epochs to store it for.
+
+| Concept | Description |
+| --- | --- |
+| **Epoch** | A time period in the Walrus network (length determined by network governance). |
+| **Storage duration** | The number of epochs your blob will be stored. More epochs = longer storage = higher cost. |
+| **Expiry** | After the purchased epochs elapse, the blob is no longer guaranteed to be available on the network. |
+
+<Warning>
+  Once a blob's storage epochs expire, it may be garbage-collected by storage nodes. Always plan your storage duration carefully, or enable **auto-extend** to have Tusky automatically renew storage before expiry.
+</Warning>
+
+### Storage Duration
+
+You control how long your data lives on the Walrus network by specifying the number of epochs at upload time. Tusky provides sensible defaults and an **auto-extend** feature to prevent accidental data loss.
+
+<Tabs>
+  <Tab title="Fixed Duration">
+    Specify a fixed number of epochs. The data is available for exactly that duration.
+
+    ```typescript
+    await tusky.file.upload(vaultId, "./data.csv", {
+      epochs: 10,
+    });
+    ```
+  </Tab>
+  <Tab title="Auto-Extend">
+    Enable auto-extend to have Tusky automatically renew storage before the current epochs expire. This ensures your data persists indefinitely as long as your wallet has funds.
+
+    ```typescript
+    await tusky.file.upload(vaultId, "./data.csv", {
+      epochs: 5,
+      autoExtend: true,
+    });
+    ```
+  </Tab>
+</Tabs>
+
+## How Tusky Interacts with Walrus
+
+### Publishing
+
+When you upload a file, Tusky's queue workers:
+
+1. Encrypt the file (if the vault is encrypted)
+2. Batch small files into quilts for efficiency
+3. Encode the data using Walrus's erasure coding scheme
+4. Submit a storage transaction to the Walrus network using your managed wallet
+5. Record the blob ID and quilt patch IDs in Tusky's database
+
+### Extending
+
+When a file's storage is approaching expiry (and auto-extend is enabled), Tusky:
+
+1. Detects the upcoming expiry from the stored metadata
+2. Submits an extension transaction to the Walrus network
+3. Deducts the extension cost from your managed wallet balance
+4. Updates the stored expiry metadata
+
+### Reading
+
+When a file is requested through your gateway, Tusky's aggregators:
+
+1. Look up the blob ID (or quilt patch ID) from the database
+2. Contact Walrus storage nodes to retrieve the encoded fragments
+3. Reconstruct the original blob using erasure decoding
+4. Extract the relevant patch (if it's a quilt) and return the file
+
+## Walrus Architecture
+
+```
+┌───────────────────────────────────────────────────┐
+│                  Sui Blockchain                    │
+│         (Storage metadata, certificates)          │
+└───────────────────────┬───────────────────────────┘
+                        │
+        ┌───────────────┼───────────────┐
+        ▼               ▼               ▼
+┌──────────────┐ ┌──────────────┐ ┌──────────────┐
+│ Storage Node │ │ Storage Node │ │ Storage Node │
+│     (1)      │ │     (2)      │ │    (...)     │
+└──────────────┘ └──────────────┘ └──────────────┘
+```
+
+- **Sui blockchain** — Stores metadata, storage certificates, and manages epoch governance. Does not store the actual blob data.
+- **Storage nodes** — Independent operators that store erasure-coded fragments of blobs. Data can be reconstructed from any sufficient subset of nodes.
+
+## Self-Custody and Ejection
+
+One of Walrus's key properties is that your data is never locked in. Because blobs are stored on a decentralized network with open access:
+
+- You can read your blobs directly from Walrus without Tusky.
+- You can manage blob extensions from your own wallet.
+- If you choose to leave Tusky, your data remains available on the network for the duration of its purchased epochs.
+
+<Note>
+  Tusky is designed as an infrastructure convenience layer — it never creates vendor lock-in. Your blobs, your keys, your control.
+</Note>
+
+## Learn More
+
+<CardGroup cols={2}>
+  <Card title="Walrus Documentation" icon="book" href="https://docs.walrus.site">
+    Read the full Walrus protocol documentation.
+  </Card>
+  <Card title="Sui Blockchain" icon="link" href="https://sui.io">
+    Learn about the Sui blockchain that powers Walrus.
+  </Card>
+  <Card title="Tusky Architecture" icon="sitemap" href="/architecture/overview">
+    See how Tusky's infrastructure connects to the Walrus network.
+  </Card>
+  <Card title="Publishing" icon="cloud-arrow-up" href="/core-concepts/publishing">
+    Understand how Tusky publishes your data to Walrus.
+  </Card>
+</CardGroup>

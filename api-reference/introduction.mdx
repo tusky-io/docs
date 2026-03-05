@@ -1,0 +1,96 @@
+---
+title: API Reference
+description: 'Complete reference for the Tusky REST API'
+---
+
+## Overview
+
+The Tusky API is a RESTful interface for managing decentralized storage on the [Sui Walrus](https://walrus.xyz) network. Use it to create vaults, upload and download files, manage access control, and configure private gateways.
+
+**Base URL:**
+
+```
+https://api.tusky.io/v2
+```
+
+All API requests must be made over HTTPS. Requests made over plain HTTP will be rejected.
+
+## Content Type
+
+All endpoints accept and return JSON (`application/json`) unless otherwise noted. File uploads use `multipart/form-data`.
+
+## Authentication
+
+Every request must include a valid API key in the `Authorization` header as a Bearer token.
+
+```bash
+Authorization: Bearer YOUR_API_KEY
+```
+
+See the [Authentication](/api-reference/authentication) page for details on generating and managing API keys.
+
+## Rate Limiting
+
+API requests are rate-limited to ensure fair usage across all accounts. Current limits are returned in response headers:
+
+| Header                  | Description                              |
+| ----------------------- | ---------------------------------------- |
+| `X-RateLimit-Limit`     | Maximum requests allowed per window      |
+| `X-RateLimit-Remaining` | Remaining requests in the current window |
+| `X-RateLimit-Reset`     | Unix timestamp when the window resets    |
+
+If you exceed the rate limit, the API returns a `429 Too Many Requests` response. Back off and retry after the `X-RateLimit-Reset` time.
+
+## Pagination
+
+List endpoints return paginated results using cursor-based pagination. Use the `cursor` and `limit` query parameters to navigate through results.
+
+<ParamField query="cursor" type="string">
+  Opaque cursor returned from a previous request. Pass this to fetch the next page of results.
+</ParamField>
+
+<ParamField query="limit" type="number" default="20">
+  Number of items to return per page. Maximum value is `100`.
+</ParamField>
+
+**Example paginated response:**
+
+```json
+{
+  "data": [...],
+  "nextCursor": "eyJpZCI6IjEyMzQ1In0",
+  "hasMore": true
+}
+```
+
+To fetch the next page, pass `nextCursor` as the `cursor` query parameter in your subsequent request.
+
+## Error Format
+
+The API uses standard HTTP status codes and returns errors in a consistent JSON format:
+
+```json
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Name is required",
+    "details": {}
+  }
+}
+```
+
+### Common Status Codes
+
+| Status Code | Description                                                  |
+| ----------- | ------------------------------------------------------------ |
+| `200`       | Request succeeded                                            |
+| `201`       | Resource created successfully                                |
+| `204`       | Request succeeded with no response body                      |
+| `400`       | Bad request — check your parameters                          |
+| `401`       | Unauthorized — missing or invalid API key                    |
+| `403`       | Forbidden — insufficient permissions                         |
+| `404`       | Resource not found                                           |
+| `409`       | Conflict — resource already exists                           |
+| `422`       | Unprocessable entity — validation failed                     |
+| `429`       | Rate limit exceeded                                          |
+| `500`       | Internal server error — contact support if this persists     |
