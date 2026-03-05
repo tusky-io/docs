@@ -1,0 +1,64 @@
+---
+title: Get Publisher
+api: 'GET https://api.tusky.io/v2/publisher'
+---
+
+Retrieve the authenticated user's publisher configuration. The publisher controls how data is written to the Walrus network, including storage duration, batching strategy, and deletability.
+
+## Response
+
+<ResponseField name="defaultEpochs" type="number">
+  The default number of Walrus storage epochs applied to new uploads. Each epoch is approximately 2 weeks. Range: 1–100.
+</ResponseField>
+
+<ResponseField name="publishingMode" type="string">
+  How files are published to Walrus.
+  <Expandable title="Possible values">
+    - `"quilts"` — Multiple files are batched into a single Walrus blob (default). More cost-efficient for small files, but files in a quilt are managed together.
+    - `"blobs"` — Each file is published as a standalone Walrus blob. More expensive but each file is independently manageable.
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="deletableBlobs" type="boolean">
+  Whether published blobs are marked as deletable on Walrus. When `true`, blobs can be deleted before their epochs expire.
+</ResponseField>
+
+<ResponseField name="autoExtend" type="boolean">
+  Whether Tusky automatically renews storage before epochs expire.
+</ResponseField>
+
+<ResponseField name="managedWalletAddress" type="string">
+  The Sui address of the managed wallet used to execute publishing transactions.
+</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl https://api.tusky.io/v2/publisher \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+```typescript SDK
+import Tusky from "@tusky-io/ts-sdk";
+
+const tusky = new Tusky({ apiKey: process.env.TUSKY_API_KEY });
+const publisher = await tusky.publisher.get();
+
+console.log(publisher);
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "defaultEpochs": 1,
+  "publishingMode": "quilts",
+  "deletableBlobs": true,
+  "autoExtend": false,
+  "managedWalletAddress": "0x1a2b3c4d5e6f7890abcdef1234567890abcdef12"
+}
+```

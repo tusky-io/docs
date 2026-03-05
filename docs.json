@@ -58,7 +58,11 @@
           "core-concepts/files",
           "core-concepts/encryption",
           "core-concepts/publishing",
-          "core-concepts/gateways"
+          "core-concepts/gateways",
+          "core-concepts/managed-wallet",
+          "core-concepts/prepay",
+          "core-concepts/api-keys",
+          "core-concepts/publisher"
         ]
       },
       {
@@ -75,6 +79,7 @@
         "pages": [
           "billing/pay-as-you-go",
           "billing/prepaid",
+          "billing/subscriptions",
           "billing/enterprise"
         ]
       },
@@ -138,6 +143,13 @@
             "pages": [
               "api-reference/gateways/get-gateway",
               "api-reference/gateways/update-gateway"
+            ]
+          },
+          {
+            "group": "Publisher",
+            "pages": [
+              "api-reference/publisher/get-publisher",
+              "api-reference/publisher/update-publisher"
             ]
           },
           {

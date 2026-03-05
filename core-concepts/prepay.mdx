@@ -1,0 +1,178 @@
+---
+title: Prepay
+description: 'Fund your wallet with SUI and WAL for storage operations'
+---
+
+Prepay lets you deposit SUI and WAL tokens into your [managed wallet](/core-concepts/managed-wallet) in advance. When you upload files, extend storage, or perform other on-chain operations, costs are automatically deducted from your balance — no per-request payment prompts.
+
+## Why you need both tokens
+
+Tusky requires **two tokens** to operate on the Walrus network:
+
+<CardGroup cols={2}>
+  <Card title="SUI" icon="coins">
+    Covers **gas fees** for every Sui transaction your managed wallet submits, plus the **10% Tusky infrastructure fee** that funds API services, encryption, and gateway hosting.
+  </Card>
+  <Card title="WAL" icon="database">
+    Pays **Walrus storage nodes** for the epochs you purchase. WAL is locked on-chain for the duration of your storage reservation.
+  </Card>
+</CardGroup>
+
+<Warning>
+  Both SUI and WAL are required for uploads. If either balance is zero, new uploads will fail. Existing stored files remain available until their purchased epochs expire.
+</Warning>
+
+## How prepay works
+
+<Steps>
+  <Step title="Find your managed wallet address">
+    Locate your managed wallet address in the dashboard, SDK, or API. This is the Sui address you send tokens to.
+  </Step>
+  <Step title="Deposit SUI and WAL">
+    Transfer tokens from any Sui-compatible wallet (Sui Wallet, Suiet, Ethos, CLI) to your managed wallet address. The balance updates within seconds after on-chain confirmation.
+  </Step>
+  <Step title="Upload and store">
+    Every upload automatically deducts the Walrus storage cost (WAL) and the gas + Tusky fee (SUI) from your prepaid balance. No approval prompts or x402 handshakes required.
+  </Step>
+  <Step title="Monitor and top up">
+    Track your balance via the dashboard, API, or SDK. Tusky sends low-balance notifications so you can top up before running out.
+  </Step>
+</Steps>
+
+<Tip>
+  There is no minimum deposit and no maximum. Top up whenever it is convenient — your balance carries forward indefinitely.
+</Tip>
+
+## Cost breakdown
+
+Every file upload costs:
+
+```
+Total Cost = Walrus Storage Cost (WAL) + Gas Fee (SUI) + 10% Tusky Fee (SUI)
+```
+
+| Component | Token | Description |
+| --- | --- | --- |
+| **Walrus storage** | WAL | Paid to Walrus storage nodes for the number of epochs you select. Scales linearly with file size and duration. |
+| **Gas fee** | SUI | Sui network transaction fee for publishing the blob on-chain. |
+| **Tusky fee** | SUI | 10% of the Walrus storage cost, covering infrastructure, encryption, and gateway services. |
+
+## Cost estimation
+
+Preview the cost of an upload before committing by using the cost estimation endpoint:
+
+<CodeGroup>
+
+```bash cURL
+curl https://api.tusky.io/v2/files/estimate \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -G \
+  -d "size=10485760" \
+  -d "epochs=5"
+```
+
+```typescript SDK
+const estimate = await tusky.file.estimate({
+  size: 10485760,
+  epochs: 5,
+});
+
+console.log("WAL cost:", estimate.walrusCost);
+console.log("Tusky fee (SUI):", estimate.tuskyFee);
+console.log("Gas estimate (SUI):", estimate.gasEstimate);
+console.log("Total SUI needed:", estimate.totalSui);
+```
+
+</CodeGroup>
+
+```json Response
+{
+  "walrusCost": "0.045 WAL",
+  "tuskyFee": "0.0045 SUI",
+  "gasEstimate": "0.002 SUI",
+  "totalSui": "0.0065 SUI",
+  "totalWal": "0.045 WAL",
+  "epochs": 5
+}
+```
+
+## Checking your balance
+
+<Tabs>
+  <Tab title="Dashboard">
+    Navigate to **Settings → Wallet** in the [Tusky dashboard](https://app.tusky.io) to see:
+    - Current SUI and WAL balances
+    - Recent transactions with costs and file references
+    - Projected runway based on current usage patterns
+  </Tab>
+  <Tab title="SDK">
+    ```typescript
+    const account = await tusky.account.get();
+    const wallet = account.managedWallet;
+
+    console.log(`SUI balance: ${wallet.suiBalance}`);
+    console.log(`WAL balance: ${wallet.walBalance}`);
+    ```
+  </Tab>
+  <Tab title="API">
+    ```bash
+    curl https://api.tusky.io/v2/account \
+      -H "Authorization: Bearer YOUR_API_KEY"
+    ```
+
+    ```json
+    {
+      "id": "acc_abc123",
+      "managedWallet": {
+        "address": "0x1a2b3c...",
+        "suiBalance": "12.5",
+        "walBalance": "48.2"
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Low balance notifications
+
+Tusky monitors your managed wallet and alerts you when balances drop below a configurable threshold:
+
+| Channel | Description |
+| --- | --- |
+| **Dashboard** | A banner alert appears at the top of the Tusky dashboard. |
+| **Email** | A notification is sent to your configured email address. |
+| **Webhook** | Configure a webhook URL in **Settings → Notifications** to receive low-balance alerts programmatically. |
+
+<Note>
+  The default low-balance threshold is 1 SUI. You can adjust it in **Settings → Wallet → Notifications**.
+</Note>
+
+## What happens when balance runs out
+
+| Scenario | Behavior |
+| --- | --- |
+| **New uploads** | Fail with a `402 Payment Required` error until you top up. |
+| **Existing files** | Remain available on Walrus until their purchased storage epochs expire. |
+| **Auto-extend** | Paused — storage will not be renewed if there are insufficient funds. |
+| **File downloads** | Unaffected — retrieval does not consume SUI or WAL. |
+
+<Info>
+  Running out of balance never deletes your existing data. Files remain accessible for the full duration of their purchased epochs. Top up at any time to resume uploads and re-enable auto-extend.
+</Info>
+
+## What's next?
+
+<CardGroup cols={2}>
+  <Card title="Managed Wallet" icon="wallet" href="/core-concepts/managed-wallet">
+    Understand your dedicated wallet and how it operates on-chain.
+  </Card>
+  <Card title="Pay As You Go" icon="credit-card" href="/billing/pay-as-you-go">
+    Learn about x402 micropayments as an alternative to prepay.
+  </Card>
+  <Card title="Publisher" icon="cloud-arrow-up" href="/core-concepts/publisher">
+    Configure storage duration, publishing mode, and more.
+  </Card>
+  <Card title="Subscriptions" icon="receipt" href="/billing/subscriptions">
+    Explore fixed-rate plans for predictable costs.
+  </Card>
+</CardGroup>

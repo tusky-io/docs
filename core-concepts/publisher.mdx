@@ -1,0 +1,204 @@
+---
+title: Publisher
+description: 'Configure how your data is published to Walrus'
+---
+
+Every Tusky user has a **publisher configuration** that controls how data is written to the Walrus network. The publisher uses your [managed wallet](/core-concepts/managed-wallet) to execute Sui transactions and determines key parameters like storage duration, batching strategy, and deletability.
+
+## Publisher settings
+
+Your publisher configuration has four main options:
+
+### Default storage epochs
+
+Storage on Walrus is purchased in discrete units of time called **epochs**. Each Walrus epoch is approximately **2 weeks** long.
+
+| Setting | Description |
+| --- | --- |
+| **Default epochs** | Number of epochs new uploads are stored for (default: 1 epoch ≈ 2 weeks). |
+| **Range** | 1–100 epochs. |
+| **Override** | Can be overridden per-upload via the API or SDK. |
+| **Cost scaling** | Linear — 10 epochs costs 10× what 1 epoch costs for the same file. |
+| **Auto-extend** | When enabled, Tusky automatically renews storage before epochs expire, ensuring uninterrupted availability. |
+
+<Tip>
+  Start with a low epoch count for experimental data and increase for production assets that need long-term availability. Use auto-extend for critical data you cannot afford to lose.
+</Tip>
+
+### Publishing mode
+
+Tusky supports two publishing modes that control how your files are written to Walrus:
+
+<Tabs>
+  <Tab title="Quilts (default)">
+    Multiple files are batched into a single Walrus blob called a **quilt**. Each file within the quilt receives a unique **quilt patch ID** for individual retrieval.
+
+    **Advantages:**
+    - Significantly more cost-efficient for many small files
+    - Reduced gas costs — one Sui transaction covers multiple files
+    - Lower Walrus storage overhead from erasure coding on larger blobs
+
+    **Trade-offs:**
+    - Files in a quilt are **managed together** — they are deleted and extended as a group, not individually
+    - Less granular lifecycle control per file
+
+    ```
+    ┌─────────────────────────────────────────────────┐
+    │               Quilt (single Walrus blob)         │
+    │  ┌──────────┐  ┌──────────┐  ┌──────────┐      │
+    │  │ Patch #1  │  │ Patch #2  │  │ Patch #3  │      │
+    │  │ file-a.md │  │ img.png   │  │ data.json │      │
+    │  └──────────┘  └──────────┘  └──────────┘      │
+    └─────────────────────────────────────────────────┘
+    ```
+  </Tab>
+  <Tab title="Simple blobs">
+    Each file is published as a **standalone Walrus blob** with its own unique blob ID.
+
+    **Advantages:**
+    - Each file is independently manageable (delete, extend, eject individually)
+    - Clearer 1:1 mapping between files and on-chain objects
+    - Better for large files where batching provides minimal savings
+
+    **Trade-offs:**
+    - Higher per-file gas costs
+    - More Sui transactions for the same number of files
+    - Greater overall cost for workloads with many small files
+  </Tab>
+</Tabs>
+
+<Warning>
+  Files published in quilts are managed as a group. If a quilt is deleted, **all files** in that quilt are deleted. If a quilt's storage is extended, all files in it are extended together. Choose simple blobs if you need independent per-file lifecycle control.
+</Warning>
+
+### Quilts vs simple blobs comparison
+
+| Feature | Quilts | Simple Blobs |
+| --- | --- | --- |
+| **Cost efficiency** | High — batches reduce gas and storage overhead | Lower — each file incurs individual transaction costs |
+| **Per-file management** | No — files in a quilt are managed together | Yes — each file is independently deletable/extendable |
+| **Best for** | Many small files, cost-sensitive workloads | Large files, files needing independent lifecycle control |
+| **Deletion** | Entire quilt is deleted (all files in it) | Individual files can be deleted independently |
+| **Storage extension** | Entire quilt is extended together | Each file is extended individually |
+| **Ejection** | Quilt blob is ejected as a unit | Each blob can be ejected independently |
+| **On-chain objects** | Fewer (one blob per batch) | More (one blob per file) |
+
+### Deletable blobs
+
+Controls whether published blobs are marked as **deletable** on the Walrus network.
+
+<CardGroup cols={2}>
+  <Card title="Deletable enabled" icon="trash-can">
+    Blobs can be deleted before their storage epochs expire. When deleted, the remaining storage cost is reclaimed. Useful when data may become obsolete before the epoch ends.
+  </Card>
+  <Card title="Deletable disabled" icon="lock">
+    Blobs persist for the full epoch duration regardless of any delete requests. This provides stronger immutability guarantees — once published, the data cannot be removed early.
+  </Card>
+</CardGroup>
+
+<Note>
+  The deletable setting interacts with publishing mode: if you use quilts with deletable enabled and delete a quilt, **all files** in that quilt are removed. There is no way to delete individual files from a quilt.
+</Note>
+
+## Reading your publisher config
+
+<Tabs>
+  <Tab title="SDK">
+    ```typescript
+    const publisher = await tusky.publisher.get();
+
+    console.log("Default epochs:", publisher.defaultEpochs);
+    console.log("Publishing mode:", publisher.publishingMode);
+    console.log("Deletable blobs:", publisher.deletableBlobs);
+    console.log("Auto-extend:", publisher.autoExtend);
+    console.log("Wallet:", publisher.managedWalletAddress);
+    ```
+  </Tab>
+  <Tab title="cURL">
+    ```bash
+    curl https://api.tusky.io/v2/publisher \
+      -H "Authorization: Bearer YOUR_API_KEY"
+    ```
+
+    ```json
+    {
+      "defaultEpochs": 1,
+      "publishingMode": "quilts",
+      "deletableBlobs": true,
+      "autoExtend": false,
+      "managedWalletAddress": "0x1a2b3c..."
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Updating your publisher config
+
+<Tabs>
+  <Tab title="SDK">
+    ```typescript
+    const updated = await tusky.publisher.update({
+      defaultEpochs: 5,
+      publishingMode: "blobs",
+      deletableBlobs: true,
+      autoExtend: true,
+    });
+
+    console.log("Updated:", updated);
+    ```
+  </Tab>
+  <Tab title="cURL">
+    ```bash
+    curl -X PATCH https://api.tusky.io/v2/publisher \
+      -H "Authorization: Bearer YOUR_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "defaultEpochs": 5,
+        "publishingMode": "blobs",
+        "deletableBlobs": true,
+        "autoExtend": true
+      }'
+    ```
+  </Tab>
+</Tabs>
+
+<Warning>
+  Changing `publishingMode` from `quilts` to `blobs` (or vice-versa) only affects **future uploads**. Files already published retain their original publishing mode and cannot be converted.
+</Warning>
+
+## Choosing the right configuration
+
+<AccordionGroup>
+  <Accordion title="I upload many small files (< 1 MB each)">
+    Use **quilts** mode with a reasonable default epoch count. Quilts batch small files together, dramatically reducing per-file costs.
+  </Accordion>
+  <Accordion title="I upload large files that need independent management">
+    Use **simple blobs** mode. Each file gets its own blob ID and can be deleted, extended, or ejected independently.
+  </Accordion>
+  <Accordion title="I need long-term archival storage">
+    Set a high `defaultEpochs` value (e.g., 50–100) and enable **auto-extend** to ensure data persists beyond the initial storage period.
+  </Accordion>
+  <Accordion title="I want to minimize costs and don't need per-file control">
+    Use **quilts** with **deletable disabled**. This is the most cost-efficient configuration for write-once data.
+  </Accordion>
+  <Accordion title="I want the ability to remove data early">
+    Enable **deletable blobs**. If using quilts, be aware that deleting a quilt removes all files in it.
+  </Accordion>
+</AccordionGroup>
+
+## What's next?
+
+<CardGroup cols={2}>
+  <Card title="Managed Wallet" icon="wallet" href="/core-concepts/managed-wallet">
+    Understand the wallet your publisher uses for on-chain operations.
+  </Card>
+  <Card title="Prepay" icon="coins" href="/core-concepts/prepay">
+    Fund your wallet so your publisher can execute transactions.
+  </Card>
+  <Card title="Publisher API" icon="code" href="/api-reference/publisher/get-publisher">
+    See the full API reference for reading and updating publisher settings.
+  </Card>
+  <Card title="Files" icon="file" href="/core-concepts/files">
+    Learn how files are uploaded and managed inside vaults.
+  </Card>
+</CardGroup>

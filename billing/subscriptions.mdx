@@ -1,0 +1,150 @@
+---
+title: Subscriptions
+description: 'Fixed-rate plans with transaction and bandwidth limits'
+---
+
+Subscriptions offer an alternative to [pay-as-you-go](/billing/pay-as-you-go) billing for teams and applications that want **predictable, fixed-rate costs**. Each plan provides monthly allowances for transactions, bandwidth, and storage, paid in SUI.
+
+## How subscriptions work
+
+<Steps>
+  <Step title="Choose a plan">
+    Select a subscription tier that matches your expected usage from the [Tusky dashboard](https://app.tusky.io).
+  </Step>
+  <Step title="Pay in SUI">
+    Subscription fees are paid monthly in SUI. Payment is processed at the start of each billing cycle.
+  </Step>
+  <Step title="Use your allowances">
+    Each plan includes monthly limits for transactions, bandwidth, and storage. Usage is tracked in real time on the dashboard.
+  </Step>
+  <Step title="Walrus costs remain pay-per-use">
+    The subscription covers Tusky infrastructure costs. Walrus storage costs (WAL) are still deducted from your [prepaid wallet balance](/core-concepts/prepay) on each upload.
+  </Step>
+</Steps>
+
+<Info>
+  A subscription replaces the 10% Tusky infrastructure fee on each transaction. Instead of paying per-upload fees, your subscription covers Tusky's infrastructure costs for the month. You still need WAL in your managed wallet for Walrus storage payments.
+</Info>
+
+## Plans
+
+Tusky offers tiered subscription plans to fit different usage levels. The following tiers are representative — visit the dashboard for current pricing and limits.
+
+| | Starter | Growth | Scale |
+| --- | --- | --- | --- |
+| **Transactions / month** | 1,000 | 10,000 | 100,000 |
+| **Bandwidth / month** | 10 GB | 100 GB | 1 TB |
+| **Storage** | 50 GB | 500 GB | 5 TB |
+| **Best for** | Side projects, prototypes | Production apps, growing teams | High-volume platforms, enterprises |
+
+<Note>
+  Plan limits and pricing are subject to change. Always check [app.tusky.io](https://app.tusky.io) for the latest plan details.
+</Note>
+
+## What's included
+
+Each subscription covers:
+
+<CardGroup cols={2}>
+  <Card title="Tusky infrastructure fee" icon="server">
+    The 10% per-transaction fee is waived. Your subscription covers API services, encryption, and gateway hosting.
+  </Card>
+  <Card title="Gateway bandwidth" icon="globe">
+    File downloads served through your private gateway count against your monthly bandwidth allowance.
+  </Card>
+  <Card title="API transactions" icon="code">
+    Every API call (upload, download, list, delete, etc.) counts toward your monthly transaction limit.
+  </Card>
+  <Card title="Storage capacity" icon="hard-drive">
+    Total data stored across all vaults, measured at the Walrus blob level.
+  </Card>
+</CardGroup>
+
+### What's NOT included
+
+<Warning>
+  **Walrus storage costs (WAL)** are not included in the subscription. You still need WAL tokens in your [managed wallet](/core-concepts/managed-wallet) to pay Walrus storage nodes for each upload. The subscription only covers the Tusky infrastructure layer.
+</Warning>
+
+## Overage behavior
+
+When you exceed your plan's monthly limits:
+
+| Limit | Behavior |
+| --- | --- |
+| **Transactions** | Additional requests may be throttled or charged at an overage rate depending on your plan. |
+| **Bandwidth** | Downloads may be throttled once the monthly allowance is exhausted. |
+| **Storage** | New uploads are blocked once the storage cap is reached. Existing files remain available. |
+
+<Tip>
+  Monitor your usage in the dashboard or via the [usage API endpoint](/api-reference/account/get-usage) to avoid hitting limits unexpectedly. Upgrade your plan before reaching capacity for uninterrupted service.
+</Tip>
+
+## Subscriptions vs pay-as-you-go
+
+| Feature | Subscription | Pay-As-You-Go |
+| --- | --- | --- |
+| **Pricing model** | Fixed monthly fee (SUI) | Per-transaction (SUI via x402) |
+| **Tusky fee** | Included in subscription | 10% on each upload |
+| **Walrus cost (WAL)** | Pay-per-use from prepaid wallet | Pay-per-use from prepaid wallet |
+| **Cost predictability** | High — fixed monthly rate | Variable — depends on usage |
+| **Transaction limits** | Monthly cap per plan tier | Unlimited (pay per request) |
+| **Bandwidth limits** | Monthly cap per plan tier | Unlimited (pay per request) |
+| **Best for** | Predictable workloads, production apps | Variable usage, experimentation |
+| **Overage handling** | Throttled or overage charges | No limits — always charged per use |
+| **Commitment** | Monthly billing cycle | None — pay only when you use |
+
+## Best for
+
+Subscriptions are ideal when:
+
+- Your application has **predictable traffic patterns** and you want to budget costs in advance.
+- You prefer a **fixed monthly bill** over variable per-transaction charges.
+- You are running a **production application** and want to avoid per-request payment overhead.
+- You want to **eliminate the 10% per-upload fee** and replace it with a flat rate.
+
+<Info>
+  You can switch between subscription and pay-as-you-go at any time. When you cancel a subscription, you revert to pay-as-you-go billing at the end of the current billing cycle.
+</Info>
+
+## Managing your subscription
+
+<Tabs>
+  <Tab title="Dashboard">
+    Navigate to **Settings → Billing** in the [Tusky dashboard](https://app.tusky.io) to:
+    - View your current plan and usage
+    - Upgrade or downgrade your plan
+    - Cancel your subscription
+    - View billing history
+  </Tab>
+  <Tab title="SDK">
+    ```typescript
+    const account = await tusky.account.get();
+
+    console.log("Plan:", account.plan);
+    console.log("Billing cycle:", account.billingCycle);
+
+    const usage = await tusky.account.usage();
+    console.log("Transactions this month:", usage.apiRequests);
+    console.log("Bandwidth this month:", usage.bandwidthBytes);
+    console.log("Storage used:", usage.storageBytes);
+    ```
+  </Tab>
+</Tabs>
+
+## What's next?
+
+<CardGroup cols={2}>
+  <Card title="Pay As You Go" icon="credit-card" href="/billing/pay-as-you-go">
+    Learn about per-request micropayments with x402.
+  </Card>
+  <Card title="Prepaid" icon="wallet" href="/billing/prepaid">
+    Fund your managed wallet with WAL for Walrus storage costs.
+  </Card>
+  <Card title="Enterprise" icon="building" href="/billing/enterprise">
+    Custom plans for high-volume and specialized use cases.
+  </Card>
+  <Card title="Account Usage" icon="chart-line" href="/api-reference/account/get-usage">
+    Monitor your usage programmatically.
+  </Card>
+</CardGroup>
