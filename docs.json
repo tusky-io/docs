@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
+  "theme": "palm",
   "name": "Tusky",
   "logo": {
     "light": "/logo/light.svg",
@@ -8,9 +8,9 @@
   },
   "favicon": "/favicon.svg",
   "colors": {
-    "primary": "#6366F1",
-    "light": "#818CF8",
-    "dark": "#4F46E5"
+    "primary": "#046994",
+    "light": "#a5e2fc",
+    "dark": "#035580"
   },
   "topbarLinks": [
     {
