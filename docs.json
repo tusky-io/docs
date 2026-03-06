@@ -117,35 +117,6 @@
             ]
           },
           {
-            "group": "Vaults",
-            "pages": [
-              "api-reference/vaults/create-vault",
-              "api-reference/vaults/get-vault",
-              "api-reference/vaults/list-vaults",
-              "api-reference/vaults/update-vault",
-              "api-reference/vaults/delete-vault"
-            ]
-          },
-          {
-            "group": "Files",
-            "pages": [
-              "api-reference/files/upload-file",
-              "api-reference/files/get-file",
-              "api-reference/files/list-files",
-              "api-reference/files/download-file",
-              "api-reference/files/extend-file",
-              "api-reference/files/delete-file"
-            ]
-          },
-          {
-            "group": "Uploads",
-            "pages": [
-              "api-reference/uploads/create-upload",
-              "api-reference/uploads/upload-chunk",
-              "api-reference/uploads/get-upload-status"
-            ]
-          },
-          {
             "group": "Publishers",
             "pages": [
               "api-reference/publishers/create-publisher",
@@ -160,6 +131,45 @@
             "pages": [
               "api-reference/aggregators/get-aggregator",
               "api-reference/aggregators/update-aggregator"
+            ]
+          },
+          {
+            "group": "Uploads",
+            "pages": [
+              "api-reference/uploads/create-upload",
+              "api-reference/uploads/upload-chunk",
+              "api-reference/uploads/get-upload-status"
+            ]
+          },
+          {
+            "group": "Files",
+            "pages": [
+              "api-reference/files/upload-file",
+              "api-reference/files/get-file",
+              "api-reference/files/list-files",
+              "api-reference/files/download-file",
+              "api-reference/files/extend-file",
+              "api-reference/files/delete-file"
+            ]
+          },
+          {
+            "group": "Folders",
+            "pages": [
+              "api-reference/folders/create-folder",
+              "api-reference/folders/get-folder",
+              "api-reference/folders/list-folders",
+              "api-reference/folders/update-folder",
+              "api-reference/folders/delete-folder"
+            ]
+          },
+          {
+            "group": "Vaults",
+            "pages": [
+              "api-reference/vaults/create-vault",
+              "api-reference/vaults/get-vault",
+              "api-reference/vaults/list-vaults",
+              "api-reference/vaults/update-vault",
+              "api-reference/vaults/delete-vault"
             ]
           },
           {
