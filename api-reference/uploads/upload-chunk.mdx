@@ -3,71 +3,60 @@ title: Upload Chunk
 api: 'PATCH https://api.tusky.io/v2/uploads/{uploadId}'
 ---
 
-Upload a chunk of file data to an existing upload session. Send binary data starting at the specified `Upload-Offset`. The server appends the data and returns the new offset.
+Upload a chunk of file data to an existing upload session. The `Upload-Offset` must match the server's current offset exactly.
 
-Repeat this request with successive chunks until the total uploaded bytes equal the `Upload-Length` specified during upload creation.
+When the final chunk is received (offset equals `Upload-Length`), Tusky processes the file — encrypting if applicable, creating the file record, and queuing for Walrus publishing.
 
 ## Path Parameters
 
 <ParamField path="uploadId" type="string" required>
-  The upload session ID from the `Location` header returned by [Create Upload](/api-reference/uploads/create-upload).
+  The upload ID from the `Location` header returned by [Create Upload](/api-reference/uploads/create-upload).
 </ParamField>
 
 ## Headers
 
 <ParamField header="Tus-Resumable" type="string" required>
-  tus protocol version. Must be `1.0.0`.
+  Must be `1.0.0`.
 </ParamField>
 
 <ParamField header="Upload-Offset" type="number" required>
-  The byte offset where this chunk starts. Must match the server's current offset for this upload. If it doesn't match, the server returns `409 Conflict`.
+  Byte offset where this chunk starts. Must match the server's current offset.
 </ParamField>
 
 <ParamField header="Content-Type" type="string" required>
   Must be `application/offset+octet-stream`.
 </ParamField>
 
-<ParamField header="Content-Length" type="number">
-  Size of this chunk in bytes.
-</ParamField>
-
 ## Request Body
 
-Raw binary data for this chunk of the file.
+Raw binary data for this chunk. Max chunk size: **50 MB**.
 
 ## Response
 
 Returns `204 No Content` on success.
 
 <ResponseField name="Upload-Offset" type="number (header)">
-  The new byte offset after this chunk was written. When this equals `Upload-Length`, the upload is complete.
+  New byte offset after this chunk. When equal to `Upload-Length`, the upload is complete.
 </ResponseField>
 
-<ResponseField name="Tus-Resumable" type="string (header)">
-  Protocol version. `1.0.0`.
-</ResponseField>
+When the upload completes (final chunk), the response includes:
+```json
+{
+  "uploadId": "upload_xyz789"
+}
+```
 
 ## Example
 
 <CodeGroup>
 
-```bash cURL - First chunk (0–5MB)
+```bash cURL
 curl -X PATCH https://api.tusky.io/v2/uploads/upload_xyz789 \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Tus-Resumable: 1.0.0" \
   -H "Upload-Offset: 0" \
   -H "Content-Type: application/offset+octet-stream" \
   --data-binary @chunk1.bin \
-  -D -
-```
-
-```bash cURL - Second chunk (5MB–10MB)
-curl -X PATCH https://api.tusky.io/v2/uploads/upload_xyz789 \
-  -H "Authorization: Bearer YOUR_API_KEY" \
-  -H "Tus-Resumable: 1.0.0" \
-  -H "Upload-Offset: 5242880" \
-  -H "Content-Type: application/offset+octet-stream" \
-  --data-binary @chunk2.bin \
   -D -
 ```
 
@@ -81,10 +70,6 @@ Upload-Offset: 5242880
 Tus-Resumable: 1.0.0
 ```
 
-<Note>
-  When the final chunk is uploaded and `Upload-Offset` equals `Upload-Length`, Tusky automatically processes the file — encrypting (if the vault is encrypted), batching, and publishing to Walrus. The file will appear in the vault once processing completes.
-</Note>
-
 <Warning>
-  The `Upload-Offset` in your request **must exactly match** the server's current offset. If there's a mismatch (e.g., due to a lost response), use [Get Upload Status](/api-reference/uploads/get-upload-status) (`HEAD` request) to check the current offset before retrying.
+  `Upload-Offset` must exactly match the server's current offset. On mismatch the server returns `409 Conflict`. Use [Get Upload Status](/api-reference/uploads/get-upload-status) to check the current offset before retrying.
 </Warning>

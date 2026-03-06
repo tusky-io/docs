@@ -1,54 +1,59 @@
 ---
 title: Update Aggregator
-api: 'PUT https://api.tusky.io/v2/aggregator'
+api: 'PATCH https://api.tusky.io/v2/aggregators/{aggregatorId}'
 ---
 
-Update the authenticated user's private aggregator settings.
+Update an aggregator's configuration. Only included fields are updated.
+
+## Path Parameters
+
+<ParamField path="aggregatorId" type="string" required>
+  The aggregator ID.
+</ParamField>
 
 ## Request Body
 
 <ParamField body="subdomain" type="string">
-  The subdomain for the aggregator. Must be unique, lowercase, and between 3 and 32 characters. This determines your aggregator URL (e.g., `myapp` → `myapp.mytusky.xyz`).
+  Subdomain for the aggregator. Must be unique, lowercase, 3–32 characters.
 </ParamField>
 
 <ParamField body="customDomain" type="string">
-  A custom domain to use for the aggregator. Set to `null` to remove. You must configure a CNAME record pointing to your aggregator URL before setting this.
+  Custom domain. Set to `null` to remove. Requires a CNAME record pointing to `{subdomain}.mytusky.xyz`.
+</ParamField>
+
+<ParamField body="public" type="boolean">
+  Whether the aggregator is public. Public aggregators serve content without authentication; private aggregators require a valid API key or session.
+</ParamField>
+
+<ParamField body="cache" type="boolean">
+  Whether to enable Cloudflare edge caching. Caches content at 300+ global edge locations for low-latency delivery. Disable for content that changes frequently.
+</ParamField>
+
+<ParamField body="fallbackToBackup" type="boolean">
+  Whether to fall back to the centralized backup store when Walrus is unavailable. Requires [Backup](/tools/backup) to be enabled on the relevant vaults.
 </ParamField>
 
 <ParamField body="analyticsEnabled" type="boolean">
-  Whether to enable analytics tracking for aggregator requests.
+  Whether to enable analytics tracking for requests.
 </ParamField>
 
 ## Response
 
-<ResponseField name="url" type="string">
-  The full URL of the private aggregator.
-</ResponseField>
-
-<ResponseField name="subdomain" type="string">
-  The updated subdomain.
-</ResponseField>
-
-<ResponseField name="customDomain" type="string">
-  The updated custom domain, or `null` if not configured.
-</ResponseField>
-
-<ResponseField name="analyticsEnabled" type="boolean">
-  Whether analytics are enabled.
-</ResponseField>
+Returns the updated aggregator object.
 
 ## Example
 
 <CodeGroup>
 
 ```bash cURL
-curl -X PUT https://api.tusky.io/v2/aggregator \
+curl -X PATCH https://api.tusky.io/v2/aggregators/agg_default \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "subdomain": "myapp",
-    "customDomain": "files.example.com",
-    "analyticsEnabled": true
+    "public": true,
+    "cache": true,
+    "fallbackToBackup": true,
+    "customDomain": "cdn.example.com"
   }'
 ```
 
@@ -58,13 +63,18 @@ curl -X PUT https://api.tusky.io/v2/aggregator \
 
 ```json
 {
+  "id": "agg_default",
   "url": "https://myapp.mytusky.xyz",
   "subdomain": "myapp",
-  "customDomain": "files.example.com",
-  "analyticsEnabled": true
+  "customDomain": "cdn.example.com",
+  "public": true,
+  "cache": true,
+  "fallbackToBackup": true,
+  "analyticsEnabled": true,
+  "updatedAt": "2026-03-06T14:00:00Z"
 }
 ```
 
 <Note>
-  When setting a `customDomain`, ensure you have configured a CNAME DNS record pointing your domain to your aggregator subdomain (e.g., `files.example.com` → `myapp.mytusky.xyz`). SSL certificates are provisioned automatically after DNS propagation.
+  `fallbackToBackup` only works for vaults with [Backup](/tools/backup) enabled. If backup is not enabled, the flag is accepted but has no effect.
 </Note>

@@ -130,7 +130,8 @@
             "group": "Aggregators",
             "pages": [
               "api-reference/aggregators/get-aggregator",
-              "api-reference/aggregators/update-aggregator"
+              "api-reference/aggregators/update-aggregator",
+              "api-reference/aggregators/delete-aggregator"
             ]
           },
           {
@@ -138,7 +139,8 @@
             "pages": [
               "api-reference/uploads/create-upload",
               "api-reference/uploads/upload-chunk",
-              "api-reference/uploads/get-upload-status"
+              "api-reference/uploads/get-upload-status",
+              "api-reference/uploads/delete-upload"
             ]
           },
           {
@@ -147,7 +149,6 @@
               "api-reference/files/upload-file",
               "api-reference/files/get-file",
               "api-reference/files/list-files",
-              "api-reference/files/download-file",
               "api-reference/files/extend-file",
               "api-reference/files/delete-file"
             ]

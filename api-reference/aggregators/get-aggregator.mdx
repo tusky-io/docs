@@ -1,26 +1,52 @@
 ---
 title: Get Aggregator
-api: 'GET https://api.tusky.io/v2/aggregator'
+api: 'GET https://api.tusky.io/v2/aggregators/{aggregatorId}'
 ---
 
-Retrieve the authenticated user's private aggregator configuration. Private aggregators provide a dedicated URL for accessing vault files.
+Retrieve an aggregator by ID.
+
+## Path Parameters
+
+<ParamField path="aggregatorId" type="string" required>
+  The aggregator ID. Use `default` for the account's primary aggregator.
+</ParamField>
 
 ## Response
 
+<ResponseField name="id" type="string">
+  Unique aggregator identifier.
+</ResponseField>
+
 <ResponseField name="url" type="string">
-  The full URL of the private aggregator.
+  The full URL of the aggregator (e.g., `https://myapp.mytusky.xyz`).
 </ResponseField>
 
 <ResponseField name="subdomain" type="string">
-  The subdomain assigned to the aggregator (e.g., `myapp` for `myapp.mytusky.xyz`).
+  The subdomain (e.g., `myapp`).
 </ResponseField>
 
 <ResponseField name="customDomain" type="string">
-  Custom domain configured for the aggregator, if any. `null` if not configured.
+  Custom domain, or `null` if not configured.
+</ResponseField>
+
+<ResponseField name="public" type="boolean">
+  Whether the aggregator is public. Public aggregators serve content to anyone; private aggregators require authentication.
+</ResponseField>
+
+<ResponseField name="cache" type="boolean">
+  Whether Cloudflare edge caching is enabled. When `true`, content is cached at 300+ edge locations for low-latency delivery.
+</ResponseField>
+
+<ResponseField name="fallbackToBackup" type="boolean">
+  Whether the aggregator falls back to the centralized backup store when the Walrus network is unavailable.
 </ResponseField>
 
 <ResponseField name="analyticsEnabled" type="boolean">
-  Whether aggregator analytics are enabled.
+  Whether analytics tracking is enabled.
+</ResponseField>
+
+<ResponseField name="createdAt" type="string">
+  ISO 8601 creation timestamp.
 </ResponseField>
 
 ## Example
@@ -28,7 +54,7 @@ Retrieve the authenticated user's private aggregator configuration. Private aggr
 <CodeGroup>
 
 ```bash cURL
-curl https://api.tusky.io/v2/aggregator \
+curl https://api.tusky.io/v2/aggregators/default \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
@@ -38,9 +64,14 @@ curl https://api.tusky.io/v2/aggregator \
 
 ```json
 {
+  "id": "agg_default",
   "url": "https://myapp.mytusky.xyz",
   "subdomain": "myapp",
-  "customDomain": "files.example.com",
-  "analyticsEnabled": true
+  "customDomain": null,
+  "public": false,
+  "cache": true,
+  "fallbackToBackup": false,
+  "analyticsEnabled": true,
+  "createdAt": "2026-01-15T10:00:00Z"
 }
 ```
