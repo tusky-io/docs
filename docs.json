@@ -35,70 +35,73 @@
     }
   ],
   "navigation": {
-    "groups": [
-      {
-        "group": "Get Started",
-        "pages": [
-          "introduction",
-          "quickstart"
-        ]
-      },
-      {
-        "group": "Getting Started",
-        "pages": [
-          "getting-started/create-account",
-          "getting-started/api-keys",
-          "getting-started/wallets"
-        ]
-      },
-      {
-        "group": "Core Concepts",
-        "pages": [
-          "core-concepts/vaults",
-          "core-concepts/files",
-          "core-concepts/encryption",
-          "core-concepts/publishing",
-          "core-concepts/aggregators",
-          "core-concepts/managed-wallet",
-          "core-concepts/prepay",
-          "core-concepts/api-keys",
-          "core-concepts/publisher"
-        ]
-      },
-      {
-        "group": "Aggregators",
-        "pages": [
-          "aggregators/overview",
-          "aggregators/private-aggregators",
-          "aggregators/custom-domains",
-          "aggregators/analytics"
-        ]
-      },
-      {
-        "group": "Billing",
-        "pages": [
-          "billing/pay-as-you-go",
-          "billing/prepaid",
-          "billing/subscriptions",
-          "billing/enterprise"
-        ]
-      },
-      {
-        "group": "Tools",
-        "pages": [
-          "tools/s3-migration",
-          "tools/backup"
-        ]
-      },
-      {
-        "group": "Architecture",
-        "pages": [
-          "architecture/overview",
-          "architecture/walrus-network"
-        ]
-      }
-    ],
     "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Getting Started",
+            "pages": [
+              "getting-started/create-account",
+              "getting-started/api-keys",
+              "getting-started/wallets"
+            ]
+          },
+          {
+            "group": "Core Concepts",
+            "pages": [
+              "core-concepts/vaults",
+              "core-concepts/files",
+              "core-concepts/encryption",
+              "core-concepts/publishing",
+              "core-concepts/publisher",
+              "core-concepts/aggregators",
+              "core-concepts/managed-wallet",
+              "core-concepts/prepay",
+              "core-concepts/api-keys"
+            ]
+          },
+          {
+            "group": "Aggregators",
+            "pages": [
+              "aggregators/overview",
+              "aggregators/private-aggregators",
+              "aggregators/custom-domains",
+              "aggregators/analytics"
+            ]
+          },
+          {
+            "group": "Billing",
+            "pages": [
+              "billing/pay-as-you-go",
+              "billing/prepaid",
+              "billing/subscriptions",
+              "billing/enterprise"
+            ]
+          },
+          {
+            "group": "Tools",
+            "pages": [
+              "tools/s3-migration",
+              "tools/backup"
+            ]
+          },
+          {
+            "group": "Architecture",
+            "pages": [
+              "architecture/overview",
+              "architecture/walrus-network"
+            ]
+          }
+        ]
+      },
       {
         "tab": "API Reference",
         "groups": [
@@ -139,17 +142,20 @@
             ]
           },
           {
-            "group": "Aggregators API",
+            "group": "Publishers",
             "pages": [
-              "api-reference/aggregators/get-aggregator",
-              "api-reference/aggregators/update-aggregator"
+              "api-reference/publishers/create-publisher",
+              "api-reference/publishers/get-publisher",
+              "api-reference/publishers/list-publishers",
+              "api-reference/publishers/update-publisher",
+              "api-reference/publishers/delete-publisher"
             ]
           },
           {
-            "group": "Publisher",
+            "group": "Aggregators",
             "pages": [
-              "api-reference/publisher/get-publisher",
-              "api-reference/publisher/update-publisher"
+              "api-reference/aggregators/get-aggregator",
+              "api-reference/aggregators/update-aggregator"
             ]
           },
           {

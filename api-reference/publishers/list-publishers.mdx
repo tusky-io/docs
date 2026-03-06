@@ -1,0 +1,94 @@
+---
+title: List Publishers
+api: 'GET https://api.tusky.io/v2/publishers'
+---
+
+List all publishers on the authenticated account.
+
+## Query Parameters
+
+<ParamField query="active" type="boolean">
+  Filter by active status. Omit to return all publishers.
+</ParamField>
+
+<ParamField query="vaultId" type="string">
+  Filter by attached vault ID. Use `null` to return only the account-level default publishers.
+</ParamField>
+
+## Response
+
+Returns an array of publisher objects.
+
+<ResponseField name="data" type="array">
+  <Expandable title="Publisher object">
+    <ResponseField name="id" type="string">
+      Unique publisher identifier.
+    </ResponseField>
+    <ResponseField name="active" type="boolean">
+      Whether the publisher is active.
+    </ResponseField>
+    <ResponseField name="epochs" type="number">
+      Default storage epoch count.
+    </ResponseField>
+    <ResponseField name="quilt" type="boolean">
+      Whether quilt batching is enabled.
+    </ResponseField>
+    <ResponseField name="permanent" type="boolean">
+      Whether blobs are non-deletable.
+    </ResponseField>
+    <ResponseField name="share" type="boolean">
+      Whether blobs are shared.
+    </ResponseField>
+    <ResponseField name="vaultId" type="string">
+      Attached vault ID, or `null`.
+    </ResponseField>
+    <ResponseField name="createdAt" type="string">
+      ISO 8601 creation timestamp.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl https://api.tusky.io/v2/publishers \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+```bash Filter active only
+curl "https://api.tusky.io/v2/publishers?active=true" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "data": [
+    {
+      "id": "pub_default",
+      "active": true,
+      "epochs": 1,
+      "quilt": true,
+      "permanent": false,
+      "share": false,
+      "vaultId": null,
+      "createdAt": "2026-01-15T10:00:00Z"
+    },
+    {
+      "id": "pub_7f3a2b1c",
+      "active": true,
+      "epochs": 5,
+      "quilt": false,
+      "permanent": true,
+      "share": false,
+      "vaultId": "vault_abc123",
+      "createdAt": "2026-03-05T12:00:00Z"
+    }
+  ]
+}
+```

@@ -1,0 +1,114 @@
+---
+title: Update Publisher
+api: 'PATCH https://api.tusky.io/v2/publishers/{publisherId}'
+---
+
+Update a publisher's configuration. Only the fields included in the request body are updated — omitted fields remain unchanged.
+
+## Path Parameters
+
+<ParamField path="publisherId" type="string" required>
+  The unique identifier of the publisher to update.
+</ParamField>
+
+## Request Body
+
+<ParamField body="active" type="boolean">
+  Whether the publisher is active. You cannot deactivate a publisher if it is the **only active publisher** on the account — there must always be at least one.
+</ParamField>
+
+<ParamField body="epochs" type="number">
+  Default number of Walrus storage epochs. Range: 1–100. Each epoch is approximately 2 weeks.
+</ParamField>
+
+<ParamField body="quilt" type="boolean">
+  Whether to batch files into quilts.
+</ParamField>
+
+<ParamField body="permanent" type="boolean">
+  Whether blobs are non-deletable.
+</ParamField>
+
+<ParamField body="share" type="boolean">
+  Whether blobs are shared.
+</ParamField>
+
+<ParamField body="vaultId" type="string">
+  Attach or detach the publisher to/from a vault. Set to a vault ID to attach, or `null` to detach and make it an account-level publisher.
+</ParamField>
+
+## Response
+
+Returns the updated publisher object.
+
+<ResponseField name="id" type="string">
+  Unique publisher identifier.
+</ResponseField>
+
+<ResponseField name="active" type="boolean">
+  Whether the publisher is active.
+</ResponseField>
+
+<ResponseField name="epochs" type="number">
+  Default storage epoch count.
+</ResponseField>
+
+<ResponseField name="quilt" type="boolean">
+  Whether quilt batching is enabled.
+</ResponseField>
+
+<ResponseField name="permanent" type="boolean">
+  Whether blobs are non-deletable.
+</ResponseField>
+
+<ResponseField name="share" type="boolean">
+  Whether blobs are shared.
+</ResponseField>
+
+<ResponseField name="vaultId" type="string">
+  Attached vault ID, or `null`.
+</ResponseField>
+
+<ResponseField name="updatedAt" type="string">
+  ISO 8601 last-updated timestamp.
+</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X PATCH https://api.tusky.io/v2/publishers/pub_7f3a2b1c \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "epochs": 10,
+    "quilt": true,
+    "permanent": false
+  }'
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "id": "pub_7f3a2b1c",
+  "active": true,
+  "epochs": 10,
+  "quilt": true,
+  "permanent": false,
+  "share": false,
+  "vaultId": "vault_abc123",
+  "updatedAt": "2026-03-05T15:00:00Z"
+}
+```
+
+<Warning>
+  Changing `quilt` from `true` to `false` (or vice versa) only affects **future uploads**. Files already published retain their original publishing mode.
+</Warning>
+
+<Note>
+  You cannot deactivate the last active publisher. If you need to change its config, update it instead. To deactivate, first create or activate another publisher.
+</Note>

@@ -1,0 +1,35 @@
+---
+title: Delete Publisher
+api: 'DELETE https://api.tusky.io/v2/publishers/{publisherId}'
+---
+
+Delete a publisher. You cannot delete the last active publisher on the account — there must always be at least one active publisher.
+
+## Path Parameters
+
+<ParamField path="publisherId" type="string" required>
+  The unique identifier of the publisher to delete.
+</ParamField>
+
+## Response
+
+Returns `204 No Content` on success.
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X DELETE https://api.tusky.io/v2/publishers/pub_7f3a2b1c \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+</CodeGroup>
+
+<Warning>
+  Deleting a publisher does **not** affect files already published through it. Those files remain on the Walrus network for the duration of their storage epochs. Deleting only removes the publisher configuration.
+</Warning>
+
+<Note>
+  If the publisher is attached to a vault, that vault will fall back to the account's default publisher for future uploads after deletion.
+</Note>
