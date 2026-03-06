@@ -69,7 +69,7 @@ jobs:
         run: kubectl apply -k k8s/overlays/dev
 
       - name: Wait for rollout
-        run: kubectl rollout status deployment/tusky-docs -n tusky-dev --timeout=120s
+        run: kubectl rollout status deployment/tusky-docs -n tusky-dev --timeout=300s
 
       - name: Get LoadBalancer URL
         run: |
