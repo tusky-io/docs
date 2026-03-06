@@ -19,6 +19,7 @@ spec:
       containers:
         - name: docs
           image: tusky-docs:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 3000
               name: http
