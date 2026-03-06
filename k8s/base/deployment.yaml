@@ -14,6 +14,8 @@ spec:
       labels:
         app: tusky-docs
     spec:
+      imagePullSecrets:
+        - name: ghcr-creds
       containers:
         - name: docs
           image: tusky-docs:latest
