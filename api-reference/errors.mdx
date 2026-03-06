@@ -1,0 +1,51 @@
+---
+title: Errors
+description: 'Error format and status codes'
+---
+
+The API uses standard HTTP status codes and returns errors in a consistent JSON format.
+
+## Error response format
+
+```json
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Name is required",
+    "details": {}
+  }
+}
+```
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `code` | string | Machine-readable error code. |
+| `message` | string | Human-readable description of the error. |
+| `details` | object | Additional context (field-level validation errors, etc.). May be empty. |
+
+## Status codes
+
+| Status Code | Description |
+| --- | --- |
+| `200` | Request succeeded |
+| `201` | Resource created successfully |
+| `204` | Request succeeded with no response body |
+| `400` | Bad request — check your parameters |
+| `401` | Unauthorized — missing or invalid API key |
+| `403` | Forbidden — insufficient permissions |
+| `404` | Resource not found |
+| `409` | Conflict — resource already exists |
+| `422` | Unprocessable entity — validation failed |
+| `429` | Rate limit exceeded |
+| `500` | Internal server error — contact support if this persists |
+
+## Common error codes
+
+| Code | Status | Description |
+| --- | --- | --- |
+| `UNAUTHORIZED` | 401 | API key is missing, invalid, or expired. |
+| `FORBIDDEN` | 403 | API key does not have permission for this action. |
+| `NOT_FOUND` | 404 | The requested resource does not exist. |
+| `VALIDATION_ERROR` | 422 | One or more request parameters are invalid. Check `details` for specifics. |
+| `RATE_LIMIT_EXCEEDED` | 429 | Too many requests. Back off and retry. |
+| `INSUFFICIENT_BALANCE` | 402 | Wallet balance too low for this operation. Fund your wallet and retry. |
