@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tusky-docs
+  labels:
+    app: tusky-docs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tusky-docs
+  template:
+    metadata:
+      labels:
+        app: tusky-docs
+    spec:
+      containers:
+        - name: docs
+          image: tusky-docs:latest
+          ports:
+            - containerPort: 3000
+              name: http
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
