@@ -59,6 +59,7 @@
             "pages": [
               "core-concepts/vaults",
               "core-concepts/files",
+              "core-concepts/uploads",
               "core-concepts/encryption",
               "core-concepts/publishing",
               "core-concepts/publisher",
@@ -132,16 +133,16 @@
               "api-reference/files/get-file",
               "api-reference/files/list-files",
               "api-reference/files/download-file",
+              "api-reference/files/extend-file",
               "api-reference/files/delete-file"
             ]
           },
           {
-            "group": "Members",
+            "group": "Uploads",
             "pages": [
-              "api-reference/members/add-member",
-              "api-reference/members/list-members",
-              "api-reference/members/update-member",
-              "api-reference/members/remove-member"
+              "api-reference/uploads/create-upload",
+              "api-reference/uploads/upload-chunk",
+              "api-reference/uploads/get-upload-status"
             ]
           },
           {
@@ -159,6 +160,15 @@
             "pages": [
               "api-reference/aggregators/get-aggregator",
               "api-reference/aggregators/update-aggregator"
+            ]
+          },
+          {
+            "group": "Members",
+            "pages": [
+              "api-reference/members/add-member",
+              "api-reference/members/list-members",
+              "api-reference/members/update-member",
+              "api-reference/members/remove-member"
             ]
           },
           {

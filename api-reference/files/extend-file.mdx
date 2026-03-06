@@ -1,0 +1,83 @@
+---
+title: Extend File
+api: 'POST https://api.tusky.io/v2/files/{fileId}/extend'
+---
+
+Extend the storage duration of a file by adding more Walrus epochs. This renews the file's availability on the network beyond its current expiration.
+
+## Path Parameters
+
+<ParamField path="fileId" type="string" required>
+  The unique identifier of the file to extend.
+</ParamField>
+
+## Request Body
+
+<ParamField body="epochs" type="number" required>
+  Number of additional Walrus epochs to add. Each epoch is approximately **2 weeks**. Range: 1–100.
+</ParamField>
+
+## Response
+
+<ResponseField name="id" type="string">
+  The file ID.
+</ResponseField>
+
+<ResponseField name="expiresAt" type="string">
+  The new expiration timestamp (ISO 8601) after the extension.
+</ResponseField>
+
+<ResponseField name="epochsAdded" type="number">
+  Number of epochs added.
+</ResponseField>
+
+<ResponseField name="totalEpochs" type="number">
+  Total number of epochs the file is now stored for (from original upload).
+</ResponseField>
+
+<ResponseField name="cost" type="object">
+  <Expandable title="Cost breakdown">
+    <ResponseField name="wal" type="string">
+      WAL tokens charged for the extension.
+    </ResponseField>
+    <ResponseField name="sui" type="string">
+      SUI tokens charged (Tusky infrastructure fee).
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.tusky.io/v2/files/file_abc123/extend \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"epochs": 5}'
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "id": "file_abc123",
+  "expiresAt": "2026-04-17T12:00:00.000Z",
+  "epochsAdded": 5,
+  "totalEpochs": 10,
+  "cost": {
+    "wal": "0.025",
+    "sui": "0.0025"
+  }
+}
+```
+
+<Note>
+  If the file was published in a quilt, extending the file extends the **entire quilt** — all files within it get the same extended storage duration.
+</Note>
+
+<Warning>
+  Extension costs are deducted from your prepaid wallet balance. If your balance is insufficient, the request returns `402 Payment Required`.
+</Warning>

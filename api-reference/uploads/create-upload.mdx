@@ -1,0 +1,70 @@
+---
+title: Create Upload
+api: 'POST https://api.tusky.io/v2/uploads'
+---
+
+Create a new resumable upload using the [tus protocol](https://tus.io). This returns a unique upload URL in the `Location` header. Use that URL to send file data in chunks via `PATCH` requests.
+
+## Headers
+
+<ParamField header="Tus-Resumable" type="string" required>
+  tus protocol version. Must be `1.0.0`.
+</ParamField>
+
+<ParamField header="Upload-Length" type="number" required>
+  Total file size in bytes. Maximum: **2,621,440,000** (2.5 GB).
+</ParamField>
+
+<ParamField header="Upload-Metadata" type="string" required>
+  Comma-separated key-value pairs with base64-encoded values. Required keys: `filename`, `vaultId`. Optional: `filetype`.
+
+  Format: `filename {base64_value},vaultId {base64_value},filetype {base64_value}`
+</ParamField>
+
+## Response
+
+Returns `201 Created` with the upload URL.
+
+<ResponseField name="Location" type="string (header)">
+  The URL to use for subsequent `PATCH` (upload chunks) and `HEAD` (check offset) requests.
+</ResponseField>
+
+<ResponseField name="Tus-Resumable" type="string (header)">
+  Protocol version. `1.0.0`.
+</ResponseField>
+
+<ResponseField name="Upload-Offset" type="number (header)">
+  Current offset. `0` for a newly created upload.
+</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.tusky.io/v2/uploads \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Tus-Resumable: 1.0.0" \
+  -H "Upload-Length: 10485760" \
+  -H "Upload-Metadata: filename $(echo -n 'photo.jpg' | base64),vaultId $(echo -n 'vault_abc123' | base64),filetype $(echo -n 'image/jpeg' | base64)" \
+  -D -
+```
+
+</CodeGroup>
+
+### Response Headers
+
+```
+HTTP/1.1 201 Created
+Location: https://api.tusky.io/v2/uploads/upload_xyz789
+Tus-Resumable: 1.0.0
+Upload-Offset: 0
+```
+
+<Note>
+  The `Location` URL is the unique identifier for this upload session. Store it to resume the upload if interrupted.
+</Note>
+
+<Warning>
+  Incomplete uploads expire after **24 hours**. If you don't finish uploading within this window, you'll need to create a new upload.
+</Warning>

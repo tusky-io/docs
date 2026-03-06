@@ -1,0 +1,209 @@
+---
+title: Uploads
+description: 'Resumable file uploads with the tus protocol'
+---
+
+Tusky uses the [tus](https://tus.io) open protocol for resumable file uploads. This means uploads can be interrupted — by network failures, browser crashes, or intentional pauses — and resumed exactly where they left off, without re-uploading data that was already transferred.
+
+## How resumable uploads work
+
+<Steps>
+  <Step title="Create the upload">
+    Send a `POST` request to the upload endpoint with file metadata (size, filename, vault ID). Tusky returns a unique upload URL in the `Location` header.
+  </Step>
+  <Step title="Upload chunks">
+    Send `PATCH` requests to the upload URL with chunks of file data. Each chunk includes an `Upload-Offset` header indicating where in the file this chunk belongs.
+  </Step>
+  <Step title="Resume on failure">
+    If the connection drops mid-upload, send a `HEAD` request to the upload URL to check how many bytes the server has received. Then resume by sending a `PATCH` with the next chunk from that offset.
+  </Step>
+  <Step title="Upload completes">
+    When the server has received all bytes (offset equals the total file size), the upload is complete. Tusky processes the file — encrypting (if applicable), batching into quilts, and publishing to Walrus.
+  </Step>
+</Steps>
+
+## Why resumable uploads?
+
+<CardGroup cols={2}>
+  <Card title="Reliability" icon="wifi">
+    Network interruptions don't mean starting over. Resume from the last successful byte, even after a complete connection loss.
+  </Card>
+  <Card title="Large files" icon="file-zipper">
+    Upload files up to **2.5 GB** without worrying about timeouts. Chunks are small enough to survive unstable connections.
+  </Card>
+  <Card title="Mobile friendly" icon="mobile">
+    Mobile networks are inherently unreliable. Resumable uploads ensure files get through even on spotty cellular connections.
+  </Card>
+  <Card title="Progress tracking" icon="bars-progress">
+    Track upload progress byte-by-byte. Show accurate progress bars and estimated completion times in your UI.
+  </Card>
+</CardGroup>
+
+## tus protocol overview
+
+Tusky implements the [tus v1.0.0](https://tus.io/protocols/resumable-upload.html) protocol with the **Creation** and **Creation With Upload** extensions. Every request must include the `Tus-Resumable: 1.0.0` header.
+
+### Key headers
+
+| Header | Direction | Description |
+| --- | --- | --- |
+| `Tus-Resumable` | Request & Response | Protocol version. Always `1.0.0`. |
+| `Upload-Length` | Request (POST) | Total file size in bytes. |
+| `Upload-Offset` | Request (PATCH) / Response | Current byte offset. Client sends where the chunk starts; server responds with the new offset after writing. |
+| `Upload-Metadata` | Request (POST) | Base64-encoded key-value pairs: `filename`, `filetype`, `vaultId`. |
+| `Content-Type` | Request (PATCH) | Must be `application/offset+octet-stream` for chunk data. |
+| `Location` | Response (POST) | The URL to send subsequent `PATCH` and `HEAD` requests to. |
+
+### Upload lifecycle
+
+```
+Client                                    Server
+  │                                          │
+  │  POST /uploads                           │
+  │  Upload-Length: 10485760                  │
+  │  Upload-Metadata: filename ..., vaultId  │
+  │ ────────────────────────────────────────▶ │
+  │                                          │
+  │  201 Created                             │
+  │  Location: /uploads/upload_abc123        │
+  │ ◀──────────────────────────────────────── │
+  │                                          │
+  │  PATCH /uploads/upload_abc123            │
+  │  Upload-Offset: 0                        │
+  │  Content-Type: application/offset+...    │
+  │  [chunk 1 data: 0 – 5MB]                │
+  │ ────────────────────────────────────────▶ │
+  │                                          │
+  │  204 No Content                          │
+  │  Upload-Offset: 5242880                  │
+  │ ◀──────────────────────────────────────── │
+  │                                          │
+  │  ❌ Connection lost                       │
+  │                                          │
+  │  HEAD /uploads/upload_abc123             │
+  │ ────────────────────────────────────────▶ │
+  │                                          │
+  │  200 OK                                  │
+  │  Upload-Offset: 5242880                  │
+  │ ◀──────────────────────────────────────── │
+  │                                          │
+  │  PATCH /uploads/upload_abc123            │
+  │  Upload-Offset: 5242880                  │
+  │  [chunk 2 data: 5MB – 10MB]             │
+  │ ────────────────────────────────────────▶ │
+  │                                          │
+  │  204 No Content                          │
+  │  Upload-Offset: 10485760 ✅ Complete      │
+  │ ◀──────────────────────────────────────── │
+```
+
+## Using the SDK
+
+The Tusky SDK handles resumable uploads automatically — chunking, offset tracking, and resume logic are all built in.
+
+```typescript
+import { Tusky } from "@tusky-io/ts-sdk";
+
+const tusky = new Tusky({ apiKey: process.env.TUSKY_API_KEY });
+
+const fileId = await tusky.file.upload("vault_abc123", "./large-video.mp4", {
+  onProgress: (bytesUploaded, bytesTotal) => {
+    const pct = ((bytesUploaded / bytesTotal) * 100).toFixed(1);
+    console.log(`${pct}% uploaded`);
+  },
+});
+```
+
+The SDK automatically resumes interrupted uploads on retry.
+
+## Browser uploads with Uppy
+
+For browser-based applications, Tusky integrates with [Uppy](https://uppy.io) — a modular file uploader that supports tus out of the box. Uppy adds a polished upload UI with drag-and-drop, progress bars, and powerful plugins.
+
+### Golden Retriever
+
+The [Golden Retriever](https://uppy.io/docs/golden-retriever/) plugin protects users from data loss by caching selected files in the browser.
+
+- **Automatic recovery**: If the browser crashes, the tab closes, or the user navigates away, Golden Retriever restores the file selection and upload progress when the user returns.
+- **Storage layers**: Uses IndexedDB for files under 5 MB and optional Service Worker for larger files. Metadata and state are stored in LocalStorage.
+- **Zero configuration**: Install the plugin and it works automatically — no user action required.
+
+```typescript
+import Uppy from "@uppy/core";
+import GoldenRetriever from "@uppy/golden-retriever";
+import Tus from "@uppy/tus";
+
+const uppy = new Uppy()
+  .use(Tus, { endpoint: "https://api.tusky.io/v2/uploads" })
+  .use(GoldenRetriever);
+```
+
+<Tip>
+  Golden Retriever is especially valuable when users spend time selecting and configuring multiple files before uploading. It prevents frustrating data loss from accidental page closures.
+</Tip>
+
+### Compressor
+
+The [Compressor](https://uppy.io/docs/compressor/) plugin optimizes images before upload, reducing file sizes by up to 60%.
+
+- **Automatic**: Compresses JPEG and PNG images transparently before they are uploaded — no user action required.
+- **Configurable quality**: Default quality is 0.6 (60%). Adjust to balance size vs. visual quality.
+- **Bandwidth savings**: Particularly valuable for mobile users on slow or metered connections.
+- **Parallel processing**: Compresses up to 10 images concurrently by default.
+
+```typescript
+import Uppy from "@uppy/core";
+import Compressor from "@uppy/compressor";
+import Tus from "@uppy/tus";
+
+const uppy = new Uppy()
+  .use(Tus, { endpoint: "https://api.tusky.io/v2/uploads" })
+  .use(Compressor, { quality: 0.6 });
+```
+
+<Info>
+  The Compressor plugin only affects image files. Non-image files pass through unmodified. The original file is replaced in the upload queue with the compressed version, and Uppy displays the total bytes saved.
+</Info>
+
+### Combining plugins
+
+For a production browser upload experience, combine tus, Golden Retriever, and Compressor:
+
+```typescript
+import Uppy from "@uppy/core";
+import Dashboard from "@uppy/dashboard";
+import Tus from "@uppy/tus";
+import GoldenRetriever from "@uppy/golden-retriever";
+import Compressor from "@uppy/compressor";
+
+const uppy = new Uppy()
+  .use(Dashboard, { inline: true, target: "#upload-area" })
+  .use(Tus, {
+    endpoint: "https://api.tusky.io/v2/uploads",
+    headers: { Authorization: "Bearer YOUR_API_KEY" },
+    chunkSize: 5 * 1024 * 1024, // 5 MB chunks
+  })
+  .use(GoldenRetriever)
+  .use(Compressor, { quality: 0.6 });
+
+uppy.on("complete", (result) => {
+  console.log("Uploads complete:", result.successful);
+});
+```
+
+## What's next?
+
+<CardGroup cols={2}>
+  <Card title="Upload API" icon="cloud-arrow-up" href="/api-reference/uploads/create-upload">
+    See the full API reference for creating and resuming uploads.
+  </Card>
+  <Card title="Files" icon="file" href="/core-concepts/files">
+    Learn about file metadata, storage epochs, and lifecycle.
+  </Card>
+  <Card title="Publishers" icon="server" href="/core-concepts/publisher">
+    Configure how uploaded files are published to Walrus.
+  </Card>
+  <Card title="Encryption" icon="lock" href="/core-concepts/encryption">
+    How files are encrypted before upload in private vaults.
+  </Card>
+</CardGroup>
