@@ -4,22 +4,23 @@ kind: Kustomization
 namespace: tusky-dev
 
 resources:
+  - namespace.yaml
   - ../../base
 
 patches:
-  - target:
+  - patch: |
+      apiVersion: networking.k8s.io/v1
       kind: Ingress
+      metadata:
+        name: tusky-docs
+      $patch: delete
+  - target:
+      kind: Service
       name: tusky-docs
     patch: |
       - op: replace
-        path: /spec/tls/0/hosts/0
-        value: docs-dev.tusky.io
-      - op: replace
-        path: /spec/rules/0/host
-        value: docs-dev.tusky.io
-      - op: replace
-        path: /spec/tls/0/secretName
-        value: tusky-docs-dev-tls
+        path: /spec/type
+        value: LoadBalancer
   - target:
       kind: Deployment
       name: tusky-docs
