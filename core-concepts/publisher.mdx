@@ -3,7 +3,7 @@ title: Publishers
 description: 'Configure how your data is published to Walrus'
 ---
 
-A **publisher** defines how files are written to the Walrus network — storage duration, batching strategy, deletability, and sharing. Every Tusky account starts with one active publisher automatically. You can create additional publishers with different configurations and attach them to specific drives.
+A **publisher** defines how files are written to the Walrus network — storage duration, batching strategy, deletability, and sharing. Every Tusky account starts with one active publisher automatically. You can create additional publishers with different configurations and attach them to specific environments.
 
 ## Publisher configuration
 
@@ -25,16 +25,16 @@ Each publisher has five configuration flags:
 
 <Steps>
   <Step title="Account default">
-    When you sign up, Tusky provisions a default publisher. All uploads use this publisher unless a drive has a specific publisher attached.
+    When you sign up, Tusky provisions a default publisher. All uploads use this publisher unless an environment has a specific publisher attached.
   </Step>
   <Step title="Create additional publishers">
     You can create publishers with different configurations for different use cases — for example, one publisher for short-lived temp files (1 epoch, deletable) and another for archival data (50 epochs, permanent).
   </Step>
-  <Step title="Attach to drives">
-    Publishers can be attached to specific drives. When a drive has an attached publisher, all uploads to that drive use that publisher's configuration instead of the account default.
+  <Step title="Attach to environments">
+    Publishers can be attached to specific environments. When an environment has an attached publisher, all uploads to that environment use that publisher's configuration instead of the account default.
   </Step>
   <Step title="Upload">
-    When you upload a file, Tusky uses the publisher attached to the target drive, or the account default if none is attached. The publisher's settings (epochs, quilt, permanent, share) determine how the blob is written to Walrus.
+    When you upload a file, Tusky uses the publisher attached to the target environment, or the account default if none is attached. The publisher's settings (epochs, quilt, permanent, share) determine how the blob is written to Walrus.
   </Step>
 </Steps>
 
@@ -131,9 +131,9 @@ Controls whether published content is accessible beyond your own account.
 | `false` (default) | Content is private — accessible only through your account's aggregator. |
 | `true` | Content is shared — accessible via any standard Walrus aggregator using the blob ID. |
 
-## Attaching publishers to drives
+## Attaching publishers to environments
 
-You can attach a publisher to a drive to give that drive a specific publishing configuration. This is useful when different drives have different storage requirements.
+You can attach a publisher to an environment to give that environment a specific publishing configuration. This is useful when different environments have different storage requirements.
 
 <Tabs>
   <Tab title="SDK">
@@ -146,9 +146,9 @@ You can attach a publisher to a drive to give that drive a specific publishing c
       share: false,
     });
 
-    // Attach it to a drive
+    // Attach it to an environment
     await tusky.publisher.update(archivalPub.id, {
-      driveId: "drive_archive",
+      environmentId: "env_archive",
     });
     ```
   </Tab>
@@ -163,13 +163,13 @@ You can attach a publisher to a drive to give that drive a specific publishing c
         "quilt": true,
         "permanent": true,
         "share": false,
-        "driveId": "drive_archive"
+        "environmentId": "env_archive"
       }'
     ```
   </Tab>
 </Tabs>
 
-When a drive has an attached publisher, all uploads to that drive use the attached publisher's config. If a drive does not have a publisher attached, it uses the account's default publisher.
+When an environment has an attached publisher, all uploads to that environment use the attached publisher's config. If an environment does not have a publisher attached, it uses the account's default publisher.
 
 ## Managing publishers
 
@@ -179,7 +179,7 @@ When a drive has an attached publisher, all uploads to that drive use the attach
     const publishers = await tusky.publisher.list();
 
     publishers.forEach(p => {
-      console.log(`${p.id}: active=${p.active}, epochs=${p.epochs}, quilt=${p.quilt}, drive=${p.driveId || 'default'}`);
+      console.log(`${p.id}: active=${p.active}, epochs=${p.epochs}, quilt=${p.quilt}, environment=${p.environmentId || 'default'}`);
     });
     ```
   </Tab>
@@ -217,8 +217,8 @@ When a drive has an attached publisher, all uploads to that drive use the attach
   <Accordion title="I want publicly accessible content">
     Set `share: true`. Your content will be resolvable through any Walrus aggregator, not just your private Tusky aggregator.
   </Accordion>
-  <Accordion title="Different drives need different settings">
-    Create multiple publishers with different configs and attach each to the appropriate drive.
+  <Accordion title="Different environments need different settings">
+    Create multiple publishers with different configs and attach each to the appropriate environment.
   </Accordion>
 </AccordionGroup>
 
@@ -235,6 +235,6 @@ When a drive has an attached publisher, all uploads to that drive use the attach
     See the full API reference for managing publishers.
   </Card>
   <Card title="Files" icon="file" href="/core-concepts/files">
-    Learn how files are uploaded and managed inside drives.
+    Learn how files are uploaded and managed inside environments.
   </Card>
 </CardGroup>

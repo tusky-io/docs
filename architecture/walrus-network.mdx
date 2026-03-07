@@ -20,7 +20,7 @@ Walrus is a decentralized blob storage protocol that uses erasure coding to dist
 A **blob** is the fundamental storage unit in Walrus — a raw binary object identified by a globally unique **blob ID**. When you upload a file to Tusky, it is ultimately stored as one or more blobs on the Walrus network.
 
 ```
-File → Encrypt (if private drive) → Encode → Blob → Walrus Network
+File → Encrypt (if private environment) → Encode → Blob → Walrus Network
 ```
 
 ### Blob IDs
@@ -71,7 +71,7 @@ You control how long your data lives on the Walrus network by specifying the num
     Specify a fixed number of epochs. The data is available for exactly that duration.
 
     ```typescript
-    await tusky.file.upload(driveId, "./data.csv", {
+    await tusky.file.upload(environmentId, "./data.csv", {
       epochs: 10,
     });
     ```
@@ -80,7 +80,7 @@ You control how long your data lives on the Walrus network by specifying the num
     Enable auto-extend to have Tusky automatically renew storage before the current epochs expire. This ensures your data persists indefinitely as long as your wallet has funds.
 
     ```typescript
-    await tusky.file.upload(driveId, "./data.csv", {
+    await tusky.file.upload(environmentId, "./data.csv", {
       epochs: 5,
       autoExtend: true,
     });
@@ -94,7 +94,7 @@ You control how long your data lives on the Walrus network by specifying the num
 
 When you upload a file, Tusky's queue workers:
 
-1. Encrypt the file (if the drive is encrypted)
+1. Encrypt the file (if the environment is encrypted)
 2. Batch small files into quilts for efficiency
 3. Encode the data using Walrus's erasure coding scheme
 4. Submit a storage transaction to the Walrus network using your managed wallet

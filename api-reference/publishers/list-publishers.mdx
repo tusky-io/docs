@@ -11,8 +11,8 @@ List all publishers on the authenticated account.
   Filter by active status. Omit to return all publishers.
 </ParamField>
 
-<ParamField query="driveId" type="string">
-  Filter by attached drive ID. Use `null` to return only the account-level default publishers.
+<ParamField query="environmentId" type="string">
+  Filter by attached environment ID. Use `null` to return only the account-level default publishers.
 </ParamField>
 
 ## Response
@@ -39,8 +39,8 @@ Returns an array of publisher objects.
     <ResponseField name="share" type="boolean">
       Whether blobs are shared.
     </ResponseField>
-    <ResponseField name="driveId" type="string">
-      Attached drive ID, or `null`.
+    <ResponseField name="environmentId" type="string">
+      Attached environment ID, or `null`.
     </ResponseField>
     <ResponseField name="createdAt" type="string">
       ISO 8601 creation timestamp.
@@ -76,7 +76,7 @@ curl "https://api.tusky.io/v2/publishers?active=true" \
       "quilt": true,
       "permanent": false,
       "share": false,
-      "driveId": null,
+      "environmentId": null,
       "createdAt": "2026-01-15T10:00:00Z"
     },
     {
@@ -86,7 +86,7 @@ curl "https://api.tusky.io/v2/publishers?active=true" \
       "quilt": false,
       "permanent": true,
       "share": false,
-      "driveId": "drive_abc123",
+      "environmentId": "env_abc123",
       "createdAt": "2026-03-05T12:00:00Z"
     }
   ]

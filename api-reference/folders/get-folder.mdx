@@ -15,7 +15,7 @@ Retrieve a folder by ID.
 
 <ResponseField name="id" type="string">Folder ID.</ResponseField>
 <ResponseField name="name" type="string">Folder name.</ResponseField>
-<ResponseField name="driveId" type="string">Parent drive ID.</ResponseField>
+<ResponseField name="environmentId" type="string">Parent environment ID.</ResponseField>
 <ResponseField name="parentId" type="string">Parent folder ID, or `null`.</ResponseField>
 <ResponseField name="createdAt" type="string">ISO 8601 creation timestamp.</ResponseField>
 <ResponseField name="updatedAt" type="string">ISO 8601 last-updated timestamp.</ResponseField>
@@ -37,7 +37,7 @@ curl https://api.tusky.io/v2/folders/folder_xyz789 \
 {
   "id": "folder_xyz789",
   "name": "Photos",
-  "driveId": "drive_abc123",
+  "environmentId": "env_abc123",
   "parentId": null,
   "createdAt": "2026-03-06T12:00:00Z",
   "updatedAt": "2026-03-06T12:00:00Z"

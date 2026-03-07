@@ -36,7 +36,7 @@ Every Tusky user is assigned a **dedicated managed wallet** on the Sui network. 
 
 <Steps>
   <Step title="Upload to Tusky">
-    Files are uploaded to Tusky through the dashboard, API, or SDK. For encrypted drives, data is encrypted client-side before upload.
+    Files are uploaded to Tusky through the dashboard, API, or SDK. For encrypted environments, data is encrypted client-side before upload.
   </Step>
   <Step title="Batching into quilts">
     To optimize cost and on-chain efficiency, Tusky batches multiple small files into a single **quilt**. Each file in the quilt receives a unique **quilt patch ID** for individual addressability. Large files may be published as standalone blobs.
@@ -58,7 +58,7 @@ Walrus storage is purchased in discrete units of time called **epochs**. When pu
 
 <Tabs>
   <Tab title="Choosing epochs">
-    Select the number of storage epochs at upload time, either per-file or using your drive's default. Longer durations cost proportionally more WAL tokens. Consider how long you need the data to remain available when choosing.
+    Select the number of storage epochs at upload time, either per-file or using your environment's default. Longer durations cost proportionally more WAL tokens. Consider how long you need the data to remain available when choosing.
   </Tab>
   <Tab title="Auto-extend">
     Enable **auto-extend** to have Tusky automatically renew your storage before epochs expire. This ensures uninterrupted availability without manual intervention. Auto-extend renewals are billed to your Tusky account.

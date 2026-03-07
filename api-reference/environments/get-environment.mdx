@@ -1,36 +1,36 @@
 ---
-title: Get Drive
-api: 'GET https://api.tusky.io/v2/drives/{driveId}'
+title: Get Environment
+api: 'GET https://api.tusky.io/v2/environments/{environmentId}'
 ---
 
-Retrieve details of a specific drive by its ID.
+Retrieve details of a specific environment by its ID.
 
 ## Path Parameters
 
-<ParamField path="driveId" type="string" required>
-  The unique identifier of the drive.
+<ParamField path="environmentId" type="string" required>
+  The unique identifier of the environment.
 </ParamField>
 
 ## Response
 
 <ResponseField name="id" type="string">
-  Unique identifier for the drive.
+  Unique identifier for the environment.
 </ResponseField>
 
 <ResponseField name="name" type="string">
-  The name of the drive.
+  The name of the environment.
 </ResponseField>
 
 <ResponseField name="encrypted" type="boolean">
-  Whether the drive is encrypted.
+  Whether the environment is encrypted.
 </ResponseField>
 
 <ResponseField name="createdAt" type="string">
-  ISO 8601 timestamp of when the drive was created.
+  ISO 8601 timestamp of when the environment was created.
 </ResponseField>
 
 <ResponseField name="updatedAt" type="string">
-  ISO 8601 timestamp of when the drive was last updated.
+  ISO 8601 timestamp of when the environment was last updated.
 </ResponseField>
 
 ## Example
@@ -38,7 +38,7 @@ Retrieve details of a specific drive by its ID.
 <CodeGroup>
 
 ```bash cURL
-curl https://api.tusky.io/v2/drives/drive_abc123def456 \
+curl https://api.tusky.io/v2/environments/env_abc123def456 \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
@@ -48,8 +48,8 @@ curl https://api.tusky.io/v2/drives/drive_abc123def456 \
 
 ```json
 {
-  "id": "drive_abc123def456",
-  "name": "My First Drive",
+  "id": "env_abc123def456",
+  "name": "My First Environment",
   "encrypted": false,
   "createdAt": "2025-07-01T12:00:00.000Z",
   "updatedAt": "2025-07-01T12:00:00.000Z"

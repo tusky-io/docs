@@ -1,14 +1,14 @@
 ---
 title: Update Member
-api: 'PUT https://api.tusky.io/v2/drives/{driveId}/members/{memberId}'
+api: 'PUT https://api.tusky.io/v2/environments/{environmentId}/members/{memberId}'
 ---
 
-Update the role of an existing drive member.
+Update the role of an existing environment member.
 
 ## Path Parameters
 
-<ParamField path="driveId" type="string" required>
-  The unique identifier of the drive.
+<ParamField path="environmentId" type="string" required>
+  The unique identifier of the environment.
 </ParamField>
 
 <ParamField path="memberId" type="string" required>
@@ -19,7 +19,7 @@ Update the role of an existing drive member.
 
 <ParamField body="role" type="string" required>
   The new role to assign. One of:
-  - `viewer` — read-only access to drive files
+  - `viewer` — read-only access to environment files
   - `contributor` — can upload, download, and delete files
   - `admin` — full access including member management
 </ParamField>
@@ -38,8 +38,8 @@ Update the role of an existing drive member.
   The updated role.
 </ResponseField>
 
-<ResponseField name="driveId" type="string">
-  The drive this membership belongs to.
+<ResponseField name="environmentId" type="string">
+  The environment this membership belongs to.
 </ResponseField>
 
 <ResponseField name="createdAt" type="string">
@@ -51,7 +51,7 @@ Update the role of an existing drive member.
 <CodeGroup>
 
 ```bash cURL
-curl -X PUT https://api.tusky.io/v2/drives/drive_abc123def456/members/member_stu901vwx234 \
+curl -X PUT https://api.tusky.io/v2/environments/env_abc123def456/members/member_stu901vwx234 \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -68,11 +68,11 @@ curl -X PUT https://api.tusky.io/v2/drives/drive_abc123def456/members/member_stu
   "id": "member_stu901vwx234",
   "address": "0x1a2b3c4d5e6f7890abcdef1234567890abcdef12",
   "role": "admin",
-  "driveId": "drive_abc123def456",
+  "environmentId": "env_abc123def456",
   "createdAt": "2025-07-02T10:00:00.000Z"
 }
 ```
 
 <Note>
-  Only drive owners and admins can update member roles. You cannot change the role of the drive owner.
+  Only environment owners and admins can update member roles. You cannot change the role of the environment owner.
 </Note>

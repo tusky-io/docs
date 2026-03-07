@@ -8,7 +8,7 @@ Retrieve usage statistics for the authenticated account, including storage consu
 ## Response
 
 <ResponseField name="storageUsed" type="number">
-  Total storage used in bytes across all drives.
+  Total storage used in bytes across all environments.
 </ResponseField>
 
 <ResponseField name="storageLimit" type="number">
@@ -16,11 +16,11 @@ Retrieve usage statistics for the authenticated account, including storage consu
 </ResponseField>
 
 <ResponseField name="filesCount" type="number">
-  Total number of files stored across all drives.
+  Total number of files stored across all environments.
 </ResponseField>
 
-<ResponseField name="drivesCount" type="number">
-  Total number of drives.
+<ResponseField name="environmentsCount" type="number">
+  Total number of environments.
 </ResponseField>
 
 <ResponseField name="transactions" type="object">
@@ -73,7 +73,7 @@ curl https://api.tusky.io/v2/account/usage \
   "storageUsed": 5368709120,
   "storageLimit": 10737418240,
   "filesCount": 142,
-  "drivesCount": 3,
+  "environmentsCount": 3,
   "transactions": {
     "uploads": 85,
     "downloads": 312,

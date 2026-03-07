@@ -33,8 +33,8 @@ Update a publisher's configuration. Only the fields included in the request body
   Whether blobs are shared.
 </ParamField>
 
-<ParamField body="driveId" type="string">
-  Attach or detach the publisher to/from a drive. Set to a drive ID to attach, or `null` to detach and make it an account-level publisher.
+<ParamField body="environmentId" type="string">
+  Attach or detach the publisher to/from an environment. Set to an environment ID to attach, or `null` to detach and make it an account-level publisher.
 </ParamField>
 
 ## Response
@@ -65,8 +65,8 @@ Returns the updated publisher object.
   Whether blobs are shared.
 </ResponseField>
 
-<ResponseField name="driveId" type="string">
-  Attached drive ID, or `null`.
+<ResponseField name="environmentId" type="string">
+  Attached environment ID, or `null`.
 </ResponseField>
 
 <ResponseField name="updatedAt" type="string">
@@ -100,7 +100,7 @@ curl -X PATCH https://api.tusky.io/v2/publishers/pub_7f3a2b1c \
   "quilt": true,
   "permanent": false,
   "share": false,
-  "driveId": "drive_abc123",
+  "environmentId": "env_abc123",
   "updatedAt": "2026-03-05T15:00:00Z"
 }
 ```

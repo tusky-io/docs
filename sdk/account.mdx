@@ -61,7 +61,7 @@ const usage = await tusky.account.usage();
 
 console.log("Storage used:", usage.storageBytes, "bytes");
 console.log("Files stored:", usage.fileCount);
-console.log("Drives:", usage.driveCount);
+console.log("Environments:", usage.environmentCount);
 console.log("Bandwidth (this month):", usage.bandwidthBytes, "bytes");
 console.log("API requests (this month):", usage.apiRequests);
 ```
@@ -70,9 +70,9 @@ console.log("API requests (this month):", usage.apiRequests);
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `storageBytes` | `number` | Total bytes currently stored across all drives. |
-| `fileCount` | `number` | Total number of files across all drives. |
-| `driveCount` | `number` | Number of active drives. |
+| `storageBytes` | `number` | Total bytes currently stored across all environments. |
+| `fileCount` | `number` | Total number of files across all environments. |
+| `environmentCount` | `number` | Number of active environments. |
 | `bandwidthBytes` | `number` | Aggregator bandwidth consumed in the current billing period. |
 | `apiRequests` | `number` | API calls made in the current billing period. |
 

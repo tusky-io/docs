@@ -1,14 +1,14 @@
 ---
 title: List Files
-api: 'GET https://api.tusky.io/v2/drives/{driveId}/files'
+api: 'GET https://api.tusky.io/v2/environments/{environmentId}/files'
 ---
 
-List all files within a specific drive. Results are returned in reverse chronological order and paginated using cursor-based pagination.
+List all files within a specific environment. Results are returned in reverse chronological order and paginated using cursor-based pagination.
 
 ## Path Parameters
 
-<ParamField path="driveId" type="string" required>
-  The unique identifier of the drive.
+<ParamField path="environmentId" type="string" required>
+  The unique identifier of the environment.
 </ParamField>
 
 ## Query Parameters
@@ -55,8 +55,8 @@ List all files within a specific drive. Results are returned in reverse chronolo
       Quilt patch identifier for the file metadata on Sui.
     </ResponseField>
 
-    <ResponseField name="driveId" type="string">
-      The drive this file belongs to.
+    <ResponseField name="environmentId" type="string">
+      The environment this file belongs to.
     </ResponseField>
 
     <ResponseField name="createdAt" type="string">
@@ -82,7 +82,7 @@ List all files within a specific drive. Results are returned in reverse chronolo
 <CodeGroup>
 
 ```bash cURL
-curl "https://api.tusky.io/v2/drives/drive_abc123def456/files?limit=10&mimeType=application/pdf" \
+curl "https://api.tusky.io/v2/environments/env_abc123def456/files?limit=10&mimeType=application/pdf" \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
@@ -100,7 +100,7 @@ curl "https://api.tusky.io/v2/drives/drive_abc123def456/files?limit=10&mimeType=
       "size": 1048576,
       "blobId": "walrus_blob_abc123",
       "quiltPatchId": "qp_def456",
-      "driveId": "drive_abc123def456",
+      "environmentId": "env_abc123def456",
       "createdAt": "2025-07-01T12:30:00.000Z",
       "expiresAt": "2025-07-11T12:30:00.000Z"
     }

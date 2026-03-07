@@ -100,7 +100,7 @@ import { Tusky } from "@tusky-io/ts-sdk";
 const tusky = new Tusky({ apiKey: process.env.TUSKY_API_KEY });
 
 // Upload with pay-as-you-go — payment is handled automatically
-const file = await tusky.file.upload("drive_abc123", "./data.csv", {
+const file = await tusky.file.upload("env_abc123", "./data.csv", {
   name: "dataset.csv",
   epochs: 5,
 });

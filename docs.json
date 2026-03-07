@@ -57,7 +57,7 @@
           {
             "group": "Core Concepts",
             "pages": [
-              "core-concepts/drives",
+              "core-concepts/environments",
               "core-concepts/files",
               "core-concepts/uploads",
               "core-concepts/secrets",
@@ -171,13 +171,13 @@
                 ]
               },
               {
-                "group": "Drives",
+                "group": "Environments",
                 "pages": [
-                  "api-reference/drives/create-drive",
-                  "api-reference/drives/get-drive",
-                  "api-reference/drives/list-drives",
-                  "api-reference/drives/update-drive",
-                  "api-reference/drives/delete-drive"
+                  "api-reference/environments/create-environment",
+                  "api-reference/environments/get-environment",
+                  "api-reference/environments/list-environments",
+                  "api-reference/environments/update-environment",
+                  "api-reference/environments/delete-environment"
                 ]
               }
             ]
@@ -227,7 +227,7 @@
           {
             "group": "SDK Modules",
             "pages": [
-              "sdk/drives",
+              "sdk/environments",
               "sdk/files",
               "sdk/members",
               "sdk/aggregators",

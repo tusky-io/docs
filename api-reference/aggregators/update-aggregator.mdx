@@ -30,7 +30,7 @@ Update an aggregator's configuration. Only included fields are updated.
 </ParamField>
 
 <ParamField body="fallbackToBackup" type="boolean">
-  Whether to fall back to the centralized backup store when Walrus is unavailable. Requires [Backup](/tools/backup) to be enabled on the relevant drives.
+  Whether to fall back to the centralized backup store when Walrus is unavailable. Requires [Backup](/tools/backup) to be enabled on the relevant environments.
 </ParamField>
 
 <ParamField body="analyticsEnabled" type="boolean">
@@ -76,5 +76,5 @@ curl -X PATCH https://api.tusky.io/v2/aggregators/agg_default \
 ```
 
 <Note>
-  `fallbackToBackup` only works for drives with [Backup](/tools/backup) enabled. If backup is not enabled, the flag is accepted but has no effect.
+  `fallbackToBackup` only works for environments with [Backup](/tools/backup) enabled. If backup is not enabled, the flag is accepted but has no effect.
 </Note>

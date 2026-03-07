@@ -31,18 +31,18 @@ API keys can be scoped to limit what operations they are allowed to perform:
 
 | Scope | Description |
 | --- | --- |
-| `drives:read` | List and retrieve drive metadata |
-| `drives:write` | Create, update, and delete drives |
+| `environments:read` | List and retrieve environment metadata |
+| `environments:write` | Create, update, and delete environments |
 | `files:read` | List, retrieve, and download files |
 | `files:write` | Upload and delete files |
-| `members:read` | List drive members |
-| `members:write` | Add, update, and remove drive members |
+| `members:read` | List environment members |
+| `members:write` | Add, update, and remove environment members |
 | `account:read` | Read account info, usage, and balance |
 | `aggregators:read` | Read aggregator configuration |
 | `aggregators:write` | Update aggregator settings and custom domains |
 
 <Tip>
-  Follow the **principle of least privilege**: only grant the scopes your application needs. A key used solely for reading files should not have `drives:write` or `members:write` permissions.
+  Follow the **principle of least privilege**: only grant the scopes your application needs. A key used solely for reading files should not have `environments:write` or `members:write` permissions.
 </Tip>
 
 ## Using Your API Key
@@ -64,7 +64,7 @@ const tusky = new Tusky({
 Include the API key in the `Authorization` header of every request:
 
 ```bash
-curl https://api.tusky.io/v1/drives \
+curl https://api.tusky.io/v1/environments \
   -H "Authorization: Bearer $TUSKY_API_KEY"
 ```
 

@@ -9,10 +9,10 @@ Tusky provides **end-to-end encryption** so that private data is never exposed �
 
 <Steps>
   <Step title="Encryption seed derivation">
-    When you create an encrypted drive, Tusky derives an encryption seed from your **connected Sui wallet**. This seed is the root of all encryption keys for that drive. Because the seed is tied to your wallet's cryptographic identity, only you (or members you explicitly authorize) can decrypt the data.
+    When you create an encrypted environment, Tusky derives an encryption seed from your **connected Sui wallet**. This seed is the root of all encryption keys for that environment. Because the seed is tied to your wallet's cryptographic identity, only you (or members you explicitly authorize) can decrypt the data.
   </Step>
   <Step title="Client-side encryption">
-    Before any file data leaves your browser or application, Tusky encrypts it locally using keys derived from the drive's encryption seed. The plaintext never reaches Tusky's servers or the Walrus network.
+    Before any file data leaves your browser or application, Tusky encrypts it locally using keys derived from the environment's encryption seed. The plaintext never reaches Tusky's servers or the Walrus network.
   </Step>
   <Step title="Publish encrypted blob">
     The encrypted payload is uploaded and published to Walrus like any other blob. Storage nodes only ever see ciphertext.
@@ -33,29 +33,29 @@ Tusky v2 eliminates passwords entirely:
     Your Sui wallet's keypair is used to derive encryption seeds. Signing a deterministic message produces a stable seed without ever exposing your private key. As long as you control your wallet, you control your data.
   </Card>
   <Card title="Seal integration" icon="shield-halved">
-    For shared drives, Tusky leverages **Seal** — a decentralized encryption protocol on Sui. Seal smart contracts manage access policies on-chain, enabling secure key sharing without Tusky ever holding decryption keys.
+    For shared environments, Tusky leverages **Seal** — a decentralized encryption protocol on Sui. Seal smart contracts manage access policies on-chain, enabling secure key sharing without Tusky ever holding decryption keys.
   </Card>
 </CardGroup>
 
 <Tip>
-  Because encryption is now tied to your wallet instead of a password, there is nothing to remember or lose. Connect your wallet, and your encrypted drives are instantly accessible.
+  Because encryption is now tied to your wallet instead of a password, there is nothing to remember or lose. Connect your wallet, and your encrypted environments are instantly accessible.
 </Tip>
 
 ## Seal and token-gated access
 
-[Seal](https://docs.mystenlabs.com/seal) is a decentralized encryption infrastructure built on Sui. Tusky uses Seal to power access control for encrypted drives, enabling powerful token-gated and policy-driven sharing.
+[Seal](https://docs.mystenlabs.com/seal) is a decentralized encryption infrastructure built on Sui. Tusky uses Seal to power access control for encrypted environments, enabling powerful token-gated and policy-driven sharing.
 
 ### How Seal works with Tusky
 
 <Tabs>
   <Tab title="Access policies">
-    Drive owners define **on-chain access policies** through Seal smart contracts. These policies specify which Sui addresses (or which NFT / token holders) can decrypt the drive's contents. Policies are transparent and verifiable on the Sui blockchain.
+    Environment owners define **on-chain access policies** through Seal smart contracts. These policies specify which Sui addresses (or which NFT / token holders) can decrypt the environment's contents. Policies are transparent and verifiable on the Sui blockchain.
   </Tab>
   <Tab title="Key management">
     Seal distributes encryption key shares across a decentralized network of key servers. No single server holds enough information to reconstruct a key. When an authorized user requests decryption, Seal key servers verify the on-chain policy, and only then release their key shares.
   </Tab>
   <Tab title="Token gating">
-    You can gate drive access on **any on-chain condition**: ownership of a specific NFT collection, holding a minimum token balance, membership in a DAO, or custom Move-based logic. This enables powerful use cases like subscriber-only content, DAO-gated archives, and NFT-unlockable media.
+    You can gate environment access on **any on-chain condition**: ownership of a specific NFT collection, holding a minimum token balance, membership in a DAO, or custom Move-based logic. This enables powerful use cases like subscriber-only content, DAO-gated archives, and NFT-unlockable media.
   </Tab>
 </Tabs>
 
@@ -63,9 +63,9 @@ Tusky v2 eliminates passwords entirely:
   Seal policies are composable. You can combine multiple conditions — for example, requiring both NFT ownership **and** a minimum SUI balance — to create fine-grained access rules.
 </Info>
 
-## Encrypted drive workflow
+## Encrypted environment workflow
 
-Here's the complete flow for data in an encrypted drive:
+Here's the complete flow for data in an encrypted environment:
 
 ```
 ┌─────────────┐     ┌──────────────┐     ┌─────────────┐     ┌──────────────┐
@@ -93,37 +93,37 @@ Here's the complete flow for data in an encrypted drive:
 | **Decentralized key management** | Seal distributes key shares so no single point of failure can compromise access. |
 | **On-chain policies** | Access rules are enforced by smart contracts, fully transparent and auditable. |
 
-## Sharing encrypted drives
+## Sharing encrypted environments
 
-When you add a member to an encrypted drive, Tusky uses Seal to grant that member's Sui wallet address decryption access:
+When you add a member to an encrypted environment, Tusky uses Seal to grant that member's Sui wallet address decryption access:
 
-1. The drive's Seal policy is updated on-chain to include the new member's address.
+1. The environment's Seal policy is updated on-chain to include the new member's address.
 2. When the new member requests a file, Seal key servers verify their address against the policy.
 3. If authorized, the key servers release key shares, enabling client-side decryption.
 
-The drive owner never transmits raw keys, and Tusky never acts as an intermediary for key material.
+The environment owner never transmits raw keys, and Tusky never acts as an intermediary for key material.
 
 <Warning>
-  Removing a member revokes their future decryption access through Seal. However, any data the member already downloaded and decrypted locally cannot be "un-shared." Treat drive membership as a trust decision.
+  Removing a member revokes their future decryption access through Seal. However, any data the member already downloaded and decrypted locally cannot be "un-shared." Treat environment membership as a trust decision.
 </Warning>
 
 ## Migration from v1
 
-If you used password-based encryption in Tusky v1, your drives will be migrated to wallet-based encryption. During migration:
+If you used password-based encryption in Tusky v1, your environments will be migrated to wallet-based encryption. During migration:
 
 1. You authenticate with your original password one final time.
-2. Tusky re-encrypts your drive's key material under your connected Sui wallet.
+2. Tusky re-encrypts your environment's key material under your connected Sui wallet.
 3. The password is discarded and no longer needed.
 
 <Note>
-  After migration, your encrypted drives are accessible solely through your Sui wallet. Make sure you have secure backups of your wallet's seed phrase.
+  After migration, your encrypted environments are accessible solely through your Sui wallet. Make sure you have secure backups of your wallet's seed phrase.
 </Note>
 
 ## What's next?
 
 <CardGroup cols={2}>
-  <Card title="Drives" icon="vault" href="/core-concepts/drives">
-    Learn about drive types, settings, and membership roles.
+  <Card title="Environments" icon="vault" href="/core-concepts/environments">
+    Learn about environment types, settings, and membership roles.
   </Card>
   <Card title="Publishing" icon="cloud-arrow-up" href="/core-concepts/publishing">
     Understand how encrypted data is published to Walrus.

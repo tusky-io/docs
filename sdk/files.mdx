@@ -3,7 +3,7 @@ title: Files
 description: 'Upload and manage files with the SDK'
 ---
 
-The `tusky.file` module handles uploading, downloading, listing, and deleting files within drives. Files uploaded to encrypted drives are automatically encrypted client-side before being published to the Walrus network.
+The `tusky.file` module handles uploading, downloading, listing, and deleting files within environments. Files uploaded to encrypted environments are automatically encrypted client-side before being published to the Walrus network.
 
 ## Upload a File
 
@@ -12,7 +12,7 @@ The `tusky.file` module handles uploading, downloading, listing, and deleting fi
 The simplest way to upload in a Node.js environment:
 
 ```typescript
-const file = await tusky.file.upload("drive_abc123", "./documents/report.pdf", {
+const file = await tusky.file.upload("env_abc123", "./documents/report.pdf", {
   name: "Q4 Report.pdf",
 });
 
@@ -27,7 +27,7 @@ Upload file content directly from a `Buffer` or `Uint8Array`:
 ```typescript
 const buffer = Buffer.from("Hello, Walrus!");
 
-const file = await tusky.file.upload("drive_abc123", buffer, {
+const file = await tusky.file.upload("env_abc123", buffer, {
   name: "greeting.txt",
   mimeType: "text/plain",
 });
@@ -42,7 +42,7 @@ import { createReadStream } from "fs";
 
 const stream = createReadStream("./large-video.mp4");
 
-const file = await tusky.file.upload("drive_abc123", stream, {
+const file = await tusky.file.upload("env_abc123", stream, {
   name: "presentation.mp4",
   mimeType: "video/mp4",
 });
@@ -54,8 +54,8 @@ const file = await tusky.file.upload("drive_abc123", stream, {
 | --- | --- | --- | --- |
 | `name` | `string` | Filename from path | Display name for the file. |
 | `mimeType` | `string` | Auto-detected | MIME type of the file content. |
-| `epochs` | `number` | Drive default | Number of Walrus storage epochs for this file. |
-| `autoExtend` | `boolean` | Drive default | Automatically renew storage before expiry. |
+| `epochs` | `number` | Environment default | Number of Walrus storage epochs for this file. |
+| `autoExtend` | `boolean` | Environment default | Automatically renew storage before expiry. |
 
 <Tip>
   Use the [cost estimation endpoint](/api-reference/uploads/create-upload) to preview the storage cost in SUI before uploading. Cost = Walrus storage cost + 10% Tusky fee.
@@ -71,17 +71,17 @@ const file = await tusky.file.get("file_xyz789");
 console.log(file.name);        // "Q4 Report.pdf"
 console.log(file.size);        // 2048576
 console.log(file.mimeType);    // "application/pdf"
-console.log(file.driveId);     // "drive_abc123"
+console.log(file.environmentId);     // "env_abc123"
 console.log(file.blobId);      // Walrus blob identifier
 console.log(file.createdAt);   // ISO 8601 timestamp
 ```
 
 ## List Files
 
-List all files in a drive:
+List all files in an environment:
 
 ```typescript
-const files = await tusky.file.list("drive_abc123");
+const files = await tusky.file.list("env_abc123");
 
 for (const file of files) {
   console.log(`${file.name} (${file.size} bytes)`);
@@ -101,12 +101,12 @@ writeFileSync("./downloaded-report.pdf", Buffer.from(content));
 ```
 
 <Note>
-  For encrypted drives, the SDK automatically decrypts the file content using keys derived from your wallet or API key. No additional steps are required.
+  For encrypted environments, the SDK automatically decrypts the file content using keys derived from your wallet or API key. No additional steps are required.
 </Note>
 
 ## Delete a File
 
-Remove a file from a drive:
+Remove a file from an environment:
 
 ```typescript
 await tusky.file.delete("file_xyz789");
@@ -126,7 +126,7 @@ import { readFileSync, writeFileSync } from "fs";
 const tusky = new Tusky({ apiKey: process.env.TUSKY_API_KEY });
 
 // Upload a file
-const file = await tusky.file.upload("drive_abc123", "./photo.jpg", {
+const file = await tusky.file.upload("env_abc123", "./photo.jpg", {
   name: "vacation.jpg",
   epochs: 5,
   autoExtend: true,
@@ -134,9 +134,9 @@ const file = await tusky.file.upload("drive_abc123", "./photo.jpg", {
 
 console.log("Uploaded:", file.id);
 
-// List all files in the drive
-const files = await tusky.file.list("drive_abc123");
-console.log("Files in drive:", files.length);
+// List all files in the environment
+const files = await tusky.file.list("env_abc123");
+console.log("Files in environment:", files.length);
 
 // Download the file
 const content = await tusky.file.arrayBuffer(file.id);
@@ -150,8 +150,8 @@ await tusky.file.delete(file.id);
 ## What's Next
 
 <CardGroup cols={2}>
-  <Card title="Drives" icon="vault" href="/sdk/drives">
-    Manage the drives that contain your files.
+  <Card title="Environments" icon="vault" href="/sdk/environments">
+    Manage the environments that contain your files.
   </Card>
   <Card title="Aggregators" icon="globe" href="/sdk/aggregators">
     Configure how your files are served over HTTP.

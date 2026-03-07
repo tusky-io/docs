@@ -3,7 +3,7 @@ title: Getting Started
 description: 'Install and configure the Tusky TypeScript SDK'
 ---
 
-The Tusky TypeScript SDK (`@tusky-io/ts-sdk`) gives you full programmatic access to the Tusky platform — create drives, upload files, manage members, and configure aggregators from any JavaScript or TypeScript application.
+The Tusky TypeScript SDK (`@tusky-io/ts-sdk`) gives you full programmatic access to the Tusky platform — create environments, upload files, manage members, and configure aggregators from any JavaScript or TypeScript application.
 
 ## Prerequisites
 
@@ -61,22 +61,22 @@ For browser applications you can authenticate with a connected Sui wallet instea
 
 ## Quick Example
 
-The following snippet creates a drive and uploads a file in just a few lines:
+The following snippet creates an environment and uploads a file in just a few lines:
 
 ```typescript
 import { Tusky } from "@tusky-io/ts-sdk";
 
 const tusky = new Tusky({ apiKey: "your-api-key" });
 
-// Create a new drive
-const drive = await tusky.drive.create("My First Drive", {
+// Create a new environment
+const environment = await tusky.environment.create("My First Environment", {
   encrypted: true,
 });
 
-console.log("Drive created:", drive.id);
+console.log("Environment created:", environment.id);
 
-// Upload a file to the drive
-const file = await tusky.file.upload(drive.id, "./hello.txt", {
+// Upload a file to the environment
+const file = await tusky.file.upload(environment.id, "./hello.txt", {
   name: "hello.txt",
 });
 
@@ -97,8 +97,8 @@ console.log("Downloaded", content.byteLength, "bytes");
   <Step title="Initialize Tusky">
     Import and instantiate the client with your API key.
   </Step>
-  <Step title="Create a drive and upload">
-    Use `tusky.drive.create()` and `tusky.file.upload()` to store your first file on Walrus.
+  <Step title="Create an environment and upload">
+    Use `tusky.environment.create()` and `tusky.file.upload()` to store your first file on Walrus.
   </Step>
 </Steps>
 
@@ -118,8 +118,8 @@ The `Tusky` constructor accepts an options object:
   <Card title="Authentication" icon="key" href="/sdk/authentication">
     Explore all authentication methods including Sui wallet integration.
   </Card>
-  <Card title="Drives" icon="vault" href="/sdk/drives">
-    Learn how to create, list, and manage drives programmatically.
+  <Card title="Environments" icon="vault" href="/sdk/environments">
+    Learn how to create, list, and manage environments programmatically.
   </Card>
   <Card title="Files" icon="file" href="/sdk/files">
     Upload, download, and manage files with the SDK.
