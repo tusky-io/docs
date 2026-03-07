@@ -60,6 +60,7 @@
               "core-concepts/drives",
               "core-concepts/files",
               "core-concepts/uploads",
+              "core-concepts/secrets",
               "core-concepts/encryption",
               "core-concepts/publishing",
               "core-concepts/publisher",
@@ -117,55 +118,33 @@
             ]
           },
           {
-            "group": "Publishers",
+            "group": "Infrastructure",
             "pages": [
               "api-reference/publishers/create-publisher",
               "api-reference/publishers/get-publisher",
               "api-reference/publishers/list-publishers",
               "api-reference/publishers/update-publisher",
-              "api-reference/publishers/delete-publisher"
-            ]
-          },
-          {
-            "group": "Aggregators",
-            "pages": [
+              "api-reference/publishers/delete-publisher",
               "api-reference/aggregators/get-aggregator",
               "api-reference/aggregators/update-aggregator",
               "api-reference/aggregators/delete-aggregator"
             ]
           },
           {
-            "group": "Uploads",
+            "group": "File Management",
             "pages": [
               "api-reference/uploads/create-upload",
               "api-reference/uploads/upload-chunk",
               "api-reference/uploads/get-upload-status",
-              "api-reference/uploads/delete-upload"
-            ]
-          },
-          {
-            "group": "Files",
-            "pages": [
-              "api-reference/files/upload-file",
               "api-reference/files/get-file",
               "api-reference/files/list-files",
               "api-reference/files/extend-file",
-              "api-reference/files/delete-file"
-            ]
-          },
-          {
-            "group": "Folders",
-            "pages": [
+              "api-reference/files/delete-file",
               "api-reference/folders/create-folder",
               "api-reference/folders/get-folder",
               "api-reference/folders/list-folders",
               "api-reference/folders/update-folder",
-              "api-reference/folders/delete-folder"
-            ]
-          },
-          {
-            "group": "Drives",
-            "pages": [
+              "api-reference/folders/delete-folder",
               "api-reference/drives/create-drive",
               "api-reference/drives/get-drive",
               "api-reference/drives/list-drives",
@@ -174,17 +153,21 @@
             ]
           },
           {
-            "group": "Members",
+            "group": "Secrets",
+            "pages": [
+              "api-reference/secrets/put-secret",
+              "api-reference/secrets/get-secret",
+              "api-reference/secrets/list-secrets",
+              "api-reference/secrets/delete-secret"
+            ]
+          },
+          {
+            "group": "Account Settings",
             "pages": [
               "api-reference/members/add-member",
               "api-reference/members/list-members",
               "api-reference/members/update-member",
-              "api-reference/members/remove-member"
-            ]
-          },
-          {
-            "group": "Account",
-            "pages": [
+              "api-reference/members/remove-member",
               "api-reference/account/get-account",
               "api-reference/account/get-usage"
             ]
