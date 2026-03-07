@@ -169,7 +169,12 @@
                   "api-reference/folders/update-folder",
                   "api-reference/folders/delete-folder"
                 ]
-              },
+              }
+            ]
+          },
+          {
+            "group": "Environments",
+            "pages": [
               {
                 "group": "Environments",
                 "pages": [
@@ -178,6 +183,15 @@
                   "api-reference/environments/list-environments",
                   "api-reference/environments/update-environment",
                   "api-reference/environments/delete-environment"
+                ]
+              },
+              {
+                "group": "Members",
+                "pages": [
+                  "api-reference/members/add-member",
+                  "api-reference/members/list-members",
+                  "api-reference/members/update-member",
+                  "api-reference/members/remove-member"
                 ]
               }
             ]
@@ -192,24 +206,10 @@
             ]
           },
           {
-            "group": "Account Settings",
+            "group": "Account",
             "pages": [
-              {
-                "group": "Members",
-                "pages": [
-                  "api-reference/members/add-member",
-                  "api-reference/members/list-members",
-                  "api-reference/members/update-member",
-                  "api-reference/members/remove-member"
-                ]
-              },
-              {
-                "group": "Account",
-                "pages": [
-                  "api-reference/account/get-account",
-                  "api-reference/account/get-usage"
-                ]
-              }
+              "api-reference/account/get-account",
+              "api-reference/account/get-usage"
             ]
           }
         ]
