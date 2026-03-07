@@ -38,14 +38,14 @@ Every paginated response includes:
 Fetch the first page:
 
 ```bash
-curl https://api.tusky.io/v2/vaults?limit=10 \
+curl https://api.tusky.io/v2/drives?limit=10 \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
 Fetch the next page using the returned cursor:
 
 ```bash
-curl "https://api.tusky.io/v2/vaults?limit=10&cursor=eyJpZCI6IjEyMzQ1In0" \
+curl "https://api.tusky.io/v2/drives?limit=10&cursor=eyJpZCI6IjEyMzQ1In0" \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 

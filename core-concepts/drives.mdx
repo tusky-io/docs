@@ -1,0 +1,102 @@
+---
+title: Drives
+description: 'Organize and manage your files in secure containers'
+---
+
+Drives are the top-level containers in Tusky for organizing and managing your files. Think of them as secure folders or cloud storage buckets — each drive groups related files together and provides granular control over encryption, access, and sharing.
+
+## Drive types
+
+Tusky supports two drive types, each suited to different use cases.
+
+<CardGroup cols={2}>
+  <Card title="Public drive" icon="globe">
+    Files stored in a public drive are uploaded **unencrypted** to Walrus. Anyone with the blob ID or aggregator URL can retrieve them. Ideal for open data, public websites, and shared media.
+  </Card>
+  <Card title="Encrypted drive" icon="lock">
+    Files are **encrypted client-side** before leaving your device. Only drive members with the correct decryption key — derived from their connected Sui wallet or managed through Seal — can read the contents.
+  </Card>
+</CardGroup>
+
+<Warning>
+  A drive's encryption setting is permanent. You cannot convert a public drive to an encrypted drive (or vice-versa) after creation.
+</Warning>
+
+## Creating a drive
+
+<Steps>
+  <Step title="Choose a name and type">
+    Give your drive a descriptive name and select either **Public** or **Encrypted**. This choice is immutable.
+  </Step>
+  <Step title="Configure settings">
+    Set default storage duration (in epochs), enable auto-extend if desired, and optionally add a description or tags.
+  </Step>
+  <Step title="Start uploading">
+    Once the drive is created you can immediately upload files, add members, or connect the drive to an aggregator.
+  </Step>
+</Steps>
+
+## Drive settings
+
+Every drive exposes a settings panel where you can manage:
+
+| Setting | Description |
+|---|---|
+| **Name & description** | Human-readable metadata for the drive. |
+| **Default storage epochs** | The number of Walrus storage epochs applied to new uploads unless overridden per-file. |
+| **Auto-extend** | When enabled, Tusky automatically renews storage before expiry so your data is never lost. |
+| **Encryption** | Displays the encryption status (read-only after creation). |
+
+## Members and roles
+
+Drives support collaborative access through a role-based membership model.
+
+<Tabs>
+  <Tab title="Owner">
+    Full control over the drive — can upload, download, delete files, manage members, and modify settings. Each drive has exactly one owner (the creator).
+  </Tab>
+  <Tab title="Manager">
+    Can upload, download, and delete files and invite or remove Viewers. Cannot change drive settings or remove other Managers.
+  </Tab>
+  <Tab title="Viewer">
+    Read-only access — can download and view files but cannot upload, delete, or manage membership.
+  </Tab>
+</Tabs>
+
+<Info>
+  For encrypted drives, adding a member shares the drive's decryption capability with that member's Sui wallet through Seal. Members never see raw encryption keys.
+</Info>
+
+## Drive lifecycle
+
+Understanding the full lifecycle of a drive helps you plan storage and collaboration effectively.
+
+```
+Create → Configure → Upload files → Share / add members → Manage → Archive / Delete
+```
+
+1. **Create** — A new drive is provisioned and linked to your account.
+2. **Active** — Files are uploaded, accessed, and managed. Members collaborate as needed.
+3. **Archive** *(optional)* — You can stop new uploads while keeping existing files accessible for their remaining storage duration.
+4. **Delete** — Removing a drive deletes all Tusky metadata. Files already published to Walrus remain available until their storage epochs expire; however, they will no longer be served through your Tusky aggregator.
+
+<Note>
+  Deleting a drive does **not** immediately delete data from the Walrus network. Walrus blobs persist until their purchased storage epochs expire. If you have ejected blobs to your own wallet, those blobs remain fully under your control regardless of drive status.
+</Note>
+
+## What's next?
+
+<CardGroup cols={2}>
+  <Card title="Files" icon="file" href="/core-concepts/files">
+    Learn how files are uploaded, stored, and retrieved inside a drive.
+  </Card>
+  <Card title="Encryption" icon="shield-halved" href="/core-concepts/encryption">
+    Understand how Tusky encrypts data in private drives.
+  </Card>
+  <Card title="Publishing" icon="cloud-arrow-up" href="/core-concepts/publishing">
+    See how Tusky publishes your data to the Walrus network.
+  </Card>
+  <Card title="Aggregators" icon="network-wired" href="/core-concepts/aggregators">
+    Discover how to access your content through dedicated aggregators.
+  </Card>
+</CardGroup>

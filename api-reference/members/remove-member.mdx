@@ -1,14 +1,14 @@
 ---
 title: Remove Member
-api: 'DELETE https://api.tusky.io/v2/vaults/{vaultId}/members/{memberId}'
+api: 'DELETE https://api.tusky.io/v2/drives/{driveId}/members/{memberId}'
 ---
 
-Remove a member from a vault, revoking their access.
+Remove a member from a drive, revoking their access.
 
 ## Path Parameters
 
-<ParamField path="vaultId" type="string" required>
-  The unique identifier of the vault.
+<ParamField path="driveId" type="string" required>
+  The unique identifier of the drive.
 </ParamField>
 
 <ParamField path="memberId" type="string" required>
@@ -24,7 +24,7 @@ Returns a `204 No Content` response on success.
 <CodeGroup>
 
 ```bash cURL
-curl -X DELETE https://api.tusky.io/v2/vaults/vault_abc123def456/members/member_stu901vwx234 \
+curl -X DELETE https://api.tusky.io/v2/drives/drive_abc123def456/members/member_stu901vwx234 \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
@@ -37,5 +37,5 @@ curl -X DELETE https://api.tusky.io/v2/vaults/vault_abc123def456/members/member_
 ```
 
 <Note>
-  Only vault owners and admins can remove members. The vault owner cannot be removed. For encrypted vaults, removing a member revokes their decryption access.
+  Only drive owners and admins can remove members. The drive owner cannot be removed. For encrypted drives, removing a member revokes their decryption access.
 </Note>

@@ -1,14 +1,14 @@
 ---
 title: Create Folder
-api: 'POST https://api.tusky.io/v2/vaults/{vaultId}/folders'
+api: 'POST https://api.tusky.io/v2/drives/{driveId}/folders'
 ---
 
-Create a new folder inside a vault to organize files.
+Create a new folder inside a drive to organize files.
 
 ## Path Parameters
 
-<ParamField path="vaultId" type="string" required>
-  The vault to create the folder in.
+<ParamField path="driveId" type="string" required>
+  The drive to create the folder in.
 </ParamField>
 
 ## Request Body
@@ -18,7 +18,7 @@ Create a new folder inside a vault to organize files.
 </ParamField>
 
 <ParamField body="parentId" type="string">
-  Parent folder ID for nesting. Omit to create at the vault root.
+  Parent folder ID for nesting. Omit to create at the drive root.
 </ParamField>
 
 ## Response
@@ -31,12 +31,12 @@ Create a new folder inside a vault to organize files.
   Folder name.
 </ResponseField>
 
-<ResponseField name="vaultId" type="string">
-  The vault this folder belongs to.
+<ResponseField name="driveId" type="string">
+  The drive this folder belongs to.
 </ResponseField>
 
 <ResponseField name="parentId" type="string">
-  Parent folder ID, or `null` if at vault root.
+  Parent folder ID, or `null` if at drive root.
 </ResponseField>
 
 <ResponseField name="createdAt" type="string">
@@ -48,7 +48,7 @@ Create a new folder inside a vault to organize files.
 <CodeGroup>
 
 ```bash cURL
-curl -X POST https://api.tusky.io/v2/vaults/vault_abc123/folders \
+curl -X POST https://api.tusky.io/v2/drives/drive_abc123/folders \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"name": "Photos", "parentId": null}'
@@ -62,7 +62,7 @@ curl -X POST https://api.tusky.io/v2/vaults/vault_abc123/folders \
 {
   "id": "folder_xyz789",
   "name": "Photos",
-  "vaultId": "vault_abc123",
+  "driveId": "drive_abc123",
   "parentId": null,
   "createdAt": "2026-03-06T12:00:00Z"
 }

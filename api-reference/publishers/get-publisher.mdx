@@ -37,8 +37,8 @@ Retrieve a publisher by ID.
   Whether blobs are shared.
 </ResponseField>
 
-<ResponseField name="vaultId" type="string">
-  The vault this publisher is attached to, or `null` if it is the account default.
+<ResponseField name="driveId" type="string">
+  The drive this publisher is attached to, or `null` if it is the account default.
 </ResponseField>
 
 <ResponseField name="createdAt" type="string">
@@ -70,7 +70,7 @@ curl https://api.tusky.io/v2/publishers/pub_7f3a2b1c \
   "quilt": false,
   "permanent": true,
   "share": false,
-  "vaultId": "vault_abc123",
+  "driveId": "drive_abc123",
   "createdAt": "2026-03-05T12:00:00Z",
   "updatedAt": "2026-03-05T14:30:00Z"
 }

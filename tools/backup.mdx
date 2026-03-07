@@ -27,11 +27,11 @@ The Walrus network is designed for durability through redundant encoding across 
 ## How It Works
 
 <Steps>
-  <Step title="Enable backup on a vault">
-    Turn on backup for any vault through the dashboard or API. Backup is configured per vault — you can choose which vaults need the extra protection.
+  <Step title="Enable backup on a drive">
+    Turn on backup for any drive through the dashboard or API. Backup is configured per drive — you can choose which drives need the extra protection.
   </Step>
   <Step title="Automatic on upload">
-    Once enabled, every file uploaded to the vault is automatically copied to Tusky's centralized blobstore in addition to being published to Walrus.
+    Once enabled, every file uploaded to the drive is automatically copied to Tusky's centralized blobstore in addition to being published to Walrus.
   </Step>
   <Step title="Transparent access">
     File retrieval works exactly the same whether backup is enabled or not. If the primary Walrus path is unavailable, the aggregator can fall back to the backup copy.
@@ -42,27 +42,27 @@ The Walrus network is designed for durability through redundant encoding across 
 
 <Tabs>
   <Tab title="Dashboard">
-    Navigate to your vault's **Settings → Backup** and toggle **Enable Backup**. All future uploads to this vault will be backed up automatically.
+    Navigate to your drive's **Settings → Backup** and toggle **Enable Backup**. All future uploads to this drive will be backed up automatically.
   </Tab>
   <Tab title="SDK">
-    Enable backup when creating or updating a vault:
+    Enable backup when creating or updating a drive:
 
     ```typescript
     // Enable on creation
-    const vault = await tusky.vault.create("Critical Data", {
+    const drive = await tusky.drive.create("Critical Data", {
       encrypted: true,
       backup: true,
     });
 
-    // Enable on existing vault
-    await tusky.vault.update("vault_abc123", {
+    // Enable on existing drive
+    await tusky.drive.update("drive_abc123", {
       backup: true,
     });
     ```
   </Tab>
   <Tab title="API">
     ```bash
-    curl -X PATCH https://api.tusky.io/v1/vaults/vault_abc123 \
+    curl -X PATCH https://api.tusky.io/v1/drives/drive_abc123 \
       -H "Authorization: Bearer tsk_live_abc123" \
       -H "Content-Type: application/json" \
       -d '{"backup": true}'
@@ -86,12 +86,12 @@ Backup is a **paid feature** with a per-GB monthly cost on top of your standard 
 
 | Included | Not Included |
 | --- | --- |
-| File content (encrypted if vault is encrypted) | Vault metadata (stored in Tusky's database) |
+| File content (encrypted if drive is encrypted) | Drive metadata (stored in Tusky's database) |
 | Original file names and structure | Member access control lists |
 | MIME types and custom metadata | Aggregator configuration |
 
 <Info>
-  For encrypted vaults, the backup stores the **encrypted** file content. Tusky never has access to your unencrypted data, even in the backup.
+  For encrypted drives, the backup stores the **encrypted** file content. Tusky never has access to your unencrypted data, even in the backup.
 </Info>
 
 ## Disabling Backup
@@ -111,7 +111,7 @@ You can disable backup at any time:
   <Card title="S3 Migration" icon="right-left" href="/tools/s3-migration">
     Migrate existing data from S3 to Tusky with automatic backup.
   </Card>
-  <Card title="Vaults" icon="vault" href="/sdk/vaults">
-    Manage the vaults that contain your backed-up files.
+  <Card title="Drives" icon="vault" href="/sdk/drives">
+    Manage the drives that contain your backed-up files.
   </Card>
 </CardGroup>

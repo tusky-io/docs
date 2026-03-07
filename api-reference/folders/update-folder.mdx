@@ -18,7 +18,7 @@ Rename or move a folder.
 </ParamField>
 
 <ParamField body="parentId" type="string">
-  New parent folder ID. Set to `null` to move to vault root.
+  New parent folder ID. Set to `null` to move to drive root.
 </ParamField>
 
 ## Example
@@ -40,7 +40,7 @@ curl -X PATCH https://api.tusky.io/v2/folders/folder_xyz789 \
 {
   "id": "folder_xyz789",
   "name": "Vacation Photos",
-  "vaultId": "vault_abc123",
+  "driveId": "drive_abc123",
   "parentId": null,
   "updatedAt": "2026-03-06T14:00:00Z"
 }

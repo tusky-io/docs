@@ -57,7 +57,7 @@
           {
             "group": "Core Concepts",
             "pages": [
-              "core-concepts/vaults",
+              "core-concepts/drives",
               "core-concepts/files",
               "core-concepts/uploads",
               "core-concepts/encryption",
@@ -164,13 +164,13 @@
             ]
           },
           {
-            "group": "Vaults",
+            "group": "Drives",
             "pages": [
-              "api-reference/vaults/create-vault",
-              "api-reference/vaults/get-vault",
-              "api-reference/vaults/list-vaults",
-              "api-reference/vaults/update-vault",
-              "api-reference/vaults/delete-vault"
+              "api-reference/drives/create-drive",
+              "api-reference/drives/get-drive",
+              "api-reference/drives/list-drives",
+              "api-reference/drives/update-drive",
+              "api-reference/drives/delete-drive"
             ]
           },
           {
@@ -204,7 +204,7 @@
           {
             "group": "SDK Modules",
             "pages": [
-              "sdk/vaults",
+              "sdk/drives",
               "sdk/files",
               "sdk/members",
               "sdk/aggregators",

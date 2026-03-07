@@ -37,8 +37,8 @@ Retrieve metadata for a specific file.
   Quilt patch identifier for the file metadata on Sui.
 </ResponseField>
 
-<ResponseField name="vaultId" type="string">
-  The vault this file belongs to.
+<ResponseField name="driveId" type="string">
+  The drive this file belongs to.
 </ResponseField>
 
 <ResponseField name="createdAt" type="string">
@@ -70,7 +70,7 @@ curl https://api.tusky.io/v2/files/file_mno345pqr678 \
   "size": 1048576,
   "blobId": "walrus_blob_abc123",
   "quiltPatchId": "qp_def456",
-  "vaultId": "vault_abc123def456",
+  "driveId": "drive_abc123def456",
   "createdAt": "2025-07-01T12:30:00.000Z",
   "expiresAt": "2025-07-11T12:30:00.000Z"
 }

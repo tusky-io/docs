@@ -15,7 +15,7 @@ Tusky provides a fully automated migration tool that pulls your data from Amazon
     Choose whether to migrate the entire bucket or specific prefixes (folders). You can also filter by file type or size.
   </Step>
   <Step title="Start migration">
-    Tusky begins pulling objects from S3 and uploading them to your chosen vault on the Walrus network. Progress is tracked in real time.
+    Tusky begins pulling objects from S3 and uploading them to your chosen drive on the Walrus network. Progress is tracked in real time.
   </Step>
   <Step title="Verify and switch">
     Once the migration completes, verify your content through your Tusky aggregator and update your application to point to the new URLs.
@@ -86,8 +86,8 @@ Create a dedicated IAM user or role with **minimal read-only** permissions for t
     | **Secret Access Key** | IAM user secret key. |
     | **Prefix** *(optional)* | Only migrate objects under this prefix (e.g. `uploads/images/`). |
   </Step>
-  <Step title="Select target vault">
-    Choose an existing vault or create a new one to receive the migrated files.
+  <Step title="Select target drive">
+    Choose an existing drive or create a new one to receive the migrated files.
   </Step>
   <Step title="Configure storage options">
     Set the number of storage epochs and whether to enable auto-extend for the migrated files.
@@ -121,7 +121,7 @@ After the migration completes:
 4. **Decommission S3** *(optional)* — Once you have verified all content is accessible through Tusky, you can optionally remove the S3 bucket to stop incurring AWS storage costs.
 
 <Note>
-  Tusky preserves the original file names, directory structure (prefixes), and MIME types from S3. Your files are organized in the target vault exactly as they were in the bucket.
+  Tusky preserves the original file names, directory structure (prefixes), and MIME types from S3. Your files are organized in the target drive exactly as they were in the bucket.
 </Note>
 
 ## What's Next

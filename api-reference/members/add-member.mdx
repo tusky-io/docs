@@ -1,14 +1,14 @@
 ---
 title: Add Member
-api: 'POST https://api.tusky.io/v2/vaults/{vaultId}/members'
+api: 'POST https://api.tusky.io/v2/drives/{driveId}/members'
 ---
 
-Add a new member to a vault by their Sui wallet address. Members can be assigned different roles that control their level of access.
+Add a new member to a drive by their Sui wallet address. Members can be assigned different roles that control their level of access.
 
 ## Path Parameters
 
-<ParamField path="vaultId" type="string" required>
-  The unique identifier of the vault.
+<ParamField path="driveId" type="string" required>
+  The unique identifier of the drive.
 </ParamField>
 
 ## Request Body
@@ -19,7 +19,7 @@ Add a new member to a vault by their Sui wallet address. Members can be assigned
 
 <ParamField body="role" type="string" required>
   The role to assign to the member. One of:
-  - `viewer` — read-only access to vault files
+  - `viewer` — read-only access to drive files
   - `contributor` — can upload, download, and delete files
   - `admin` — full access including member management
 </ParamField>
@@ -38,8 +38,8 @@ Add a new member to a vault by their Sui wallet address. Members can be assigned
   The assigned role (`viewer`, `contributor`, or `admin`).
 </ResponseField>
 
-<ResponseField name="vaultId" type="string">
-  The vault this membership belongs to.
+<ResponseField name="driveId" type="string">
+  The drive this membership belongs to.
 </ResponseField>
 
 <ResponseField name="createdAt" type="string">
@@ -51,7 +51,7 @@ Add a new member to a vault by their Sui wallet address. Members can be assigned
 <CodeGroup>
 
 ```bash cURL
-curl -X POST https://api.tusky.io/v2/vaults/vault_abc123def456/members \
+curl -X POST https://api.tusky.io/v2/drives/drive_abc123def456/members \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -69,11 +69,11 @@ curl -X POST https://api.tusky.io/v2/vaults/vault_abc123def456/members \
   "id": "member_stu901vwx234",
   "address": "0x1a2b3c4d5e6f7890abcdef1234567890abcdef12",
   "role": "contributor",
-  "vaultId": "vault_abc123def456",
+  "driveId": "drive_abc123def456",
   "createdAt": "2025-07-02T10:00:00.000Z"
 }
 ```
 
 <Note>
-  Only vault owners and admins can add new members. The invited user's Sui wallet address must be valid.
+  Only drive owners and admins can add new members. The invited user's Sui wallet address must be valid.
 </Note>

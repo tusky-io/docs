@@ -3,7 +3,7 @@ title: Create Publisher
 api: 'POST https://api.tusky.io/v2/publishers'
 ---
 
-Create a new publisher. Each account gets one active publisher automatically on sign-up. You can create additional publishers with different configurations and attach them to specific vaults.
+Create a new publisher. Each account gets one active publisher automatically on sign-up. You can create additional publishers with different configurations and attach them to specific drives.
 
 ## Request Body
 
@@ -27,8 +27,8 @@ Create a new publisher. Each account gets one active publisher automatically on 
   Whether blobs published by this publisher are shared. When `true`, the published content is accessible to other Tusky users via standard Walrus aggregators. When `false`, content is private to the account.
 </ParamField>
 
-<ParamField body="vaultId" type="string">
-  Optional vault ID to attach this publisher to. When set, this publisher configuration is used for all uploads to the specified vault, overriding the account default.
+<ParamField body="driveId" type="string">
+  Optional drive ID to attach this publisher to. When set, this publisher configuration is used for all uploads to the specified drive, overriding the account default.
 </ParamField>
 
 ## Response
@@ -57,8 +57,8 @@ Create a new publisher. Each account gets one active publisher automatically on 
   Whether blobs are shared.
 </ResponseField>
 
-<ResponseField name="vaultId" type="string">
-  The vault this publisher is attached to, or `null` if it is the account default.
+<ResponseField name="driveId" type="string">
+  The drive this publisher is attached to, or `null` if it is the account default.
 </ResponseField>
 
 <ResponseField name="createdAt" type="string">
@@ -79,7 +79,7 @@ curl -X POST https://api.tusky.io/v2/publishers \
     "quilt": false,
     "permanent": true,
     "share": false,
-    "vaultId": "vault_abc123"
+    "driveId": "drive_abc123"
   }'
 ```
 
@@ -95,11 +95,11 @@ curl -X POST https://api.tusky.io/v2/publishers \
   "quilt": false,
   "permanent": true,
   "share": false,
-  "vaultId": "vault_abc123",
+  "driveId": "drive_abc123",
   "createdAt": "2026-03-05T12:00:00Z"
 }
 ```
 
 <Note>
-  When a vault has an attached publisher, uploads to that vault use the attached publisher's configuration instead of the account default.
+  When a drive has an attached publisher, uploads to that drive use the attached publisher's configuration instead of the account default.
 </Note>

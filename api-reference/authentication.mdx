@@ -14,7 +14,7 @@ Authorization: Bearer YOUR_API_KEY
 ### Example Request
 
 ```bash
-curl https://api.tusky.io/v2/vaults \
+curl https://api.tusky.io/v2/drives \
   -H "Authorization: Bearer tsk_live_abc123def456"
 ```
 
@@ -39,8 +39,8 @@ API keys can be scoped to limit their access:
 | Scope         | Description                                      |
 | ------------- | ------------------------------------------------ |
 | `full_access` | Read and write access to all resources           |
-| `read_only`   | Read-only access to vaults, files, and metadata  |
-| `vault:{id}`  | Access restricted to a specific vault            |
+| `read_only`   | Read-only access to drives, files, and metadata  |
+| `drive:{id}`  | Access restricted to a specific drive            |
 
 Scoped keys follow the principle of least privilege. Use the narrowest scope that satisfies your use case.
 

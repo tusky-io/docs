@@ -1,42 +1,42 @@
 ---
-title: Update Vault
-api: 'PUT https://api.tusky.io/v2/vaults/{vaultId}'
+title: Update Drive
+api: 'PUT https://api.tusky.io/v2/drives/{driveId}'
 ---
 
-Update the properties of an existing vault.
+Update the properties of an existing drive.
 
 ## Path Parameters
 
-<ParamField path="vaultId" type="string" required>
-  The unique identifier of the vault to update.
+<ParamField path="driveId" type="string" required>
+  The unique identifier of the drive to update.
 </ParamField>
 
 ## Request Body
 
 <ParamField body="name" type="string" required>
-  The new name for the vault. Must be between 1 and 128 characters.
+  The new name for the drive. Must be between 1 and 128 characters.
 </ParamField>
 
 ## Response
 
 <ResponseField name="id" type="string">
-  Unique identifier for the vault.
+  Unique identifier for the drive.
 </ResponseField>
 
 <ResponseField name="name" type="string">
-  The updated name of the vault.
+  The updated name of the drive.
 </ResponseField>
 
 <ResponseField name="encrypted" type="boolean">
-  Whether the vault is encrypted.
+  Whether the drive is encrypted.
 </ResponseField>
 
 <ResponseField name="createdAt" type="string">
-  ISO 8601 timestamp of when the vault was created.
+  ISO 8601 timestamp of when the drive was created.
 </ResponseField>
 
 <ResponseField name="updatedAt" type="string">
-  ISO 8601 timestamp of when the vault was last updated.
+  ISO 8601 timestamp of when the drive was last updated.
 </ResponseField>
 
 ## Example
@@ -44,11 +44,11 @@ Update the properties of an existing vault.
 <CodeGroup>
 
 ```bash cURL
-curl -X PUT https://api.tusky.io/v2/vaults/vault_abc123def456 \
+curl -X PUT https://api.tusky.io/v2/drives/drive_abc123def456 \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "Renamed Vault"
+    "name": "Renamed Drive"
   }'
 ```
 
@@ -58,8 +58,8 @@ curl -X PUT https://api.tusky.io/v2/vaults/vault_abc123def456 \
 
 ```json
 {
-  "id": "vault_abc123def456",
-  "name": "Renamed Vault",
+  "id": "drive_abc123def456",
+  "name": "Renamed Drive",
   "encrypted": false,
   "createdAt": "2025-07-01T12:00:00.000Z",
   "updatedAt": "2025-07-05T09:15:00.000Z"
@@ -67,5 +67,5 @@ curl -X PUT https://api.tusky.io/v2/vaults/vault_abc123def456 \
 ```
 
 <Note>
-  The `encrypted` property cannot be modified after vault creation.
+  The `encrypted` property cannot be modified after drive creation.
 </Note>

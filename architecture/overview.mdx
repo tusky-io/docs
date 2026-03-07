@@ -32,7 +32,7 @@ When you upload a file through the SDK or API, this is the journey your data tak
 
 <Steps>
   <Step title="Upload received">
-    The file is sent to the Tusky REST API. For encrypted vaults, the SDK encrypts the file client-side before transmission.
+    The file is sent to the Tusky REST API. For encrypted drives, the SDK encrypts the file client-side before transmission.
   </Step>
   <Step title="Temporary storage">
     The file is temporarily stored in a staging area while it awaits processing. This ensures fast upload responses even under high load.
@@ -75,7 +75,7 @@ When a client requests a file through your aggregator:
 
 ### REST API
 
-The central interface for all Tusky operations. Handles authentication, authorization, vault/file CRUD, and orchestrates the write and read paths.
+The central interface for all Tusky operations. Handles authentication, authorization, drive/file CRUD, and orchestrates the write and read paths.
 
 - Built with modern web frameworks on **Kubernetes**
 - Horizontally scalable behind a load balancer
@@ -114,7 +114,7 @@ Every Tusky user gets a dedicated Sui wallet, managed by Tusky's infrastructure:
 
 | System | Purpose |
 | --- | --- |
-| **PostgreSQL** | Primary state store — vaults, files, members, accounts, transaction history. |
+| **PostgreSQL** | Primary state store — drives, files, members, accounts, transaction history. |
 | **Redis** | Caching layer for hot metadata, rate limiting counters, and queue management. |
 
 ### CDN (Cloudflare)

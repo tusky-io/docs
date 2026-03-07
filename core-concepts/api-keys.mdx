@@ -42,12 +42,12 @@ Each API key can be assigned any combination of the following scopes:
 
 | Scope | Description |
 | --- | --- |
-| `vaults:read` | List and retrieve vault metadata |
-| `vaults:write` | Create, update, and delete vaults |
+| `drives:read` | List and retrieve drive metadata |
+| `drives:write` | Create, update, and delete drives |
 | `files:read` | List, retrieve, and download files |
 | `files:write` | Upload and delete files |
-| `members:read` | List vault members |
-| `members:write` | Add, update, and remove vault members |
+| `members:read` | List drive members |
+| `members:write` | Add, update, and remove drive members |
 | `account:read` | Read account info, usage statistics, and wallet balance |
 | `aggregators:read` | Read aggregator configuration and analytics |
 | `aggregators:write` | Update aggregator settings and custom domains |
@@ -71,26 +71,26 @@ Each API key can be assigned any combination of the following scopes:
       apiKey: process.env.TUSKY_API_KEY,
     });
 
-    const vaults = await tusky.vault.list();
-    console.log("Vaults:", vaults);
+    const drives = await tusky.drive.list();
+    console.log("Drives:", drives);
     ```
   </Tab>
   <Tab title="cURL">
     Include the key in the `Authorization` header of every request:
 
     ```bash
-    curl https://api.tusky.io/v2/vaults \
+    curl https://api.tusky.io/v2/drives \
       -H "Authorization: Bearer tsk_live_abc123..."
     ```
   </Tab>
   <Tab title="Fetch (JS)">
     ```javascript
-    const response = await fetch("https://api.tusky.io/v2/vaults", {
+    const response = await fetch("https://api.tusky.io/v2/drives", {
       headers: {
         Authorization: `Bearer ${process.env.TUSKY_API_KEY}`,
       },
     });
-    const vaults = await response.json();
+    const drives = await response.json();
     ```
   </Tab>
 </Tabs>
@@ -101,22 +101,22 @@ Common scope combinations for different use cases:
 
 <AccordionGroup>
   <Accordion title="Read-only dashboard integration">
-    Scopes: `vaults:read`, `files:read`, `account:read`
+    Scopes: `drives:read`, `files:read`, `account:read`
 
     ```typescript
     const tusky = new Tusky({ apiKey: process.env.TUSKY_READONLY_KEY });
 
-    const vaults = await tusky.vault.list();
+    const drives = await tusky.drive.list();
     const usage = await tusky.account.usage();
     ```
   </Accordion>
   <Accordion title="File upload service">
-    Scopes: `vaults:read`, `files:write`
+    Scopes: `drives:read`, `files:write`
 
     ```typescript
     const tusky = new Tusky({ apiKey: process.env.TUSKY_UPLOAD_KEY });
 
-    const file = await tusky.file.upload("vault_abc123", "./data.csv", {
+    const file = await tusky.file.upload("drive_abc123", "./data.csv", {
       name: "dataset.csv",
       epochs: 5,
     });
@@ -126,10 +126,10 @@ Common scope combinations for different use cases:
     Scopes: all scopes
 
     ```bash
-    curl -X POST https://api.tusky.io/v2/vaults \
+    curl -X POST https://api.tusky.io/v2/drives \
       -H "Authorization: Bearer tsk_live_admin_key..." \
       -H "Content-Type: application/json" \
-      -d '{"name": "production-vault", "encrypted": true}'
+      -d '{"name": "production-drive", "encrypted": true}'
     ```
   </Accordion>
 </AccordionGroup>
@@ -138,7 +138,7 @@ Common scope combinations for different use cases:
 
 <CardGroup cols={2}>
   <Card title="Least privilege" icon="shield-halved">
-    Grant only the scopes each integration needs. A key used solely for downloads should not carry `vaults:write` or `members:write`.
+    Grant only the scopes each integration needs. A key used solely for downloads should not carry `drives:write` or `members:write`.
   </Card>
   <Card title="Separate keys per environment" icon="layer-group">
     Create distinct keys for development, staging, and production. Use `tsk_test_` keys for non-production environments.

@@ -9,7 +9,7 @@ Tusky uses the [tus](https://tus.io) open protocol for resumable file uploads. T
 
 <Steps>
   <Step title="Create the upload">
-    Send a `POST` request to the upload endpoint with file metadata (size, filename, vault ID). Tusky returns a unique upload URL in the `Location` header.
+    Send a `POST` request to the upload endpoint with file metadata (size, filename, drive ID). Tusky returns a unique upload URL in the `Location` header.
   </Step>
   <Step title="Upload chunks">
     Send `PATCH` requests to the upload URL with chunks of file data. Each chunk includes an `Upload-Offset` header indicating where in the file this chunk belongs.
@@ -50,7 +50,7 @@ Tusky implements the [tus v1.0.0](https://tus.io/protocols/resumable-upload.html
 | `Tus-Resumable` | Request & Response | Protocol version. Always `1.0.0`. |
 | `Upload-Length` | Request (POST) | Total file size in bytes. |
 | `Upload-Offset` | Request (PATCH) / Response | Current byte offset. Client sends where the chunk starts; server responds with the new offset after writing. |
-| `Upload-Metadata` | Request (POST) | Base64-encoded key-value pairs: `filename`, `filetype`, `vaultId`. |
+| `Upload-Metadata` | Request (POST) | Base64-encoded key-value pairs: `filename`, `filetype`, `driveId`. |
 | `Content-Type` | Request (PATCH) | Must be `application/offset+octet-stream` for chunk data. |
 | `Location` | Response (POST) | The URL to send subsequent `PATCH` and `HEAD` requests to. |
 
@@ -61,7 +61,7 @@ Client                                    Server
   │                                          │
   │  POST /uploads                           │
   │  Upload-Length: 10485760                  │
-  │  Upload-Metadata: filename ..., vaultId  │
+  │  Upload-Metadata: filename ..., driveId  │
   │ ────────────────────────────────────────▶ │
   │                                          │
   │  201 Created                             │
@@ -106,7 +106,7 @@ import { Tusky } from "@tusky-io/ts-sdk";
 
 const tusky = new Tusky({ apiKey: process.env.TUSKY_API_KEY });
 
-const fileId = await tusky.file.upload("vault_abc123", "./large-video.mp4", {
+const fileId = await tusky.file.upload("drive_abc123", "./large-video.mp4", {
   onProgress: (bytesUploaded, bytesTotal) => {
     const pct = ((bytesUploaded / bytesTotal) * 100).toFixed(1);
     console.log(`${pct}% uploaded`);
@@ -204,6 +204,6 @@ uppy.on("complete", (result) => {
     Configure how uploaded files are published to Walrus.
   </Card>
   <Card title="Encryption" icon="lock" href="/core-concepts/encryption">
-    How files are encrypted before upload in private vaults.
+    How files are encrypted before upload in private drives.
   </Card>
 </CardGroup>
