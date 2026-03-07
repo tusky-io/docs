@@ -120,36 +120,66 @@
           {
             "group": "Infrastructure",
             "pages": [
-              "api-reference/publishers/create-publisher",
-              "api-reference/publishers/get-publisher",
-              "api-reference/publishers/list-publishers",
-              "api-reference/publishers/update-publisher",
-              "api-reference/publishers/delete-publisher",
-              "api-reference/aggregators/get-aggregator",
-              "api-reference/aggregators/update-aggregator",
-              "api-reference/aggregators/delete-aggregator"
+              {
+                "group": "Publishers",
+                "pages": [
+                  "api-reference/publishers/create-publisher",
+                  "api-reference/publishers/get-publisher",
+                  "api-reference/publishers/list-publishers",
+                  "api-reference/publishers/update-publisher",
+                  "api-reference/publishers/delete-publisher"
+                ]
+              },
+              {
+                "group": "Aggregators",
+                "pages": [
+                  "api-reference/aggregators/get-aggregator",
+                  "api-reference/aggregators/update-aggregator",
+                  "api-reference/aggregators/delete-aggregator"
+                ]
+              }
             ]
           },
           {
             "group": "File Management",
             "pages": [
-              "api-reference/uploads/create-upload",
-              "api-reference/uploads/upload-chunk",
-              "api-reference/uploads/get-upload-status",
-              "api-reference/files/get-file",
-              "api-reference/files/list-files",
-              "api-reference/files/extend-file",
-              "api-reference/files/delete-file",
-              "api-reference/folders/create-folder",
-              "api-reference/folders/get-folder",
-              "api-reference/folders/list-folders",
-              "api-reference/folders/update-folder",
-              "api-reference/folders/delete-folder",
-              "api-reference/drives/create-drive",
-              "api-reference/drives/get-drive",
-              "api-reference/drives/list-drives",
-              "api-reference/drives/update-drive",
-              "api-reference/drives/delete-drive"
+              {
+                "group": "Uploads",
+                "pages": [
+                  "api-reference/uploads/create-upload",
+                  "api-reference/uploads/upload-chunk",
+                  "api-reference/uploads/get-upload-status"
+                ]
+              },
+              {
+                "group": "Files",
+                "pages": [
+                  "api-reference/files/get-file",
+                  "api-reference/files/list-files",
+                  "api-reference/files/extend-file",
+                  "api-reference/files/delete-file"
+                ]
+              },
+              {
+                "group": "Folders",
+                "pages": [
+                  "api-reference/folders/create-folder",
+                  "api-reference/folders/get-folder",
+                  "api-reference/folders/list-folders",
+                  "api-reference/folders/update-folder",
+                  "api-reference/folders/delete-folder"
+                ]
+              },
+              {
+                "group": "Drives",
+                "pages": [
+                  "api-reference/drives/create-drive",
+                  "api-reference/drives/get-drive",
+                  "api-reference/drives/list-drives",
+                  "api-reference/drives/update-drive",
+                  "api-reference/drives/delete-drive"
+                ]
+              }
             ]
           },
           {
@@ -164,12 +194,22 @@
           {
             "group": "Account Settings",
             "pages": [
-              "api-reference/members/add-member",
-              "api-reference/members/list-members",
-              "api-reference/members/update-member",
-              "api-reference/members/remove-member",
-              "api-reference/account/get-account",
-              "api-reference/account/get-usage"
+              {
+                "group": "Members",
+                "pages": [
+                  "api-reference/members/add-member",
+                  "api-reference/members/list-members",
+                  "api-reference/members/update-member",
+                  "api-reference/members/remove-member"
+                ]
+              },
+              {
+                "group": "Account",
+                "pages": [
+                  "api-reference/account/get-account",
+                  "api-reference/account/get-usage"
+                ]
+              }
             ]
           }
         ]
