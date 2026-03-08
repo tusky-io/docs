@@ -1,0 +1,47 @@
+---
+title: Prepay with Crypto
+api: 'POST https://api.tusky.io/v2/billing/prepay'
+---
+
+Prepay for Tusky services by depositing SUI tokens via the [x402 protocol](https://x402.org). The payment is settled on-chain and credited to your managed wallet balance.
+
+## Request Body
+
+<ParamField body="amount" type="string" required>
+  Amount of SUI to deposit (e.g., `"10.0"`).
+</ParamField>
+
+## Response
+
+<ResponseField name="paymentId" type="string">Payment transaction ID.</ResponseField>
+<ResponseField name="amount" type="string">SUI amount deposited.</ResponseField>
+<ResponseField name="txHash" type="string">Sui blockchain transaction hash.</ResponseField>
+<ResponseField name="newBalance" type="string">Updated SUI balance after deposit.</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.tusky.io/v2/billing/prepay \
+  -H "Api-Key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"amount": "10.0"}'
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "paymentId": "pay_xyz789",
+  "amount": "10.0",
+  "txHash": "0xabcdef1234567890...",
+  "newBalance": "55.2"
+}
+```
+
+<Note>
+  This endpoint uses the x402 protocol for HTTP-native crypto payments. The Tusky SDK handles the x402 payment flow automatically.
+</Note>

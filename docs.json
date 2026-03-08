@@ -135,7 +135,8 @@
                 "pages": [
                   "api-reference/aggregators/get-aggregator",
                   "api-reference/aggregators/update-aggregator",
-                  "api-reference/aggregators/delete-aggregator"
+                  "api-reference/aggregators/delete-aggregator",
+                  "api-reference/aggregators/get-aggregator-analytics"
                 ]
               }
             ]
@@ -222,7 +223,21 @@
             "group": "Account",
             "pages": [
               "api-reference/account/get-account",
-              "api-reference/account/get-usage"
+              {
+                "group": "Analytics",
+                "pages": [
+                  "api-reference/account/get-usage"
+                ]
+              },
+              {
+                "group": "Billing",
+                "pages": [
+                  "api-reference/billing/prepay-crypto",
+                  "api-reference/billing/generate-fiat-url",
+                  "api-reference/billing/get-subscription",
+                  "api-reference/billing/update-subscription"
+                ]
+              }
             ]
           }
         ]

@@ -3,55 +3,38 @@ title: Get Usage
 api: 'GET https://api.tusky.io/v2/account/usage'
 ---
 
-Retrieve usage statistics for the authenticated account, including storage consumption, transaction counts, and costs.
+Retrieve usage statistics for the authenticated account.
+
+## Query Parameters
+
+<ParamField query="from" type="string">
+  Start of the period (ISO 8601). Defaults to current billing period start.
+</ParamField>
+
+<ParamField query="to" type="string">
+  End of the period (ISO 8601). Defaults to now.
+</ParamField>
 
 ## Response
 
-<ResponseField name="storageUsed" type="number">
-  Total storage used in bytes across all environments.
-</ResponseField>
-
-<ResponseField name="storageLimit" type="number">
-  Maximum storage allowed under the current plan, in bytes.
-</ResponseField>
-
-<ResponseField name="filesCount" type="number">
-  Total number of files stored across all environments.
-</ResponseField>
-
-<ResponseField name="environmentsCount" type="number">
-  Total number of environments.
-</ResponseField>
-
 <ResponseField name="transactions" type="object">
-  Transaction statistics for the current billing period.
-
-  <Expandable title="Transaction properties">
-    <ResponseField name="uploads" type="number">
-      Number of file uploads.
-    </ResponseField>
-
-    <ResponseField name="downloads" type="number">
-      Number of file downloads.
-    </ResponseField>
-
-    <ResponseField name="totalCost" type="string">
-      Total cost in SUI tokens for the current billing period.
-    </ResponseField>
+  <Expandable title="Transaction metrics">
+    <ResponseField name="total" type="number">Total transactions in the period.</ResponseField>
+    <ResponseField name="thisMonth" type="number">Transactions in the current calendar month.</ResponseField>
   </Expandable>
 </ResponseField>
 
-<ResponseField name="billingPeriod" type="object">
-  Current billing period information.
+<ResponseField name="bandwidth" type="object">
+  <Expandable title="Bandwidth metrics">
+    <ResponseField name="totalBytes" type="number">Total bandwidth in bytes.</ResponseField>
+    <ResponseField name="thisMonthBytes" type="number">Bandwidth in the current calendar month.</ResponseField>
+  </Expandable>
+</ResponseField>
 
-  <Expandable title="Billing period properties">
-    <ResponseField name="start" type="string">
-      ISO 8601 timestamp of the billing period start.
-    </ResponseField>
-
-    <ResponseField name="end" type="string">
-      ISO 8601 timestamp of the billing period end.
-    </ResponseField>
+<ResponseField name="walletBalance" type="object">
+  <Expandable title="Wallet balance">
+    <ResponseField name="sui" type="string">SUI token balance.</ResponseField>
+    <ResponseField name="wal" type="string">WAL token balance.</ResponseField>
   </Expandable>
 </ResponseField>
 
@@ -61,7 +44,7 @@ Retrieve usage statistics for the authenticated account, including storage consu
 
 ```bash cURL
 curl https://api.tusky.io/v2/account/usage \
-  -H "Authorization: Bearer YOUR_API_KEY"
+  -H "Api-Key: YOUR_API_KEY"
 ```
 
 </CodeGroup>
@@ -70,18 +53,17 @@ curl https://api.tusky.io/v2/account/usage \
 
 ```json
 {
-  "storageUsed": 5368709120,
-  "storageLimit": 10737418240,
-  "filesCount": 142,
-  "environmentsCount": 3,
   "transactions": {
-    "uploads": 85,
-    "downloads": 312,
-    "totalCost": "2.45"
+    "total": 12450,
+    "thisMonth": 3200
   },
-  "billingPeriod": {
-    "start": "2025-07-01T00:00:00.000Z",
-    "end": "2025-07-31T23:59:59.000Z"
+  "bandwidth": {
+    "totalBytes": 85236940800,
+    "thisMonthBytes": 21309235200
+  },
+  "walletBalance": {
+    "sui": "45.2",
+    "wal": "120.0"
   }
 }
 ```

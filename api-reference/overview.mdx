@@ -13,17 +13,13 @@ https://api.tusky.io/v2
 
 All API requests must be made over HTTPS. Requests made over plain HTTP will be rejected.
 
-## Content Type
-
-All endpoints accept and return JSON (`application/json`) unless otherwise noted. File uploads use `multipart/form-data`.
-
 ## Request format
 
-Include your API key in the `Authorization` header of every request:
+Include your API key in the `Api-Key` header of every request:
 
 ```bash
 curl https://api.tusky.io/v2/environments \
-  -H "Authorization: Bearer YOUR_API_KEY"
+  -H "Api-Key: YOUR_API_KEY"
 ```
 
 See [Authentication](/api-reference/authentication) for details on generating and managing API keys.

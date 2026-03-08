@@ -3,33 +3,16 @@ title: Get Account
 api: 'GET https://api.tusky.io/v2/account'
 ---
 
-Retrieve account details for the authenticated user, including wallet information and balance.
+Retrieve account details for the authenticated user.
 
 ## Response
 
-<ResponseField name="id" type="string">
-  Unique identifier for the account.
-</ResponseField>
-
-<ResponseField name="email" type="string">
-  The email address associated with the account.
-</ResponseField>
-
-<ResponseField name="walletAddress" type="string">
-  The managed Sui wallet address for the account.
-</ResponseField>
-
-<ResponseField name="walletBalance" type="string">
-  Current wallet balance in SUI tokens.
-</ResponseField>
-
-<ResponseField name="plan" type="string">
-  The current billing plan (`free`, `pro`, `enterprise`).
-</ResponseField>
-
-<ResponseField name="createdAt" type="string">
-  ISO 8601 timestamp of when the account was created.
-</ResponseField>
+<ResponseField name="id" type="string">Account ID.</ResponseField>
+<ResponseField name="address" type="string">Connected Sui wallet address.</ResponseField>
+<ResponseField name="managedWalletAddress" type="string">Tusky-managed wallet address for publishing.</ResponseField>
+<ResponseField name="email" type="string">Email address, or `null` if not set.</ResponseField>
+<ResponseField name="plan" type="string">Current plan: `payg`, `starter`, `growth`, `scale`, `enterprise`.</ResponseField>
+<ResponseField name="createdAt" type="string">ISO 8601 creation timestamp.</ResponseField>
 
 ## Example
 
@@ -37,7 +20,7 @@ Retrieve account details for the authenticated user, including wallet informatio
 
 ```bash cURL
 curl https://api.tusky.io/v2/account \
-  -H "Authorization: Bearer YOUR_API_KEY"
+  -H "Api-Key: YOUR_API_KEY"
 ```
 
 </CodeGroup>
@@ -46,11 +29,11 @@ curl https://api.tusky.io/v2/account \
 
 ```json
 {
-  "id": "acct_abc123def456",
+  "id": "acct_abc123",
+  "address": "0xabcdef1234567890abcdef1234567890abcdef12",
+  "managedWalletAddress": "0x1a2b3c4d5e6f7890abcdef1234567890abcdef12",
   "email": "user@example.com",
-  "walletAddress": "0xabcdef1234567890abcdef1234567890abcdef12",
-  "walletBalance": "12.5",
-  "plan": "pro",
-  "createdAt": "2025-06-01T00:00:00.000Z"
+  "plan": "growth",
+  "createdAt": "2026-01-15T10:00:00Z"
 }
 ```
