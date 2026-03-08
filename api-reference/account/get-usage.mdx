@@ -8,7 +8,7 @@ Retrieve usage statistics for the authenticated account.
 ## Query Parameters
 
 <ParamField query="from" type="string">
-  Start of the period (ISO 8601). Defaults to current billing period start.
+  Start of the period (ISO 8601). Defaults to 30 days ago.
 </ParamField>
 
 <ParamField query="to" type="string">
@@ -17,25 +17,34 @@ Retrieve usage statistics for the authenticated account.
 
 ## Response
 
-<ResponseField name="transactions" type="object">
-  <Expandable title="Transaction metrics">
-    <ResponseField name="total" type="number">Total transactions in the period.</ResponseField>
-    <ResponseField name="thisMonth" type="number">Transactions in the current calendar month.</ResponseField>
-  </Expandable>
+<ResponseField name="transactions" type="number">
+  Total transactions (uploads, extends, deletes) in the period.
 </ResponseField>
 
 <ResponseField name="bandwidth" type="object">
   <Expandable title="Bandwidth metrics">
-    <ResponseField name="totalBytes" type="number">Total bandwidth in bytes.</ResponseField>
-    <ResponseField name="thisMonthBytes" type="number">Bandwidth in the current calendar month.</ResponseField>
+    <ResponseField name="ingressBytes" type="number">Data uploaded (bytes).</ResponseField>
+    <ResponseField name="egressBytes" type="number">Data downloaded / served via aggregators (bytes).</ResponseField>
   </Expandable>
 </ResponseField>
 
-<ResponseField name="walletBalance" type="object">
-  <Expandable title="Wallet balance">
-    <ResponseField name="sui" type="string">SUI token balance.</ResponseField>
-    <ResponseField name="wal" type="string">WAL token balance.</ResponseField>
+<ResponseField name="storage" type="object">
+  <Expandable title="Storage metrics">
+    <ResponseField name="usedBytes" type="number">Total bytes currently stored on Walrus.</ResponseField>
+    <ResponseField name="activeFiles" type="number">Number of active files.</ResponseField>
+    <ResponseField name="environments" type="number">Number of environments.</ResponseField>
   </Expandable>
+</ResponseField>
+
+<ResponseField name="costs" type="object">
+  <Expandable title="Cost breakdown">
+    <ResponseField name="suiSpent" type="string">SUI spent in the period (gas + Tusky fees).</ResponseField>
+    <ResponseField name="walSpent" type="string">WAL spent in the period (Walrus storage).</ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="expiringFiles" type="number">
+  Number of files with storage expiring within the next 2 epochs (~4 weeks).
 </ResponseField>
 
 ## Example
@@ -43,7 +52,7 @@ Retrieve usage statistics for the authenticated account.
 <CodeGroup>
 
 ```bash cURL
-curl https://api.tusky.io/v2/account/usage \
+curl "https://api.tusky.io/v2/account/usage?from=2026-03-01T00:00:00Z&to=2026-03-07T23:59:59Z" \
   -H "Api-Key: YOUR_API_KEY"
 ```
 
@@ -53,17 +62,20 @@ curl https://api.tusky.io/v2/account/usage \
 
 ```json
 {
-  "transactions": {
-    "total": 12450,
-    "thisMonth": 3200
-  },
+  "transactions": 3200,
   "bandwidth": {
-    "totalBytes": 85236940800,
-    "thisMonthBytes": 21309235200
+    "ingressBytes": 5368709120,
+    "egressBytes": 21474836480
   },
-  "walletBalance": {
-    "sui": "45.2",
-    "wal": "120.0"
-  }
+  "storage": {
+    "usedBytes": 85236940800,
+    "activeFiles": 4520,
+    "environments": 3
+  },
+  "costs": {
+    "suiSpent": "12.45",
+    "walSpent": "38.2"
+  },
+  "expiringFiles": 42
 }
 ```
