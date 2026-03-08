@@ -1,0 +1,31 @@
+---
+title: Delete API Key
+api: 'DELETE https://api.tusky.io/v2/api-keys/{keyId}'
+---
+
+Revoke an API key. Takes effect immediately — any in-flight requests using this key will fail.
+
+## Path Parameters
+
+<ParamField path="keyId" type="string" required>
+  The API key ID to revoke.
+</ParamField>
+
+## Response
+
+Returns `204 No Content` on success.
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X DELETE https://api.tusky.io/v2/api-keys/key_abc123 \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+</CodeGroup>
+
+<Warning>
+  Revocation is immediate and permanent. Update any applications using this key before deleting.
+</Warning>

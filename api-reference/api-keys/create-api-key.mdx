@@ -1,0 +1,80 @@
+---
+title: Create API Key
+api: 'POST https://api.tusky.io/v2/api-keys'
+---
+
+Create a new API key with specific permission scopes.
+
+## Request Body
+
+<ParamField body="name" type="string" required>
+  A descriptive name for the key (e.g., `production-backend`, `ci-pipeline`).
+</ParamField>
+
+<ParamField body="scopes" type="array" required>
+  Permission scopes to grant. See [scopes reference](#available-scopes) below.
+</ParamField>
+
+<ParamField body="expiresAt" type="string">
+  Optional ISO 8601 expiration date. Key is valid indefinitely if omitted.
+</ParamField>
+
+## Available Scopes
+
+| Scope | Description |
+| --- | --- |
+| `environments:read` | List and retrieve environments |
+| `environments:write` | Create, update, delete environments |
+| `files:read` | List, retrieve, and download files |
+| `files:write` | Upload and delete files |
+| `members:read` | List environment members |
+| `members:write` | Add, update, remove members |
+| `publishers:read` | Read publisher configuration |
+| `publishers:write` | Create, update, delete publishers |
+| `aggregators:read` | Read aggregator configuration |
+| `aggregators:write` | Update, delete aggregators |
+| `secrets:read` | Read secrets |
+| `secrets:write` | Create, update, delete secrets |
+| `account:read` | Read account info and usage |
+
+## Response
+
+<ResponseField name="id" type="string">API key ID.</ResponseField>
+<ResponseField name="key" type="string">The API key value. **Only returned once** — store it securely.</ResponseField>
+<ResponseField name="name" type="string">Key name.</ResponseField>
+<ResponseField name="scopes" type="array">Granted scopes.</ResponseField>
+<ResponseField name="expiresAt" type="string">Expiration timestamp, or `null`.</ResponseField>
+<ResponseField name="createdAt" type="string">ISO 8601 creation timestamp.</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.tusky.io/v2/api-keys \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "production-backend",
+    "scopes": ["files:read", "files:write", "environments:read"]
+  }'
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "id": "key_abc123",
+  "key": "tsk_live_xK9m2...",
+  "name": "production-backend",
+  "scopes": ["files:read", "files:write", "environments:read"],
+  "expiresAt": null,
+  "createdAt": "2026-03-07T14:00:00Z"
+}
+```
+
+<Warning>
+  The `key` value is only returned in this response. Store it securely — you cannot retrieve it again.
+</Warning>

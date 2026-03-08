@@ -121,6 +121,25 @@
             "group": "Infrastructure",
             "pages": [
               {
+                "group": "Environments",
+                "pages": [
+                  "api-reference/environments/create-environment",
+                  "api-reference/environments/get-environment",
+                  "api-reference/environments/list-environments",
+                  "api-reference/environments/update-environment",
+                  "api-reference/environments/delete-environment"
+                ]
+              },
+              {
+                "group": "Members",
+                "pages": [
+                  "api-reference/members/add-member",
+                  "api-reference/members/list-members",
+                  "api-reference/members/update-member",
+                  "api-reference/members/remove-member"
+                ]
+              },
+              {
                 "group": "Publishers",
                 "pages": [
                   "api-reference/publishers/create-publisher",
@@ -173,36 +192,25 @@
             ]
           },
           {
-            "group": "Environments",
-            "pages": [
-              {
-                "group": "Environments",
-                "pages": [
-                  "api-reference/environments/create-environment",
-                  "api-reference/environments/get-environment",
-                  "api-reference/environments/list-environments",
-                  "api-reference/environments/update-environment",
-                  "api-reference/environments/delete-environment"
-                ]
-              },
-              {
-                "group": "Members",
-                "pages": [
-                  "api-reference/members/add-member",
-                  "api-reference/members/list-members",
-                  "api-reference/members/update-member",
-                  "api-reference/members/remove-member"
-                ]
-              }
-            ]
-          },
-          {
             "group": "Secrets",
             "pages": [
               "api-reference/secrets/put-secret",
               "api-reference/secrets/get-secret",
               "api-reference/secrets/list-secrets",
               "api-reference/secrets/delete-secret"
+            ]
+          },
+          {
+            "group": "Authentication",
+            "pages": [
+              {
+                "group": "API Keys",
+                "pages": [
+                  "api-reference/api-keys/create-api-key",
+                  "api-reference/api-keys/list-api-keys",
+                  "api-reference/api-keys/delete-api-key"
+                ]
+              }
             ]
           },
           {

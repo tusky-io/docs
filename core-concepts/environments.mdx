@@ -1,22 +1,44 @@
 ---
 title: Environments
-description: 'Organize and manage your files in secure containers'
+description: 'Public and private containers for your files and secrets'
 ---
 
-Environments are the top-level containers in Tusky for organizing and managing your files. Think of them as secure folders or cloud storage buckets — each environment groups related files together and provides granular control over encryption, access, and sharing.
+Environments are the top-level containers in Tusky for organizing files, folders, and secrets. Every Tusky account starts with **two environments** automatically created on sign-up: one public and one private (encrypted).
 
-## Environment types
-
-Tusky supports two environment types, each suited to different use cases.
+## Public vs Private
 
 <CardGroup cols={2}>
   <Card title="Public environment" icon="globe">
-    Files stored in a public environment are uploaded **unencrypted** to Walrus. Anyone with the blob ID or aggregator URL can retrieve them. Ideal for open data, public websites, and shared media.
+    Files are stored **unencrypted** on Walrus. Anyone with the blob ID can read the data through any Walrus aggregator. Ideal for open data, public websites, NFT media, and shared assets.
   </Card>
-  <Card title="Encrypted environment" icon="lock">
-    Files are **encrypted client-side** before leaving your device. Only environment members with the correct decryption key — derived from their connected Sui wallet or managed through Seal — can read the contents.
+  <Card title="Private environment" icon="lock">
+    Files are **encrypted client-side** before upload. Encryption keys are stored as [Secrets](/core-concepts/secrets) and managed through [Sui Seal](https://docs.mystenlabs.com/seal). The encrypted blobs are readable from any Walrus aggregator, but the data is ciphertext without the decryption key. The Tusky SDK handles encryption and decryption transparently.
   </Card>
 </CardGroup>
+
+<Info>
+  On sign-up, every account receives a **default public environment** and a **default private environment**. You can create additional environments of either type at any time.
+</Info>
+
+### How private environments work
+
+Private environment files are stored on Walrus like any other blob — they can be fetched through any standard Walrus aggregator. However, the content is encrypted ciphertext. Only users with access to the environment's encryption keys (stored as [Secrets](/core-concepts/secrets) via Sui Seal) can decrypt the data.
+
+<Steps>
+  <Step title="Upload">
+    The SDK encrypts the file client-side using keys derived from the environment's Seal policy, then uploads the ciphertext to Walrus.
+  </Step>
+  <Step title="Store keys">
+    Encryption keys are stored as secrets using Sui Seal. Access policies are defined on-chain — only authorized wallet addresses can retrieve the keys.
+  </Step>
+  <Step title="Read">
+    Any Walrus aggregator can serve the encrypted blob. The SDK fetches the ciphertext, retrieves the decryption key from Seal, and decrypts client-side.
+  </Step>
+</Steps>
+
+<Tip>
+  Because decryption happens client-side, Tusky never sees your plaintext data. And because the encrypted blobs live on Walrus, they're accessible from any aggregator — you're not locked into Tusky's infrastructure for retrieval.
+</Tip>
 
 <Warning>
   A environment's encryption setting is permanent. You cannot convert a public environment to an encrypted environment (or vice-versa) after creation.
