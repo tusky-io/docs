@@ -17,8 +17,8 @@ Update an environment's settings. Only included fields are changed.
   New environment name.
 </ParamField>
 
-<ParamField body="publisherId" type="string">
-  Assign a different publisher. Set to `null` to revert to the account default.
+<ParamField body="publisherIds" type="array">
+  Replace the assigned publishers. Pass an array of publisher IDs. Multiple publishers enable horizontal scaling — uploads are distributed across them for shorter publishing times. Set to `[]` to revert to the account default publisher.
 </ParamField>
 
 ## Response
@@ -29,11 +29,18 @@ Returns the updated environment object.
 
 <CodeGroup>
 
-```bash cURL
+```bash Scale up — add a third publisher
 curl -X PATCH https://api.tusky.io/v2/environments/env_abc123 \
   -H "Api-Key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"name": "Staging Assets", "publisherId": "pub_temp"}'
+  -d '{"publisherIds": ["pub_primary", "pub_secondary", "pub_tertiary"]}'
+```
+
+```bash Scale down — single publisher
+curl -X PATCH https://api.tusky.io/v2/environments/env_abc123 \
+  -H "Api-Key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"publisherIds": ["pub_primary"]}'
 ```
 
 </CodeGroup>
@@ -43,9 +50,9 @@ curl -X PATCH https://api.tusky.io/v2/environments/env_abc123 \
 ```json
 {
   "id": "env_abc123",
-  "name": "Staging Assets",
+  "name": "Production Assets",
   "encrypted": false,
-  "publisherId": "pub_temp",
+  "publisherIds": ["pub_primary", "pub_secondary", "pub_tertiary"],
   "updatedAt": "2026-03-07T15:00:00Z"
 }
 ```

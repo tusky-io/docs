@@ -15,8 +15,8 @@ Create a new environment. Environments are containers for files, folders, and se
   Whether to enable end-to-end encryption. When `true`, all files are encrypted client-side before upload. Encryption keys are managed via Sui Seal and stored as secrets. **Cannot be changed after creation.**
 </ParamField>
 
-<ParamField body="publisherId" type="string">
-  Publisher to use for this environment. If omitted, the account's default publisher is used. See [Publishers](/api-reference/publishers/create-publisher).
+<ParamField body="publisherIds" type="array">
+  Array of publisher IDs to assign to this environment. Assigning multiple publishers enables **horizontal scaling** — uploads are distributed across publishers for shorter publishing times. If omitted, the account's default publisher is used.
 </ParamField>
 
 ## Response
@@ -24,7 +24,7 @@ Create a new environment. Environments are containers for files, folders, and se
 <ResponseField name="id" type="string">Environment ID.</ResponseField>
 <ResponseField name="name" type="string">Environment name.</ResponseField>
 <ResponseField name="encrypted" type="boolean">Whether encrypted.</ResponseField>
-<ResponseField name="publisherId" type="string">Assigned publisher ID.</ResponseField>
+<ResponseField name="publisherIds" type="array">Assigned publisher IDs.</ResponseField>
 <ResponseField name="createdAt" type="string">ISO 8601 creation timestamp.</ResponseField>
 
 ## Example
@@ -38,7 +38,7 @@ curl -X POST https://api.tusky.io/v2/environments \
   -d '{
     "name": "Production Assets",
     "encrypted": false,
-    "publisherId": "pub_archival"
+    "publisherIds": ["pub_primary", "pub_secondary"]
   }'
 ```
 
@@ -51,11 +51,15 @@ curl -X POST https://api.tusky.io/v2/environments \
   "id": "env_abc123",
   "name": "Production Assets",
   "encrypted": false,
-  "publisherId": "pub_archival",
+  "publisherIds": ["pub_primary", "pub_secondary"],
   "createdAt": "2026-03-07T14:00:00Z"
 }
 ```
 
 <Note>
-  The `encrypted` setting is **permanent** — it cannot be changed after creation. Choose based on your security requirements.
+  The `encrypted` setting is **permanent** — it cannot be changed after creation.
 </Note>
+
+<Tip>
+  Assigning multiple publishers to an environment scales your publishing infrastructure horizontally. Incoming uploads are load-balanced across all assigned publishers, reducing publishing latency for high-throughput workloads.
+</Tip>
