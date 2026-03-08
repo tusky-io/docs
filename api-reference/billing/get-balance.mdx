@@ -1,0 +1,33 @@
+---
+title: Get Balance
+api: 'GET https://api.tusky.io/v2/billing/balance'
+---
+
+Retrieve the current prepaid wallet balance.
+
+## Response
+
+<ResponseField name="sui" type="string">SUI token balance.</ResponseField>
+<ResponseField name="wal" type="string">WAL token balance.</ResponseField>
+<ResponseField name="managedWalletAddress" type="string">The Sui address of your managed wallet.</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl https://api.tusky.io/v2/billing/balance \
+  -H "Api-Key: YOUR_API_KEY"
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "sui": "45.2",
+  "wal": "120.0",
+  "managedWalletAddress": "0x1a2b3c4d5e6f7890abcdef1234567890abcdef12"
+}
+```

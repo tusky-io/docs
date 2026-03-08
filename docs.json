@@ -243,10 +243,10 @@
           {
             "group": "Account",
             "pages": [
-              "api-reference/account/get-account",
               {
                 "group": "Prepay",
                 "pages": [
+                  "api-reference/billing/get-balance",
                   "api-reference/billing/prepay-crypto",
                   "api-reference/billing/generate-fiat-url"
                 ]

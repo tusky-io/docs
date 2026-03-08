@@ -21,12 +21,12 @@ Update an aggregator's configuration. Only included fields are updated.
   Custom domain. Set to `null` to remove. Requires a CNAME record pointing to `{subdomain}.mytusky.xyz`.
 </ParamField>
 
-<ParamField body="public" type="boolean">
-  Whether the aggregator is public. Public aggregators serve content without authentication; private aggregators require a valid API key or session.
+<ParamField body="restricted" type="boolean">
+  When `true`, requests require authentication via `Api-Key` header. When `false`, content is served without authentication.
 </ParamField>
 
-<ParamField body="restricted" type="boolean">
-  When `true`, the aggregator serves only your account's content. When `false`, it acts as an open Walrus aggregator serving any blob on the network.
+<ParamField body="public" type="boolean">
+  When `true`, the aggregator serves any content from the Walrus network. When `false`, it serves only your account's content.
 </ParamField>
 
 <ParamField body="cache" type="boolean">

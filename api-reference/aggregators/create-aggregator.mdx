@@ -11,12 +11,12 @@ Create a new aggregator. Each account starts with a default aggregator; use this
   Subdomain for the aggregator (e.g., `myapp` → `myapp.mytusky.xyz`). Must be unique, lowercase, 3–32 characters.
 </ParamField>
 
-<ParamField body="public" type="boolean" default="false">
-  Whether the aggregator is public (no authentication required to access content).
+<ParamField body="restricted" type="boolean" default="false">
+  When `true`, requests require authentication via `Api-Key` header. When `false`, content is served without authentication.
 </ParamField>
 
-<ParamField body="restricted" type="boolean" default="true">
-  When `true`, the aggregator serves **only** content belonging to your account. When `false`, the aggregator serves any content from the Walrus network (acts as an open Walrus aggregator).
+<ParamField body="public" type="boolean" default="false">
+  When `true`, the aggregator serves **any content from the Walrus network** (acts as an open Walrus aggregator). When `false`, the aggregator serves only content belonging to your account.
 </ParamField>
 
 <ParamField body="cache" type="boolean" default="true">
@@ -28,7 +28,7 @@ Create a new aggregator. Each account starts with a default aggregator; use this
 </ParamField>
 
 <ParamField body="customDomain" type="string">
-  Custom domain for the aggregator. Requires a CNAME record pointing to `{subdomain}.mytusky.xyz`.
+  Custom domain. Requires a CNAME record pointing to `{subdomain}.mytusky.xyz`.
 </ParamField>
 
 ## Response
@@ -37,8 +37,8 @@ Create a new aggregator. Each account starts with a default aggregator; use this
 <ResponseField name="url" type="string">Full aggregator URL.</ResponseField>
 <ResponseField name="subdomain" type="string">Assigned subdomain.</ResponseField>
 <ResponseField name="customDomain" type="string">Custom domain, or `null`.</ResponseField>
-<ResponseField name="public" type="boolean">Whether public.</ResponseField>
-<ResponseField name="restricted" type="boolean">Whether restricted to account content.</ResponseField>
+<ResponseField name="restricted" type="boolean">Whether authentication is required.</ResponseField>
+<ResponseField name="public" type="boolean">Whether serving all Walrus content.</ResponseField>
 <ResponseField name="cache" type="boolean">Whether Cloudflare edge caching is enabled.</ResponseField>
 <ResponseField name="fallbackToBackup" type="boolean">Whether backup fallback is enabled.</ResponseField>
 <ResponseField name="createdAt" type="string">ISO 8601 creation timestamp.</ResponseField>
@@ -53,8 +53,8 @@ curl -X POST https://api.tusky.io/v2/aggregators \
   -H "Content-Type: application/json" \
   -d '{
     "subdomain": "cdn-assets",
-    "public": true,
-    "restricted": true,
+    "restricted": false,
+    "public": false,
     "cache": true
   }'
 ```
@@ -69,8 +69,8 @@ curl -X POST https://api.tusky.io/v2/aggregators \
   "url": "https://cdn-assets.mytusky.xyz",
   "subdomain": "cdn-assets",
   "customDomain": null,
-  "public": true,
-  "restricted": true,
+  "restricted": false,
+  "public": false,
   "cache": true,
   "fallbackToBackup": false,
   "createdAt": "2026-03-07T14:00:00Z"
@@ -78,5 +78,5 @@ curl -X POST https://api.tusky.io/v2/aggregators \
 ```
 
 <Note>
-  Set `restricted: false` to create an open Walrus aggregator that serves any blob on the network — useful for public goods or community infrastructure. Restricted aggregators only serve content published through your account.
+  Default: `restricted: false, public: false` — serves your account's content without requiring authentication. Set `restricted: true` to require an `Api-Key` header on every request. Set `public: true` to serve any blob from the Walrus network.
 </Note>

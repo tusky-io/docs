@@ -29,12 +29,12 @@ Retrieve an aggregator by ID.
   Custom domain, or `null` if not configured.
 </ResponseField>
 
-<ResponseField name="public" type="boolean">
-  Whether the aggregator is public. Public aggregators serve content to anyone; private aggregators require authentication.
+<ResponseField name="restricted" type="boolean">
+  Whether authentication is required. When `true`, requests must include an `Api-Key` header.
 </ResponseField>
 
-<ResponseField name="restricted" type="boolean">
-  When `true`, serves only content belonging to your account. When `false`, serves any content from the Walrus network.
+<ResponseField name="public" type="boolean">
+  When `true`, serves any content from the Walrus network. When `false`, serves only your account's content.
 </ResponseField>
 
 <ResponseField name="cache" type="boolean">
@@ -72,8 +72,8 @@ curl https://api.tusky.io/v2/aggregators/default \
   "url": "https://myapp.mytusky.xyz",
   "subdomain": "myapp",
   "customDomain": null,
+  "restricted": false,
   "public": false,
-  "restricted": true,
   "cache": true,
   "fallbackToBackup": false,
   "analyticsEnabled": true,
