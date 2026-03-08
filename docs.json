@@ -248,7 +248,8 @@
                 "pages": [
                   "api-reference/billing/get-balance",
                   "api-reference/billing/prepay-crypto",
-                  "api-reference/billing/generate-fiat-url"
+                  "api-reference/billing/generate-fiat-url",
+                  "api-reference/billing/withdraw"
                 ]
               },
               {
