@@ -25,6 +25,10 @@ Update an aggregator's configuration. Only included fields are updated.
   Whether the aggregator is public. Public aggregators serve content without authentication; private aggregators require a valid API key or session.
 </ParamField>
 
+<ParamField body="restricted" type="boolean">
+  When `true`, the aggregator serves only your account's content. When `false`, it acts as an open Walrus aggregator serving any blob on the network.
+</ParamField>
+
 <ParamField body="cache" type="boolean">
   Whether to enable Cloudflare edge caching. Caches content at 300+ global edge locations for low-latency delivery. Disable for content that changes frequently.
 </ParamField>

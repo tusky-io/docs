@@ -1,0 +1,49 @@
+---
+title: Subscribe with Balance
+api: 'POST https://api.tusky.io/v2/billing/subscription/pay-with-balance'
+---
+
+Subscribe to a plan using your prepaid SUI token balance. The subscription cost is deducted from your managed wallet. Renews automatically each period from the same balance.
+
+## Request Body
+
+<ParamField body="plan" type="string" required>
+  Target plan: `starter`, `growth`, `scale`.
+</ParamField>
+
+## Response
+
+<ResponseField name="plan" type="string">Activated plan.</ResponseField>
+<ResponseField name="status" type="string">Subscription status (`active`).</ResponseField>
+<ResponseField name="chargedAmount" type="string">SUI deducted for this period.</ResponseField>
+<ResponseField name="newBalance" type="string">Remaining SUI balance.</ResponseField>
+<ResponseField name="renewsAt" type="string">Next renewal date (ISO 8601).</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.tusky.io/v2/billing/subscription/pay-with-balance \
+  -H "Api-Key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"plan": "growth"}'
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "plan": "growth",
+  "status": "active",
+  "chargedAmount": "25.0",
+  "newBalance": "30.2",
+  "renewsAt": "2026-04-07T14:00:00Z"
+}
+```
+
+<Note>
+  If your balance is insufficient at renewal time, the subscription transitions to `past_due`. Top up your balance to avoid service interruption.
+</Note>

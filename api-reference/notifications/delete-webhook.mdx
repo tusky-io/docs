@@ -1,0 +1,27 @@
+---
+title: Delete Webhook
+api: 'DELETE https://api.tusky.io/v2/notifications/webhooks/{webhookId}'
+---
+
+Delete a webhook endpoint. No further events will be sent to this URL.
+
+## Path Parameters
+
+<ParamField path="webhookId" type="string" required>
+  The webhook ID to delete.
+</ParamField>
+
+## Response
+
+Returns `204 No Content` on success.
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X DELETE https://api.tusky.io/v2/notifications/webhooks/wh_abc123 \
+  -H "Api-Key: YOUR_API_KEY"
+```
+
+</CodeGroup>

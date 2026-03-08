@@ -1,0 +1,67 @@
+---
+title: Create Webhook
+api: 'POST https://api.tusky.io/v2/notifications/webhooks'
+---
+
+Create a webhook endpoint to receive event notifications via HTTP POST.
+
+## Request Body
+
+<ParamField body="url" type="string" required>
+  The HTTPS URL to send webhook events to.
+</ParamField>
+
+<ParamField body="events" type="array" required>
+  Event types to subscribe to: `files.expiring`, `balance.low`, `bandwidth.limit_approaching`, `bandwidth.limit_reached`, `transactions.limit_approaching`, `transactions.limit_reached`.
+</ParamField>
+
+<ParamField body="balanceThreshold" type="string">
+  SUI balance threshold for `balance.low` events (e.g., `"5.0"`).
+</ParamField>
+
+## Response
+
+<ResponseField name="id" type="string">Webhook ID.</ResponseField>
+<ResponseField name="url" type="string">Webhook URL.</ResponseField>
+<ResponseField name="events" type="array">Subscribed events.</ResponseField>
+<ResponseField name="active" type="boolean">Whether the webhook is active.</ResponseField>
+<ResponseField name="secret" type="string">Signing secret for verifying payloads. **Only returned once.**</ResponseField>
+<ResponseField name="createdAt" type="string">ISO 8601 creation timestamp.</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.tusky.io/v2/notifications/webhooks \
+  -H "Api-Key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://api.example.com/tusky-webhook",
+    "events": ["files.expiring", "balance.low", "transactions.limit_reached"],
+    "balanceThreshold": "5.0"
+  }'
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "id": "wh_abc123",
+  "url": "https://api.example.com/tusky-webhook",
+  "events": ["files.expiring", "balance.low", "transactions.limit_reached"],
+  "active": true,
+  "secret": "whsec_xK9m2nP4qR7...",
+  "createdAt": "2026-03-07T14:00:00Z"
+}
+```
+
+<Warning>
+  The `secret` is only returned when the webhook is created. Store it securely — use it to verify webhook payload signatures.
+</Warning>
+
+<Note>
+  Webhook payloads are signed with HMAC-SHA256 using the `secret`. Verify the `X-Tusky-Signature` header on incoming requests to ensure authenticity.
+</Note>

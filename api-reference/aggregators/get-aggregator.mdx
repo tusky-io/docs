@@ -33,6 +33,10 @@ Retrieve an aggregator by ID.
   Whether the aggregator is public. Public aggregators serve content to anyone; private aggregators require authentication.
 </ResponseField>
 
+<ResponseField name="restricted" type="boolean">
+  When `true`, serves only content belonging to your account. When `false`, serves any content from the Walrus network.
+</ResponseField>
+
 <ResponseField name="cache" type="boolean">
   Whether Cloudflare edge caching is enabled. When `true`, content is cached at 300+ edge locations for low-latency delivery.
 </ResponseField>
@@ -69,6 +73,7 @@ curl https://api.tusky.io/v2/aggregators/default \
   "subdomain": "myapp",
   "customDomain": null,
   "public": false,
+  "restricted": true,
   "cache": true,
   "fallbackToBackup": false,
   "analyticsEnabled": true,

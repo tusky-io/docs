@@ -3,39 +3,29 @@ title: Create Environment
 api: 'POST https://api.tusky.io/v2/environments'
 ---
 
-Create a new environment to organize and store files on the Walrus network.
+Create a new environment. Environments are containers for files, folders, and secrets. They can be public or private (encrypted).
 
 ## Request Body
 
 <ParamField body="name" type="string" required>
-  The name of the environment. Must be between 1 and 128 characters.
+  Environment name. 1–128 characters.
 </ParamField>
 
 <ParamField body="encrypted" type="boolean" default="false">
-  Whether to enable end-to-end encryption for the environment. When enabled, all files uploaded to this environment are encrypted before being stored on Walrus. This cannot be changed after creation.
+  Whether to enable end-to-end encryption. When `true`, all files are encrypted client-side before upload. Encryption keys are managed via Sui Seal and stored as secrets. **Cannot be changed after creation.**
+</ParamField>
+
+<ParamField body="publisherId" type="string">
+  Publisher to use for this environment. If omitted, the account's default publisher is used. See [Publishers](/api-reference/publishers/create-publisher).
 </ParamField>
 
 ## Response
 
-<ResponseField name="id" type="string">
-  Unique identifier for the environment.
-</ResponseField>
-
-<ResponseField name="name" type="string">
-  The name of the environment.
-</ResponseField>
-
-<ResponseField name="encrypted" type="boolean">
-  Whether the environment is encrypted.
-</ResponseField>
-
-<ResponseField name="createdAt" type="string">
-  ISO 8601 timestamp of when the environment was created.
-</ResponseField>
-
-<ResponseField name="updatedAt" type="string">
-  ISO 8601 timestamp of when the environment was last updated.
-</ResponseField>
+<ResponseField name="id" type="string">Environment ID.</ResponseField>
+<ResponseField name="name" type="string">Environment name.</ResponseField>
+<ResponseField name="encrypted" type="boolean">Whether encrypted.</ResponseField>
+<ResponseField name="publisherId" type="string">Assigned publisher ID.</ResponseField>
+<ResponseField name="createdAt" type="string">ISO 8601 creation timestamp.</ResponseField>
 
 ## Example
 
@@ -43,11 +33,12 @@ Create a new environment to organize and store files on the Walrus network.
 
 ```bash cURL
 curl -X POST https://api.tusky.io/v2/environments \
-  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Api-Key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "My First Environment",
-    "encrypted": false
+    "name": "Production Assets",
+    "encrypted": false,
+    "publisherId": "pub_archival"
   }'
 ```
 
@@ -57,14 +48,14 @@ curl -X POST https://api.tusky.io/v2/environments \
 
 ```json
 {
-  "id": "env_abc123def456",
-  "name": "My First Environment",
+  "id": "env_abc123",
+  "name": "Production Assets",
   "encrypted": false,
-  "createdAt": "2025-07-01T12:00:00.000Z",
-  "updatedAt": "2025-07-01T12:00:00.000Z"
+  "publisherId": "pub_archival",
+  "createdAt": "2026-03-07T14:00:00Z"
 }
 ```
 
 <Note>
-  The `encrypted` setting is permanent and cannot be changed after environment creation. Choose carefully based on your security requirements.
+  The `encrypted` setting is **permanent** — it cannot be changed after creation. Choose based on your security requirements.
 </Note>

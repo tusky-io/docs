@@ -133,6 +133,7 @@
               {
                 "group": "Aggregators",
                 "pages": [
+                  "api-reference/aggregators/create-aggregator",
                   "api-reference/aggregators/get-aggregator",
                   "api-reference/aggregators/update-aggregator",
                   "api-reference/aggregators/delete-aggregator",
@@ -220,22 +221,49 @@
             ]
           },
           {
+            "group": "Notifications",
+            "pages": [
+              {
+                "group": "Email",
+                "pages": [
+                  "api-reference/notifications/get-email-settings",
+                  "api-reference/notifications/update-email-settings"
+                ]
+              },
+              {
+                "group": "Webhooks",
+                "pages": [
+                  "api-reference/notifications/list-webhooks",
+                  "api-reference/notifications/create-webhook",
+                  "api-reference/notifications/delete-webhook"
+                ]
+              }
+            ]
+          },
+          {
             "group": "Account",
             "pages": [
               "api-reference/account/get-account",
               {
-                "group": "Analytics",
+                "group": "Prepay",
                 "pages": [
-                  "api-reference/account/get-usage"
+                  "api-reference/billing/prepay-crypto",
+                  "api-reference/billing/generate-fiat-url"
                 ]
               },
               {
-                "group": "Billing",
+                "group": "Subscriptions",
                 "pages": [
-                  "api-reference/billing/prepay-crypto",
-                  "api-reference/billing/generate-fiat-url",
                   "api-reference/billing/get-subscription",
-                  "api-reference/billing/update-subscription"
+                  "api-reference/billing/update-subscription",
+                  "api-reference/billing/subscribe-with-balance",
+                  "api-reference/billing/generate-subscription-url"
+                ]
+              },
+              {
+                "group": "Analytics",
+                "pages": [
+                  "api-reference/account/get-usage"
                 ]
               }
             ]

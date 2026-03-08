@@ -1,0 +1,47 @@
+---
+title: Generate Subscription Payment URL
+api: 'POST https://api.tusky.io/v2/billing/subscription/checkout'
+---
+
+Generate a checkout URL to subscribe using a credit card. The user is redirected to a payment page. On success, the subscription is activated.
+
+## Request Body
+
+<ParamField body="plan" type="string" required>
+  Target plan: `starter`, `growth`, `scale`.
+</ParamField>
+
+<ParamField body="returnUrl" type="string">
+  URL to redirect to after payment completes.
+</ParamField>
+
+## Response
+
+<ResponseField name="checkoutUrl" type="string">Redirect URL for payment.</ResponseField>
+<ResponseField name="sessionId" type="string">Payment session ID.</ResponseField>
+<ResponseField name="plan" type="string">Selected plan.</ResponseField>
+<ResponseField name="expiresAt" type="string">Checkout URL expiration (ISO 8601).</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.tusky.io/v2/billing/subscription/checkout \
+  -H "Api-Key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"plan": "growth", "returnUrl": "https://app.tusky.io/billing/success"}'
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "checkoutUrl": "https://checkout.tusky.io/subscribe/session_xyz789",
+  "sessionId": "session_xyz789",
+  "plan": "growth",
+  "expiresAt": "2026-03-07T15:30:00Z"
+}
+```

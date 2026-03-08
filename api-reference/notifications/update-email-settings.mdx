@@ -1,0 +1,53 @@
+---
+title: Update Email Settings
+api: 'PATCH https://api.tusky.io/v2/notifications/email'
+---
+
+Configure email notification preferences.
+
+## Request Body
+
+<ParamField body="enabled" type="boolean">
+  Enable or disable email notifications.
+</ParamField>
+
+<ParamField body="email" type="string">
+  Destination email address.
+</ParamField>
+
+<ParamField body="events" type="array">
+  Event types to subscribe to: `files.expiring`, `balance.low`, `bandwidth.limit_approaching`, `bandwidth.limit_reached`, `transactions.limit_approaching`, `transactions.limit_reached`.
+</ParamField>
+
+<ParamField body="balanceThreshold" type="string">
+  SUI balance threshold for `balance.low` alerts (e.g., `"5.0"`).
+</ParamField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X PATCH https://api.tusky.io/v2/notifications/email \
+  -H "Api-Key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "enabled": true,
+    "email": "alerts@example.com",
+    "events": ["files.expiring", "balance.low"],
+    "balanceThreshold": "5.0"
+  }'
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "enabled": true,
+  "email": "alerts@example.com",
+  "events": ["files.expiring", "balance.low"],
+  "balanceThreshold": "5.0"
+}
+```

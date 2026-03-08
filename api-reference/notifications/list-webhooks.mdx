@@ -1,0 +1,38 @@
+---
+title: List Webhooks
+api: 'GET https://api.tusky.io/v2/notifications/webhooks'
+---
+
+List all configured webhook endpoints.
+
+## Response
+
+Returns an array of webhook objects.
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl https://api.tusky.io/v2/notifications/webhooks \
+  -H "Api-Key: YOUR_API_KEY"
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "data": [
+    {
+      "id": "wh_abc123",
+      "url": "https://api.example.com/tusky-webhook",
+      "events": ["files.expiring", "balance.low"],
+      "active": true,
+      "secret": "whsec_****...",
+      "createdAt": "2026-03-07T14:00:00Z"
+    }
+  ]
+}
+```

@@ -1,0 +1,82 @@
+---
+title: Create Aggregator
+api: 'POST https://api.tusky.io/v2/aggregators'
+---
+
+Create a new aggregator. Each account starts with a default aggregator; use this endpoint to create additional ones with different configurations.
+
+## Request Body
+
+<ParamField body="subdomain" type="string" required>
+  Subdomain for the aggregator (e.g., `myapp` → `myapp.mytusky.xyz`). Must be unique, lowercase, 3–32 characters.
+</ParamField>
+
+<ParamField body="public" type="boolean" default="false">
+  Whether the aggregator is public (no authentication required to access content).
+</ParamField>
+
+<ParamField body="restricted" type="boolean" default="true">
+  When `true`, the aggregator serves **only** content belonging to your account. When `false`, the aggregator serves any content from the Walrus network (acts as an open Walrus aggregator).
+</ParamField>
+
+<ParamField body="cache" type="boolean" default="true">
+  Whether to enable Cloudflare edge caching for low-latency delivery.
+</ParamField>
+
+<ParamField body="fallbackToBackup" type="boolean" default="false">
+  Whether to fall back to the centralized backup store when Walrus is unavailable.
+</ParamField>
+
+<ParamField body="customDomain" type="string">
+  Custom domain for the aggregator. Requires a CNAME record pointing to `{subdomain}.mytusky.xyz`.
+</ParamField>
+
+## Response
+
+<ResponseField name="id" type="string">Aggregator ID.</ResponseField>
+<ResponseField name="url" type="string">Full aggregator URL.</ResponseField>
+<ResponseField name="subdomain" type="string">Assigned subdomain.</ResponseField>
+<ResponseField name="customDomain" type="string">Custom domain, or `null`.</ResponseField>
+<ResponseField name="public" type="boolean">Whether public.</ResponseField>
+<ResponseField name="restricted" type="boolean">Whether restricted to account content.</ResponseField>
+<ResponseField name="cache" type="boolean">Whether Cloudflare edge caching is enabled.</ResponseField>
+<ResponseField name="fallbackToBackup" type="boolean">Whether backup fallback is enabled.</ResponseField>
+<ResponseField name="createdAt" type="string">ISO 8601 creation timestamp.</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.tusky.io/v2/aggregators \
+  -H "Api-Key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "subdomain": "cdn-assets",
+    "public": true,
+    "restricted": true,
+    "cache": true
+  }'
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "id": "agg_xyz789",
+  "url": "https://cdn-assets.mytusky.xyz",
+  "subdomain": "cdn-assets",
+  "customDomain": null,
+  "public": true,
+  "restricted": true,
+  "cache": true,
+  "fallbackToBackup": false,
+  "createdAt": "2026-03-07T14:00:00Z"
+}
+```
+
+<Note>
+  Set `restricted: false` to create an open Walrus aggregator that serves any blob on the network — useful for public goods or community infrastructure. Restricted aggregators only serve content published through your account.
+</Note>

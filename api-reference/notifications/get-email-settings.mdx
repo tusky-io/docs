@@ -1,0 +1,46 @@
+---
+title: Get Email Settings
+api: 'GET https://api.tusky.io/v2/notifications/email'
+---
+
+Retrieve email notification settings.
+
+## Response
+
+<ResponseField name="enabled" type="boolean">Whether email notifications are enabled.</ResponseField>
+<ResponseField name="email" type="string">Destination email address.</ResponseField>
+<ResponseField name="events" type="array">
+  Enabled event types. See [events reference](#event-types).
+</ResponseField>
+
+## Event Types
+
+| Event | Description |
+| --- | --- |
+| `files.expiring` | Files approaching storage epoch expiration |
+| `balance.low` | Prepaid balance below configured threshold |
+| `bandwidth.limit_approaching` | Bandwidth usage nearing plan limit (80%) |
+| `bandwidth.limit_reached` | Bandwidth limit reached |
+| `transactions.limit_approaching` | Transaction count nearing plan limit (80%) |
+| `transactions.limit_reached` | Transaction limit reached |
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl https://api.tusky.io/v2/notifications/email \
+  -H "Api-Key: YOUR_API_KEY"
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "enabled": true,
+  "email": "alerts@example.com",
+  "events": ["files.expiring", "balance.low", "bandwidth.limit_approaching"]
+}
+```
