@@ -121,6 +121,29 @@
             "group": "Infrastructure",
             "pages": [
               {
+                "group": "Publishers",
+                "pages": [
+                  "api-reference/publishers/create-publisher",
+                  "api-reference/publishers/get-publisher",
+                  "api-reference/publishers/list-publishers",
+                  "api-reference/publishers/update-publisher",
+                  "api-reference/publishers/delete-publisher"
+                ]
+              },
+              {
+                "group": "Aggregators",
+                "pages": [
+                  "api-reference/aggregators/get-aggregator",
+                  "api-reference/aggregators/update-aggregator",
+                  "api-reference/aggregators/delete-aggregator"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Environments",
+            "pages": [
+              {
                 "group": "Environments",
                 "pages": [
                   "api-reference/environments/create-environment",
@@ -137,24 +160,6 @@
                   "api-reference/members/list-members",
                   "api-reference/members/update-member",
                   "api-reference/members/remove-member"
-                ]
-              },
-              {
-                "group": "Publishers",
-                "pages": [
-                  "api-reference/publishers/create-publisher",
-                  "api-reference/publishers/get-publisher",
-                  "api-reference/publishers/list-publishers",
-                  "api-reference/publishers/update-publisher",
-                  "api-reference/publishers/delete-publisher"
-                ]
-              },
-              {
-                "group": "Aggregators",
-                "pages": [
-                  "api-reference/aggregators/get-aggregator",
-                  "api-reference/aggregators/update-aggregator",
-                  "api-reference/aggregators/delete-aggregator"
                 ]
               }
             ]
