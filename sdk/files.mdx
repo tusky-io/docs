@@ -58,7 +58,7 @@ const file = await tusky.file.upload("env_abc123", stream, {
 | `autoExtend` | `boolean` | Environment default | Automatically renew storage before expiry. |
 
 <Tip>
-  Use the [cost estimation endpoint](/api-reference/uploads/create-upload) to preview the storage cost in SUI before uploading. Cost = Walrus storage cost + 10% Tusky fee.
+  Use the [cost estimation endpoint](/api-reference/uploads/create-upload) to preview the storage cost before uploading. Cost = Walrus storage cost (WAL) + gas fee (SUI). Tusky charges no infrastructure fee.
 </Tip>
 
 ## Get File Metadata

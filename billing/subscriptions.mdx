@@ -23,7 +23,7 @@ Subscriptions offer an alternative to [pay-as-you-go](/billing/pay-as-you-go) bi
 </Steps>
 
 <Info>
-  A subscription replaces the 10% Tusky infrastructure fee on each transaction. Instead of paying per-upload fees, your subscription covers Tusky's infrastructure costs for the month. You still need WAL in your managed wallet for Walrus storage payments.
+  A subscription covers Tusky's infrastructure costs for the month. You still need WAL in your managed wallet for Walrus storage payments.
 </Info>
 
 ## Plans
@@ -46,8 +46,8 @@ Tusky offers tiered subscription plans to fit different usage levels. The follow
 Each subscription covers:
 
 <CardGroup cols={2}>
-  <Card title="Tusky infrastructure fee" icon="server">
-    The 10% per-transaction fee is waived. Your subscription covers API services, encryption, and aggregator hosting.
+  <Card title="Tusky infrastructure" icon="server">
+    Your subscription covers API services, encryption, and aggregator hosting.
   </Card>
   <Card title="Aggregator bandwidth" icon="globe">
     File downloads served through your private aggregator count against your monthly bandwidth allowance.
@@ -85,7 +85,7 @@ When you exceed your plan's monthly limits:
 | Feature | Subscription | Pay-As-You-Go |
 | --- | --- | --- |
 | **Pricing model** | Fixed monthly fee (SUI) | Per-transaction (SUI via x402) |
-| **Tusky fee** | Included in subscription | 10% on each upload |
+| **Tusky fee** | Included in subscription | None |
 | **Walrus cost (WAL)** | Pay-per-use from prepaid wallet | Pay-per-use from prepaid wallet |
 | **Cost predictability** | High — fixed monthly rate | Variable — depends on usage |
 | **Transaction limits** | Monthly cap per plan tier | Unlimited (pay per request) |
@@ -101,7 +101,7 @@ Subscriptions are ideal when:
 - Your application has **predictable traffic patterns** and you want to budget costs in advance.
 - You prefer a **fixed monthly bill** over variable per-transaction charges.
 - You are running a **production application** and want to avoid per-request payment overhead.
-- You want to **eliminate the 10% per-upload fee** and replace it with a flat rate.
+- You want a **flat monthly rate** covering infrastructure instead of per-request billing.
 
 <Info>
   You can switch between subscription and pay-as-you-go at any time. When you cancel a subscription, you revert to pay-as-you-go billing at the end of the current billing cycle.

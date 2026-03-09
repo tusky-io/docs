@@ -11,7 +11,7 @@ Tusky requires **two tokens** to operate on the Walrus network:
 
 <CardGroup cols={2}>
   <Card title="SUI" icon="coins">
-    Covers **gas fees** for every Sui transaction your managed wallet submits, plus the **10% Tusky infrastructure fee** that funds API services, encryption, and aggregator hosting.
+    Covers **gas fees** for every Sui transaction your managed wallet submits.
   </Card>
   <Card title="WAL" icon="database">
     Pays **Walrus storage nodes** for the epochs you purchase. WAL is locked on-chain for the duration of your storage reservation.
@@ -48,14 +48,13 @@ Tusky requires **two tokens** to operate on the Walrus network:
 Every file upload costs:
 
 ```
-Total Cost = Walrus Storage Cost (WAL) + Gas Fee (SUI) + 10% Tusky Fee (SUI)
+Total Cost = Walrus Storage Cost (WAL) + Gas Fee (SUI)
 ```
 
 | Component | Token | Description |
 | --- | --- | --- |
 | **Walrus storage** | WAL | Paid to Walrus storage nodes for the number of epochs you select. Scales linearly with file size and duration. |
 | **Gas fee** | SUI | Sui network transaction fee for publishing the blob on-chain. |
-| **Tusky fee** | SUI | 10% of the Walrus storage cost, covering infrastructure, encryption, and aggregator services. |
 
 ## Cost estimation
 
@@ -78,7 +77,7 @@ const estimate = await tusky.file.estimate({
 });
 
 console.log("WAL cost:", estimate.walrusCost);
-console.log("Tusky fee (SUI):", estimate.tuskyFee);
+console.log("Gas estimate (SUI):", estimate.gasEstimate);
 console.log("Gas estimate (SUI):", estimate.gasEstimate);
 console.log("Total SUI needed:", estimate.totalSui);
 ```
@@ -88,9 +87,8 @@ console.log("Total SUI needed:", estimate.totalSui);
 ```json Response
 {
   "walrusCost": "0.045 WAL",
-  "tuskyFee": "0.0045 SUI",
   "gasEstimate": "0.002 SUI",
-  "totalSui": "0.0065 SUI",
+  "totalSui": "0.002 SUI",
   "totalWal": "0.045 WAL",
   "epochs": 5
 }

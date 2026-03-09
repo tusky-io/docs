@@ -12,7 +12,7 @@ Prepaid mode lets you fund your Tusky managed wallet in advance with SUI and WAL
     Send SUI or WAL tokens to your managed wallet address. You can find your wallet address in the dashboard or via the SDK.
   </Step>
   <Step title="Upload files">
-    When you upload, Tusky deducts the cost (Walrus storage + 10% fee) from your prepaid balance automatically.
+    When you upload, Tusky deducts the Walrus storage cost from your prepaid balance automatically.
   </Step>
   <Step title="Monitor balance">
     Track your remaining balance through the dashboard, API, or SDK. Tusky sends notifications when your balance is running low.
@@ -56,7 +56,7 @@ Transfer SUI or WAL to your managed wallet address from any Sui-compatible walle
 When you upload a file, the cost breakdown is:
 
 ```
-Deducted Amount = Walrus Storage Cost + 10% Tusky Fee
+Deducted Amount = Walrus Storage Cost
 ```
 
 If your balance is insufficient, the upload will fail with a `402 Payment Required` error. You can either fund your wallet or fall back to [pay-as-you-go](/billing/pay-as-you-go) micropayments.

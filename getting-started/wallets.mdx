@@ -3,7 +3,7 @@ title: Wallets & Funding
 description: 'Fund your Tusky wallet with SUI and WAL tokens'
 ---
 
-Tusky uses a **prepaid wallet** system. You deposit SUI and WAL tokens into your Tusky wallet, and storage operations draw from that balance automatically. There is no free tier — all storage is paid at current Walrus network rates plus a Tusky infrastructure fee.
+Tusky uses a **prepaid wallet** system. You deposit SUI and WAL tokens into your Tusky wallet, and storage operations draw from that balance automatically. There is no free tier — all storage is paid at current Walrus network rates.
 
 ## How Billing Works
 
@@ -12,10 +12,10 @@ Every file you upload through Tusky involves two costs:
 | Cost Component | Token | Description |
 | --- | --- | --- |
 | **Walrus storage** | WAL | Paid to Walrus storage nodes for blob storage across epochs. Rate determined by the Walrus network. |
-| **Tusky infrastructure fee** | SUI | A 10% fee on top of the base storage cost, covering managed publishing, aggregation, encryption, indexing, and aggregator services. |
+| **Gas fee** | SUI | Sui network transaction fee for publishing the blob on-chain. |
 
 <Info>
-  Storage costs scale with file size and the number of storage epochs. The Walrus network sets base rates — Tusky passes these through directly with no markup on the WAL component.
+  Storage costs scale with file size and the number of storage epochs. Tusky passes through Walrus storage costs directly with no markup or infrastructure fee.
 </Info>
 
 ## Funding Your Wallet
@@ -26,7 +26,7 @@ Every file you upload through Tusky involves two costs:
   </Step>
 
   <Step title="Deposit SUI">
-    Click **Deposit SUI** and approve the transfer from your connected Sui wallet. SUI is used for gas fees and the Tusky infrastructure fee.
+    Click **Deposit SUI** and approve the transfer from your connected Sui wallet. SUI is used for gas fees on Sui transactions.
   </Step>
 
   <Step title="Deposit WAL">
