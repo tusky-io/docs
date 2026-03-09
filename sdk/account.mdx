@@ -59,22 +59,34 @@ Monitor your storage consumption and API usage:
 ```typescript
 const usage = await tusky.account.usage();
 
-console.log("Storage used:", usage.storageBytes, "bytes");
-console.log("Files stored:", usage.fileCount);
-console.log("Environments:", usage.environmentCount);
-console.log("Bandwidth (this month):", usage.bandwidthBytes, "bytes");
-console.log("API requests (this month):", usage.apiRequests);
+console.log("Transactions:", usage.transactions);
+console.log("Ingress:", usage.ingressBytes, "bytes");
+console.log("Egress:", usage.egressBytes, "bytes");
+console.log("Storage used:", usage.usedBytes, "bytes");
+console.log("Active files:", usage.activeFiles);
+console.log("Expired files:", usage.expiredFiles);
+console.log("Environments:", usage.environments);
+console.log("Publishers:", usage.publishers);
+console.log("Aggregators:", usage.aggregators);
+console.log("SUI spent:", usage.suiSpent);
+console.log("WAL spent:", usage.walSpent);
 ```
 
 ### Usage Object
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `storageBytes` | `number` | Total bytes currently stored across all environments. |
-| `fileCount` | `number` | Total number of files across all environments. |
-| `environmentCount` | `number` | Number of active environments. |
-| `bandwidthBytes` | `number` | Aggregator bandwidth consumed in the current billing period. |
-| `apiRequests` | `number` | API calls made in the current billing period. |
+| `transactions` | `number` | Total transactions (uploads, extends, deletes) in the period. |
+| `ingressBytes` | `number` | Data uploaded in the period (bytes). |
+| `egressBytes` | `number` | Data downloaded / served via aggregators in the period (bytes). |
+| `usedBytes` | `number` | Total bytes currently stored on Walrus. |
+| `activeFiles` | `number` | Number of active files. |
+| `expiredFiles` | `number` | Number of files whose storage epochs have already expired. |
+| `environments` | `number` | Number of environments on the account. |
+| `publishers` | `number` | Number of publishers on the account. |
+| `aggregators` | `number` | Number of aggregators on the account. |
+| `suiSpent` | `string` | SUI spent in the period (gas fees). |
+| `walSpent` | `string` | WAL spent in the period (Walrus storage). |
 
 <Tip>
   Use `tusky.account.usage()` in monitoring dashboards or alerting systems to track consumption and avoid unexpected charges.
@@ -96,9 +108,12 @@ console.log(`WAL: ${account.managedWallet.walBalance}`);
 
 // Usage stats
 const usage = await tusky.account.usage();
-console.log(`Storage: ${(usage.storageBytes / 1e9).toFixed(2)} GB`);
-console.log(`Files: ${usage.fileCount}`);
-console.log(`Bandwidth: ${(usage.bandwidthBytes / 1e9).toFixed(2)} GB`);
+console.log(`Storage: ${(usage.usedBytes / 1e9).toFixed(2)} GB`);
+console.log(`Active files: ${usage.activeFiles}`);
+console.log(`Expired files: ${usage.expiredFiles}`);
+console.log(`Egress: ${(usage.egressBytes / 1e9).toFixed(2)} GB`);
+console.log(`Publishers: ${usage.publishers}`);
+console.log(`Aggregators: ${usage.aggregators}`);
 ```
 
 ## What's Next

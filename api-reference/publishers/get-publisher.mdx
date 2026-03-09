@@ -17,8 +17,8 @@ Retrieve a publisher by ID.
   Unique publisher identifier.
 </ResponseField>
 
-<ResponseField name="active" type="boolean">
-  Whether the publisher is active.
+<ResponseField name="state" type="string">
+  Current operational state of the publisher. One of `ready`, `idle`, `working`, `deactivated`.
 </ResponseField>
 
 <ResponseField name="epochs" type="number">
@@ -65,7 +65,7 @@ curl https://api.tusky.io/v2/publishers/pub_7f3a2b1c \
 ```json
 {
   "id": "pub_7f3a2b1c",
-  "active": true,
+  "state": "ready",
   "epochs": 5,
   "quilt": false,
   "permanent": true,
