@@ -39,6 +39,9 @@ Returns an array of publisher objects.
     <ResponseField name="share" type="boolean">
       Whether blobs are shared.
     </ResponseField>
+    <ResponseField name="autoConvert" type="boolean">
+      Whether SUI → WAL auto-conversion is enabled.
+    </ResponseField>
     <ResponseField name="environmentId" type="string">
       Attached environment ID, or `null`.
     </ResponseField>
@@ -76,6 +79,7 @@ curl "https://api.tusky.io/v2/publishers?state=ready" \
       "quilt": true,
       "permanent": false,
       "share": false,
+      "autoConvert": true,
       "environmentId": null,
       "createdAt": "2026-01-15T10:00:00Z"
     },
@@ -86,6 +90,7 @@ curl "https://api.tusky.io/v2/publishers?state=ready" \
       "quilt": false,
       "permanent": true,
       "share": false,
+      "autoConvert": true,
       "environmentId": "env_abc123",
       "createdAt": "2026-03-05T12:00:00Z"
     }

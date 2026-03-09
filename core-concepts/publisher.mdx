@@ -9,7 +9,7 @@ Assigning **multiple publishers** to a single environment enables **horizontal s
 
 ## Publisher configuration
 
-Each publisher has five configuration flags:
+Each publisher has six configuration flags:
 
 | Setting | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -18,9 +18,10 @@ Each publisher has five configuration flags:
 | **quilt** | boolean | `true` | Whether to batch files into quilts for cost efficiency. |
 | **permanent** | boolean | `false` | Whether blobs are permanent (non-deletable before epoch expiry). |
 | **share** | boolean | `false` | Whether published content is shared and accessible to other users via standard Walrus aggregators. |
+| **autoConvert** | boolean | `true` | Whether to automatically convert SUI to WAL before upload when WAL balance is insufficient. |
 
 <Info>
-  Your account always has at least one non-deactivated publisher. Tusky creates a default publisher on sign-up — `state: "ready"`, `epochs: 1`, `quilt: true`, `permanent: false`, `share: false`.
+  Your account always has at least one non-deactivated publisher. Tusky creates a default publisher on sign-up — `state: "ready"`, `epochs: 1`, `quilt: true`, `permanent: false`, `share: false`, `autoConvert: true`.
 </Info>
 
 ## How publishers work
@@ -133,6 +134,23 @@ Controls whether published content is accessible beyond your own account.
 | `false` (default) | Content is private — accessible only through your account's aggregator. |
 | `true` | Content is shared — accessible via any standard Walrus aggregator using the blob ID. |
 
+### Auto-convert (SUI → WAL)
+
+When `autoConvert` is enabled, the publisher automatically swaps SUI for WAL via on-chain DEX before an upload if your managed wallet's WAL balance is insufficient. This means **you only need to hold SUI** — the publisher acquires WAL on demand at current market rates.
+
+| `autoConvert` | Behavior |
+| --- | --- |
+| `true` (default) | If WAL balance is too low for the upload, the publisher swaps the required amount of SUI → WAL through a Sui DEX (best available rate across Cetus, DeepBook, and other liquidity sources) and proceeds with the upload. |
+| `false` | No conversion. Upload fails with `402 Payment Required` if WAL balance is insufficient. You must deposit WAL manually. |
+
+<Tip>
+  With `autoConvert: true`, you can fund your managed wallet with **SUI only** and never think about WAL. The conversion happens atomically as part of the upload transaction, so there is no extra delay.
+</Tip>
+
+<Note>
+  The swap uses the best available rate across Sui DEX liquidity pools at the time of the transaction. A small amount of additional SUI covers the swap gas. The exact conversion rate and fee are included in the upload receipt.
+</Note>
+
 ## Attaching publishers to environments
 
 You can attach a publisher to an environment to give that environment a specific publishing configuration. This is useful when different environments have different storage requirements.
@@ -146,6 +164,7 @@ You can attach a publisher to an environment to give that environment a specific
       quilt: true,
       permanent: true,
       share: false,
+      autoConvert: true,
     });
 
     // Attach it to an environment
@@ -158,13 +177,14 @@ You can attach a publisher to an environment to give that environment a specific
     ```bash
     # Create a publisher
     curl -X POST https://api.tusky.io/v2/publishers \
-      -H "Authorization: Bearer YOUR_API_KEY" \
+      -H "Api-Key: YOUR_API_KEY" \
       -H "Content-Type: application/json" \
       -d '{
         "epochs": 50,
         "quilt": true,
         "permanent": true,
         "share": false,
+        "autoConvert": true,
         "environmentId": "env_archive"
       }'
     ```
@@ -181,7 +201,7 @@ When an environment has an attached publisher, all uploads to that environment u
     const publishers = await tusky.publisher.list();
 
     publishers.forEach(p => {
-      console.log(`${p.id}: state=${p.state}, epochs=${p.epochs}, quilt=${p.quilt}, environment=${p.environmentId || 'default'}`);
+      console.log(`${p.id}: state=${p.state}, epochs=${p.epochs}, quilt=${p.quilt}, autoConvert=${p.autoConvert}, environment=${p.environmentId || 'default'}`);
     });
     ```
   </Tab>
@@ -218,6 +238,9 @@ When an environment has an attached publisher, all uploads to that environment u
   </Accordion>
   <Accordion title="I want publicly accessible content">
     Set `share: true`. Your content will be resolvable through any Walrus aggregator, not just your private Tusky aggregator.
+  </Accordion>
+  <Accordion title="I want to simplify token management">
+    Enable `autoConvert: true` on your publisher. Fund your wallet with SUI only — the publisher swaps SUI → WAL automatically at upload time.
   </Accordion>
   <Accordion title="Different environments need different settings">
     Create multiple publishers with different configs and attach each to the appropriate environment.

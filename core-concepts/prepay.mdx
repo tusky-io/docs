@@ -5,9 +5,9 @@ description: 'Fund your wallet with SUI and WAL for storage operations'
 
 Prepay lets you deposit SUI and WAL tokens into your [managed wallet](/core-concepts/managed-wallet) in advance. When you upload files, extend storage, or perform other on-chain operations, costs are automatically deducted from your balance — no per-request payment prompts.
 
-## Why you need both tokens
+## Tokens
 
-Tusky requires **two tokens** to operate on the Walrus network:
+Walrus storage uses **two tokens**:
 
 <CardGroup cols={2}>
   <Card title="SUI" icon="coins">
@@ -18,8 +18,12 @@ Tusky requires **two tokens** to operate on the Walrus network:
   </Card>
 </CardGroup>
 
+<Tip>
+  With `autoConvert: true` on your publisher (the default), you only need to hold **SUI**. The publisher swaps SUI → WAL via on-chain DEX when your WAL balance is insufficient. See [Auto-convert SUI → WAL](#auto-convert-sui--wal) below.
+</Tip>
+
 <Warning>
-  Both SUI and WAL are required for uploads. If either balance is zero, new uploads will fail. Existing stored files remain available until their purchased epochs expire.
+  If both SUI and WAL balances are zero, new uploads will fail. Existing stored files remain available until their purchased epochs expire.
 </Warning>
 
 ## How prepay works
@@ -58,40 +62,83 @@ Total Cost = Walrus Storage Cost (WAL) + Gas Fee (SUI)
 
 ## Cost estimation
 
-Preview the cost of an upload before committing by using the cost estimation endpoint:
+Preview the cost of uploading one or more files before committing. Pass a list of file sizes to get a per-file breakdown and totals:
 
 <CodeGroup>
 
 ```bash cURL
-curl https://api.tusky.io/v2/files/estimate \
-  -H "Authorization: Bearer YOUR_API_KEY" \
-  -G \
-  -d "size=10485760" \
-  -d "epochs=5"
+curl -X POST https://api.tusky.io/v2/uploads/estimate \
+  -H "Api-Key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "files": [
+      { "size": 10485760, "name": "video.mp4" },
+      { "size": 2097152, "name": "document.pdf" }
+    ],
+    "epochs": 5
+  }'
 ```
 
 ```typescript SDK
-const estimate = await tusky.file.estimate({
-  size: 10485760,
+const estimate = await tusky.upload.estimate({
+  files: [
+    { size: 10485760, name: "video.mp4" },
+    { size: 2097152, name: "document.pdf" },
+  ],
   epochs: 5,
 });
 
-console.log("WAL cost:", estimate.walrusCost);
-console.log("Gas estimate (SUI):", estimate.gasEstimate);
-console.log("Total SUI needed:", estimate.totalSui);
+console.log("Total WAL:", estimate.totals.totalWal);
+console.log("Total SUI:", estimate.totals.totalSui);
+console.log("Balance sufficient:", estimate.balance.sufficient);
 ```
 
 </CodeGroup>
 
 ```json Response
 {
-  "walrusCost": "0.045 WAL",
-  "gasEstimate": "0.002 SUI",
-  "totalSui": "0.002 SUI",
-  "totalWal": "0.045 WAL",
-  "epochs": 5
+  "files": [
+    { "name": "video.mp4", "size": 10485760, "encodedSize": 52428800, "walCost": "0.045", "gasCost": "0.002" },
+    { "name": "document.pdf", "size": 2097152, "encodedSize": 10485760, "walCost": "0.012", "gasCost": "0.002" }
+  ],
+  "totals": {
+    "fileCount": 2,
+    "totalSize": 12582912,
+    "totalEncodedSize": 62914560,
+    "totalWal": "0.057",
+    "totalGas": "0.004",
+    "totalSui": "0.004"
+  },
+  "epochs": 5,
+  "balance": {
+    "walBalance": "120.0",
+    "suiBalance": "45.2",
+    "sufficient": true,
+    "walDeficit": "0",
+    "suiDeficit": "0"
+  }
 }
 ```
+
+<Tip>
+  The response includes your current wallet balance and tells you whether it covers the batch. Use this to build pre-upload validation into your application.
+</Tip>
+
+## Auto-convert SUI → WAL
+
+If your publisher has `autoConvert: true` (the default), you don't need to hold WAL at all. When an upload requires WAL and your balance is insufficient, the publisher automatically swaps SUI → WAL via on-chain DEX at the best available rate.
+
+This means you can **fund your wallet with SUI only** and let the publisher handle WAL acquisition on demand.
+
+| Scenario | `autoConvert: true` | `autoConvert: false` |
+| --- | --- | --- |
+| WAL balance sufficient | Upload proceeds normally | Upload proceeds normally |
+| WAL balance insufficient, SUI available | SUI swapped to WAL, upload proceeds | Upload fails with `402` |
+| Both balances insufficient | Upload fails with `402` | Upload fails with `402` |
+
+<Note>
+  The swap uses aggregated DEX liquidity (Cetus, DeepBook, and others) for the best available rate. A small amount of additional SUI covers the swap gas. The conversion details are included in the upload receipt.
+</Note>
 
 ## Checking your balance
 
@@ -114,7 +161,7 @@ console.log("Total SUI needed:", estimate.totalSui);
   <Tab title="API">
     ```bash
     curl https://api.tusky.io/v2/account \
-      -H "Authorization: Bearer YOUR_API_KEY"
+      -H "Api-Key: YOUR_API_KEY"
     ```
 
     ```json
@@ -148,7 +195,8 @@ Tusky monitors your managed wallet and alerts you when balances drop below a con
 
 | Scenario | Behavior |
 | --- | --- |
-| **New uploads** | Fail with a `402 Payment Required` error until you top up. |
+| **New uploads (WAL low, SUI available, autoConvert on)** | SUI is swapped to WAL automatically — upload proceeds. |
+| **New uploads (both low)** | Fail with a `402 Payment Required` error until you top up. |
 | **Existing files** | Remain available on Walrus until their purchased storage epochs expire. |
 | **Auto-extend** | Paused — storage will not be renewed if there are insufficient funds. |
 | **File downloads** | Unaffected — retrieval does not consume SUI or WAL. |

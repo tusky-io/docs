@@ -3,7 +3,9 @@ title: Wallets & Funding
 description: 'Fund your Tusky wallet with SUI and WAL tokens'
 ---
 
-Tusky uses a **prepaid wallet** system. You deposit SUI and WAL tokens into your Tusky wallet, and storage operations draw from that balance automatically. There is no free tier — all storage is paid at current Walrus network rates.
+Tusky uses a **prepaid wallet** system. You deposit tokens into your Tusky wallet, and storage operations draw from that balance automatically. There is no free tier — all storage is paid at current Walrus network rates.
+
+With **auto-convert** enabled (the default), you only need to deposit **SUI** — the publisher swaps SUI → WAL automatically when needed. You can also deposit WAL directly if you prefer.
 
 ## How Billing Works
 
@@ -29,11 +31,11 @@ Every file you upload through Tusky involves two costs:
     Click **Deposit SUI** and approve the transfer from your connected Sui wallet. SUI is used for gas fees on Sui transactions.
   </Step>
 
-  <Step title="Deposit WAL">
+  <Step title="Deposit WAL (optional)">
     Click **Deposit WAL** and approve the transfer. WAL is used to pay Walrus storage nodes for blob storage.
 
     <Tip>
-      You can acquire WAL tokens on supported Sui DEXes or through the Walrus staking mechanism. Check the [Walrus documentation](https://docs.walrus.site) for current token distribution details.
+      With `autoConvert: true` on your publisher (the default), you can skip this step entirely — the publisher swaps SUI → WAL via on-chain DEX when needed. If you prefer to deposit WAL directly, you can acquire it on [supported Sui DEXes](https://app.cetus.zone/swap) or through the Walrus staking mechanism.
     </Tip>
   </Step>
 </Steps>
@@ -58,8 +60,8 @@ Use the SDK or API to check your balance programmatically:
   ```
 
   ```bash cURL
-  curl https://api.tusky.io/v1/account \
-    -H "Authorization: Bearer $TUSKY_API_KEY"
+  curl https://api.tusky.io/v2/account \
+    -H "Api-Key: YOUR_API_KEY"
   ```
 </CodeGroup>
 
@@ -104,17 +106,20 @@ With x402, each API request includes a payment header, and Tusky charges the exa
 
 ## Cost Estimation
 
-Use the dashboard cost calculator or the API to estimate costs before uploading:
+Use the dashboard cost calculator or the [estimation API](/api-reference/uploads/estimate-upload) to preview costs before uploading. Pass a list of file sizes to get a per-file breakdown and totals:
 
 ```typescript
-const estimate = await tusky.account.estimateCost({
-  fileSizeBytes: 10 * 1024 * 1024, // 10 MB
+const estimate = await tusky.upload.estimate({
+  files: [
+    { size: 10 * 1024 * 1024, name: "video.mp4" },
+    { size: 2 * 1024 * 1024, name: "report.pdf" },
+  ],
   epochs: 5,
 });
 
-console.log("WAL cost:", estimate.wal);
-console.log("SUI fee:", estimate.sui);
-console.log("Total USD estimate:", estimate.usdEstimate);
+console.log("Total WAL:", estimate.totals.totalWal);
+console.log("Total SUI:", estimate.totals.totalSui);
+console.log("Balance sufficient:", estimate.balance.sufficient);
 ```
 
 <Note>

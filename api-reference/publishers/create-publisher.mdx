@@ -27,6 +27,10 @@ Create a new publisher. Each account gets one active publisher automatically on 
   Whether blobs published by this publisher are shared. When `true`, the published content is accessible to other Tusky users via standard Walrus aggregators. When `false`, content is private to the account.
 </ParamField>
 
+<ParamField body="autoConvert" type="boolean" default="true">
+  Whether to automatically convert SUI to WAL before upload when the managed wallet's WAL balance is insufficient. When `true`, the publisher swaps SUI → WAL via on-chain DEX at the best available rate. When `false`, uploads fail with `402` if WAL balance is too low.
+</ParamField>
+
 <ParamField body="environmentId" type="string">
   Optional environment ID to attach this publisher to. When set, this publisher configuration is used for all uploads to the specified environment, overriding the account default.
 </ParamField>
@@ -57,6 +61,10 @@ Create a new publisher. Each account gets one active publisher automatically on 
   Whether blobs are shared.
 </ResponseField>
 
+<ResponseField name="autoConvert" type="boolean">
+  Whether SUI → WAL auto-conversion is enabled.
+</ResponseField>
+
 <ResponseField name="environmentId" type="string">
   The environment this publisher is attached to, or `null` if it is the account default.
 </ResponseField>
@@ -78,6 +86,7 @@ curl -X POST https://api.tusky.io/v2/publishers \
     "quilt": false,
     "permanent": true,
     "share": false,
+    "autoConvert": true,
     "environmentId": "env_abc123"
   }'
 ```
@@ -94,6 +103,7 @@ curl -X POST https://api.tusky.io/v2/publishers \
   "quilt": false,
   "permanent": true,
   "share": false,
+  "autoConvert": true,
   "environmentId": "env_abc123",
   "createdAt": "2026-03-05T12:00:00Z"
 }
