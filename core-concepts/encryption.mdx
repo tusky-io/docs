@@ -44,11 +44,21 @@ Seal is not used to encrypt file data directly — that would be too slow for la
 
 ## Per-environment keys
 
-All files in an environment share **one encryption key**. This is a deliberate performance choice:
+All files in an environment share **one encryption key**. This is both a performance and a security design choice:
 
 - **Single Seal request** per session — the SDK caches the environment key after the first retrieval, so subsequent uploads and downloads require no additional Seal round-trips.
 - **Batch operations** — listing, downloading, or migrating many files only needs one key fetch.
 - **Sharing is simple** — granting access means adding a wallet to the environment's Seal policy. One policy change covers all files.
+
+### Why this is safe
+
+Each file encryption uses a **unique random nonce** (IV). Even though the same key encrypts every file, AES-256-GCM produces cryptographically independent ciphertexts — this is exactly how AES-GCM is designed to operate. The environment already defines the trust boundary: everyone with access can see all files in it, so the key boundary matches the access boundary.
+
+Per-file keys would add no security benefit — the same Seal policy protects the entire environment — while adding significant cost (N Seal round-trips, N on-chain key objects, N policy updates for sharing).
+
+<Tip>
+  Use **separate environments** for separate trust levels. Each environment has its own key and its own Seal access policy — this is your security boundary.
+</Tip>
 
 <Info>
   The environment key is stored as a managed secret at `tusky/environments/{environmentId}/encryption`. You can read it via the [Secrets API](/api-reference/secrets/get-secret), but it cannot be deleted manually.
