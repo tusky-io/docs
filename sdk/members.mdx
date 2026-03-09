@@ -12,12 +12,8 @@ Tusky uses three roles with escalating permissions:
 | Role | Permissions |
 | --- | --- |
 | **Viewer** | Download and view files. Cannot upload, delete, or manage members. |
-| **Contributor** | Everything a Viewer can do, plus upload and delete files. |
-| **Admin** | Full control — upload, delete, manage members, and modify environment settings. |
-
-<Info>
-  The environment **owner** always has full control and cannot be removed. Admin, Contributor, and Viewer roles apply to additional members.
-</Info>
+| **Manager** | Everything a Viewer can do, plus upload and delete files, invite or remove Viewers. |
+| **Owner** | Full control — upload, delete, manage all members, modify environment settings. Each environment has exactly one owner (the creator). |
 
 ## Add a Member
 
@@ -26,7 +22,7 @@ Invite a user by their Sui wallet address:
 ```typescript
 const member = await tusky.environment.addMember("env_abc123", {
   address: "0x1a2b3c...user_wallet_address",
-  role: "contributor",
+  role: "manager",
 });
 
 console.log("Added member:", member.id);
@@ -34,7 +30,7 @@ console.log("Role:", member.role);
 ```
 
 <Note>
-  For encrypted environments, adding a member automatically shares the decryption capability with the new member's wallet through [Seal](https://docs.sui.io/standards/seal). The member can decrypt environment content using their wallet — no encryption keys are ever exposed.
+  For encrypted environments, adding a member updates the on-chain [Seal](https://seal-docs.wal.app) policy to include the new wallet. The member can decrypt environment content using their wallet — no encryption keys are ever transmitted.
 </Note>
 
 ## List Members
@@ -55,7 +51,7 @@ for (const member of members) {
 | --- | --- | --- |
 | `id` | `string` | Unique member ID. |
 | `address` | `string` | Sui wallet address of the member. |
-| `role` | `string` | One of `viewer`, `contributor`, or `admin`. |
+| `role` | `string` | One of `viewer`, `manager`, or `owner`. |
 | `createdAt` | `string` | ISO 8601 timestamp of when the member was added. |
 
 ## Update a Member's Role
@@ -63,13 +59,13 @@ for (const member of members) {
 Change a member's role:
 
 ```typescript
-const updated = await tusky.environment.updateMember("member_def456", "admin");
+const updated = await tusky.environment.updateMember("member_def456", "manager");
 
 console.log("Updated role:", updated.role);
 ```
 
 <Tip>
-  Promoting a member to `admin` grants them the ability to manage other members. Only environment owners and existing admins can promote members.
+  Promoting a member to `manager` grants them the ability to upload, delete, and manage Viewers. Only the environment owner can promote members.
 </Tip>
 
 ## Remove a Member
@@ -94,10 +90,10 @@ const tusky = new Tusky({ apiKey: process.env.TUSKY_API_KEY });
 
 const environmentId = "env_abc123";
 
-// Add a contributor
+// Add a manager
 const member = await tusky.environment.addMember(environmentId, {
   address: "0xAliceWalletAddress",
-  role: "contributor",
+  role: "manager",
 });
 
 // List all members
@@ -107,8 +103,8 @@ for (const m of members) {
   console.log(`  ${m.address} [${m.role}]`);
 }
 
-// Promote to admin
-await tusky.environment.updateMember(member.id, "admin");
+// Downgrade to viewer
+await tusky.environment.updateMember(member.id, "viewer");
 
 // Remove the member
 await tusky.environment.removeMember(member.id);

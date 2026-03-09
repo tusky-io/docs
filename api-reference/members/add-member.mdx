@@ -20,8 +20,8 @@ Add a new member to an environment by their Sui wallet address. Members can be a
 <ParamField body="role" type="string" required>
   The role to assign to the member. One of:
   - `viewer` — read-only access to environment files
-  - `contributor` — can upload, download, and delete files
-  - `admin` — full access including member management
+  - `manager` — can upload, download, and delete files
+  - `owner` — full access including member management
 </ParamField>
 
 ## Response
@@ -35,7 +35,7 @@ Add a new member to an environment by their Sui wallet address. Members can be a
 </ResponseField>
 
 <ResponseField name="role" type="string">
-  The assigned role (`viewer`, `contributor`, or `admin`).
+  The assigned role (`viewer`, `manager`, or `owner`).
 </ResponseField>
 
 <ResponseField name="environmentId" type="string">
@@ -52,11 +52,11 @@ Add a new member to an environment by their Sui wallet address. Members can be a
 
 ```bash cURL
 curl -X POST https://api.tusky.io/v2/environments/env_abc123def456/members \
-  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Api-Key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "address": "0x1a2b3c4d5e6f7890abcdef1234567890abcdef12",
-    "role": "contributor"
+    "role": "manager"
   }'
 ```
 
@@ -68,12 +68,12 @@ curl -X POST https://api.tusky.io/v2/environments/env_abc123def456/members \
 {
   "id": "member_stu901vwx234",
   "address": "0x1a2b3c4d5e6f7890abcdef1234567890abcdef12",
-  "role": "contributor",
+  "role": "manager",
   "environmentId": "env_abc123def456",
   "createdAt": "2025-07-02T10:00:00.000Z"
 }
 ```
 
 <Note>
-  Only environment owners and admins can add new members. The invited user's Sui wallet address must be valid.
+  Only the environment owner can add new members. The invited user's Sui wallet address must be valid.
 </Note>

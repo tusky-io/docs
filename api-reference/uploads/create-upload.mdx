@@ -74,14 +74,14 @@ When the upload completes (single request or final chunk), the response body con
   <Tab title="Single request (multipart)">
     ```bash
     curl -X POST "https://api.tusky.io/v2/uploads?vaultId=env_abc123&filename=photo.jpg" \
-      -H "Authorization: Bearer YOUR_API_KEY" \
+      -H "Api-Key: YOUR_API_KEY" \
       -F "file=@./photo.jpg"
     ```
   </Tab>
   <Tab title="Single request (binary)">
     ```bash
     curl -X POST "https://api.tusky.io/v2/uploads?vaultId=env_abc123&filename=photo.jpg&filetype=image/jpeg" \
-      -H "Authorization: Bearer YOUR_API_KEY" \
+      -H "Api-Key: YOUR_API_KEY" \
       -H "Content-Type: application/offset+octet-stream" \
       --data-binary @./photo.jpg
     ```
@@ -89,7 +89,7 @@ When the upload completes (single request or final chunk), the response body con
   <Tab title="Resumable (create only)">
     ```bash
     curl -X POST https://api.tusky.io/v2/uploads \
-      -H "Authorization: Bearer YOUR_API_KEY" \
+      -H "Api-Key: YOUR_API_KEY" \
       -H "Tus-Resumable: 1.0.0" \
       -H "Upload-Length: 10485760" \
       -H "Upload-Metadata: filename $(echo -n 'video.mp4' | base64),vaultId $(echo -n 'env_abc123' | base64),filetype $(echo -n 'video/mp4' | base64)" \

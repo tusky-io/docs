@@ -109,8 +109,9 @@ The `Tusky` constructor accepts an options object:
 | Option | Type | Description |
 | --- | --- | --- |
 | `apiKey` | `string` | API key for server-side authentication. |
-| `wallet` | `WalletAdapter` | Sui wallet adapter for browser-based authentication. |
+| `wallet` | `WalletAdapter \| Keypair` | Sui wallet adapter (browser) or keypair (server). |
 | `baseUrl` | `string` | Override the API base URL (defaults to `https://api.tusky.io`). |
+| `aggregatorUrl` | `string` | Custom aggregator URL for downloads. Use any Walrus aggregator — Tusky's, a public one, or your own. Enables [decryption without Tusky](/core-concepts/encryption#decryption-without-tusky). |
 
 ## What's Next
 

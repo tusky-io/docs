@@ -1,131 +1,196 @@
 ---
 title: Encryption
-description: 'End-to-end encryption for private data'
+description: 'End-to-end encryption powered by Sui Seal'
 ---
 
-Tusky provides **end-to-end encryption** so that private data is never exposed — not to Tusky, not to Walrus storage nodes, and not to anyone without explicit access. In v2, encryption is tightly integrated with your Sui wallet and the [Seal](https://docs.mystenlabs.com/seal) decentralized encryption protocol, removing the friction of password-based key management.
+Tusky provides **end-to-end encryption** for private environments. Data is encrypted client-side before upload and decrypted client-side on download. Tusky never sees plaintext. Encryption keys are managed through [Seal](https://seal-docs.wal.app) — a decentralized key management protocol on Sui.
 
-## How encryption works
+## How it works
 
 <Steps>
-  <Step title="Encryption seed derivation">
-    When you create an encrypted environment, Tusky derives an encryption seed from your **connected Sui wallet**. This seed is the root of all encryption keys for that environment. Because the seed is tied to your wallet's cryptographic identity, only you (or members you explicitly authorize) can decrypt the data.
+  <Step title="Environment key creation">
+    When you create an encrypted environment, Tusky generates a symmetric AES-256-GCM key and encrypts it through Seal using the environment's on-chain access policy. The encrypted key is stored as a [managed secret](/core-concepts/secrets).
   </Step>
   <Step title="Client-side encryption">
-    Before any file data leaves your browser or application, Tusky encrypts it locally using keys derived from the environment's encryption seed. The plaintext never reaches Tusky's servers or the Walrus network.
+    Before upload, the SDK retrieves the environment key from Seal, encrypts the file locally with AES-256-GCM, then uploads the ciphertext. Plaintext never reaches Tusky servers or Walrus nodes.
   </Step>
-  <Step title="Publish encrypted blob">
-    The encrypted payload is uploaded and published to Walrus like any other blob. Storage nodes only ever see ciphertext.
-  </Step>
-  <Step title="Decryption on retrieval">
-    When you (or an authorized member) download a file, the encrypted blob is fetched from Walrus and decrypted **client-side** using keys derived from the member's wallet. The plaintext is reconstructed entirely in your browser or SDK client.
+  <Step title="Client-side decryption">
+    On download, the SDK fetches the encrypted blob from an aggregator, retrieves the environment key from Seal, and decrypts locally. The SDK auto-detects encrypted content — no separate method needed.
   </Step>
 </Steps>
 
-## Wallet-based encryption (v2)
+## Seal as a Key Management Service
 
-In Tusky v1, encryption relied on a user-chosen password. This introduced friction — forgotten passwords meant permanent data loss, and sharing required securely transmitting passwords out-of-band.
+Seal is not used to encrypt file data directly — that would be too slow for large files. Instead, Tusky uses Seal as a **KMS (Key Management Service)**: Seal protects the encryption key, AES encrypts the data.
 
-Tusky v2 eliminates passwords entirely:
+```
+┌────────────┐    AES-256-GCM    ┌────────────────┐    Walrus    ┌─────────┐
+│ Your file  │──────────────────▶│  Ciphertext     │────────────▶│ Storage │
+└────────────┘                   └────────────────┘              └─────────┘
+                                        ▲
+                                        │ encrypts with
+                                        │
+┌────────────┐   Seal threshold  ┌──────┴───────────┐
+│ Your wallet│──────────────────▶│  Environment key  │
+└────────────┘   decryption      └──────────────────┘
+                                   (stored as Seal secret)
+```
 
-<CardGroup cols={2}>
-  <Card title="Connected wallet" icon="wallet">
-    Your Sui wallet's keypair is used to derive encryption seeds. Signing a deterministic message produces a stable seed without ever exposing your private key. As long as you control your wallet, you control your data.
-  </Card>
-  <Card title="Seal integration" icon="shield-halved">
-    For shared environments, Tusky leverages **Seal** — a decentralized encryption protocol on Sui. Seal smart contracts manage access policies on-chain, enabling secure key sharing without Tusky ever holding decryption keys.
-  </Card>
-</CardGroup>
+| Layer | What | How |
+|---|---|---|
+| **Data encryption** | File content | AES-256-GCM with the environment key |
+| **Key encryption** | Environment key | Seal threshold encryption across decentralized key servers |
+| **Access control** | Who can decrypt | On-chain Move policy verified by Seal key servers |
 
-<Tip>
-  Because encryption is now tied to your wallet instead of a password, there is nothing to remember or lose. Connect your wallet, and your encrypted environments are instantly accessible.
-</Tip>
+## Per-environment keys
 
-## Seal and token-gated access
+All files in an environment share **one encryption key**. This is a deliberate performance choice:
 
-[Seal](https://docs.mystenlabs.com/seal) is a decentralized encryption infrastructure built on Sui. Tusky uses Seal to power access control for encrypted environments, enabling powerful token-gated and policy-driven sharing.
-
-### How Seal works with Tusky
-
-<Tabs>
-  <Tab title="Access policies">
-    Environment owners define **on-chain access policies** through Seal smart contracts. These policies specify which Sui addresses (or which NFT / token holders) can decrypt the environment's contents. Policies are transparent and verifiable on the Sui blockchain.
-  </Tab>
-  <Tab title="Key management">
-    Seal distributes encryption key shares across a decentralized network of key servers. No single server holds enough information to reconstruct a key. When an authorized user requests decryption, Seal key servers verify the on-chain policy, and only then release their key shares.
-  </Tab>
-  <Tab title="Token gating">
-    You can gate environment access on **any on-chain condition**: ownership of a specific NFT collection, holding a minimum token balance, membership in a DAO, or custom Move-based logic. This enables powerful use cases like subscriber-only content, DAO-gated archives, and NFT-unlockable media.
-  </Tab>
-</Tabs>
+- **Single Seal request** per session — the SDK caches the environment key after the first retrieval, so subsequent uploads and downloads require no additional Seal round-trips.
+- **Batch operations** — listing, downloading, or migrating many files only needs one key fetch.
+- **Sharing is simple** — granting access means adding a wallet to the environment's Seal policy. One policy change covers all files.
 
 <Info>
-  Seal policies are composable. You can combine multiple conditions — for example, requiring both NFT ownership **and** a minimum SUI balance — to create fine-grained access rules.
+  The environment key is stored as a managed secret at `tusky/environments/{environmentId}/encryption`. You can read it via the [Secrets API](/api-reference/secrets/get-secret), but it cannot be deleted manually.
 </Info>
 
-## Encrypted environment workflow
+## Decryption without Tusky
 
-Here's the complete flow for data in an encrypted environment:
+Encrypted blobs live on Walrus and encryption keys are managed by Seal — both are decentralized and independent of Tusky. If Tusky's API goes down, you can still decrypt your data.
 
+**What you need:**
+
+1. **The encrypted blob** — fetch from any Walrus aggregator (Tusky's, a public one, or your own)
+2. **Seal access** — Seal key servers are decentralized and available as long as the Sui network is running
+3. **Your wallet** — the Sui wallet authorized in the environment's Seal policy
+
+### SDK with any aggregator
+
+Configure the SDK to fetch from any aggregator — it does not have to be Tusky's:
+
+```typescript
+import { Tusky } from "@tusky-io/ts-sdk";
+
+const tusky = new Tusky({
+  wallet: keypair,
+  aggregatorUrl: "https://aggregator.walrus.site", // any Walrus aggregator
+});
+
+// Download and decrypt — works without Tusky API
+const content = await tusky.file.arrayBuffer("file_xyz789");
 ```
-┌─────────────┐     ┌──────────────┐     ┌─────────────┐     ┌──────────────┐
-│  Your device │────▶│ Encrypt with │────▶│  Publish to  │────▶│   Walrus     │
-│  (plaintext) │     │ wallet seed  │     │   Walrus     │     │  (ciphertext)│
-└─────────────┘     └──────────────┘     └─────────────┘     └──────────────┘
 
-                          UPLOAD FLOW ──────────────────▶
+### Manual decryption with Seal directly
 
-◀────────────── RETRIEVAL FLOW
+For full independence from the Tusky SDK:
 
-┌──────────────┐     ┌──────────────┐     ┌─────────────┐     ┌──────────────┐
-│   Walrus     │────▶│  Fetch via   │────▶│ Decrypt with │────▶│  Your device │
-│  (ciphertext)│     │  aggregator  │     │ wallet seed  │     │  (plaintext) │
-└──────────────┘     └──────────────┘     └─────────────┘     └──────────────┘
+```typescript
+import { SealClient, SessionKey } from "@aspect-build/seal-sdk";
+import { SuiClient, getFullnodeUrl } from "@mysten/sui/client";
+
+const suiClient = new SuiClient({ url: getFullnodeUrl("mainnet") });
+
+// 1. Create a session key
+const sessionKey = await SessionKey.create({
+  address: walletAddress,
+  packageId: sealPackageId,
+  ttlMin: 10,
+  suiClient,
+});
+const msg = sessionKey.getPersonalMessage();
+sessionKey.setPersonalMessageSignature(await wallet.sign(msg));
+
+// 2. Build the Seal approval transaction
+const tx = new Transaction();
+tx.moveCall({
+  target: `${policyPackageId}::environment_policy::seal_approve`,
+  arguments: [tx.pure.vector("u8", environmentId)],
+});
+const txBytes = await tx.build({ client: suiClient, onlyTransactionKind: true });
+
+// 3. Retrieve and decrypt the environment key
+const sealClient = new SealClient({ suiClient, serverConfigs: [...] });
+const envKey = await sealClient.decrypt({
+  data: encryptedKeyBytes,
+  sessionKey,
+  txBytes,
+});
+
+// 4. Decrypt the file with AES-256-GCM using the environment key
 ```
 
-### Key security properties
+<Tip>
+  This is the escape hatch. For day-to-day use, the SDK handles all of this transparently.
+</Tip>
+
+## Sharing encrypted files
+
+### Share with specific wallets
+
+Add a member to the environment. Tusky updates the on-chain Seal policy to include the new wallet:
+
+```typescript
+await tusky.environment.addMember("env_abc123", {
+  address: "0xRecipientWallet",
+  role: "viewer",
+});
+// The recipient can now decrypt all files in the environment
+```
+
+Removing a member revokes future decryption access by removing their address from the Seal policy.
+
+<Warning>
+  Data the member already downloaded locally cannot be un-shared. Treat environment membership as a trust decision.
+</Warning>
+
+### Token-gated access (anyone who qualifies)
+
+Gate access on any on-chain condition — no need to add members individually:
+
+```typescript
+const env = await tusky.environment.create("NFT Holders Only", {
+  encrypted: true,
+  sealPolicy: {
+    type: "nft",
+    collectionId: "0xMyNFTCollection",
+  },
+});
+```
+
+Anyone holding an NFT from the collection can decrypt. Seal key servers verify ownership on-chain at decryption time.
+
+<Info>
+  Policies are composable. Combine NFT ownership, token balance, DAO membership, or custom Move logic for fine-grained access.
+</Info>
+
+### Public sharing
+
+For files that should be accessible to anyone with the URL, use a **public environment** instead. Public environments store unencrypted blobs accessible through any aggregator.
+
+## Security properties
 
 | Property | Guarantee |
 |---|---|
-| **Zero-knowledge** | Tusky never sees your plaintext data or holds your encryption keys. |
-| **Client-side only** | Encryption and decryption happen exclusively in your browser or SDK client. |
-| **Wallet-bound** | Keys are derived from your Sui wallet — no passwords to manage or leak. |
-| **Decentralized key management** | Seal distributes key shares so no single point of failure can compromise access. |
-| **On-chain policies** | Access rules are enforced by smart contracts, fully transparent and auditable. |
-
-## Sharing encrypted environments
-
-When you add a member to an encrypted environment, Tusky uses Seal to grant that member's Sui wallet address decryption access:
-
-1. The environment's Seal policy is updated on-chain to include the new member's address.
-2. When the new member requests a file, Seal key servers verify their address against the policy.
-3. If authorized, the key servers release key shares, enabling client-side decryption.
-
-The environment owner never transmits raw keys, and Tusky never acts as an intermediary for key material.
-
-<Warning>
-  Removing a member revokes their future decryption access through Seal. However, any data the member already downloaded and decrypted locally cannot be "un-shared." Treat environment membership as a trust decision.
-</Warning>
-
-## Migration from v1
-
-If you used password-based encryption in Tusky v1, your environments will be migrated to wallet-based encryption. During migration:
-
-1. You authenticate with your original password one final time.
-2. Tusky re-encrypts your environment's key material under your connected Sui wallet.
-3. The password is discarded and no longer needed.
-
-<Note>
-  After migration, your encrypted environments are accessible solely through your Sui wallet. Make sure you have secure backups of your wallet's seed phrase.
-</Note>
+| **Zero-knowledge** | Tusky never sees plaintext or holds decryption keys. |
+| **Client-side only** | Encryption and decryption happen in your browser or SDK. |
+| **Wallet-bound** | Keys are accessible only through authorized Sui wallets. No passwords. |
+| **Decentralized keys** | Seal distributes key shares — no single point of failure. |
+| **On-chain policies** | Access rules are smart contracts: transparent, auditable, tamper-proof. |
+| **Tusky-independent** | Decryption works without Tusky as long as Seal and Walrus are available. |
 
 ## What's next?
 
 <CardGroup cols={2}>
-  <Card title="Environments" icon="vault" href="/core-concepts/environments">
-    Learn about environment types, settings, and membership roles.
+  <Card title="Secrets" icon="key" href="/core-concepts/secrets">
+    How encryption keys are stored as managed secrets.
   </Card>
-  <Card title="Publishing" icon="cloud-arrow-up" href="/core-concepts/publishing">
-    Understand how encrypted data is published to Walrus.
+  <Card title="Environments" icon="vault" href="/core-concepts/environments">
+    Public vs private environments and membership.
+  </Card>
+  <Card title="SDK Files" icon="file" href="/sdk/files">
+    Upload and download encrypted files with the SDK.
+  </Card>
+  <Card title="Seal Docs" icon="shield-halved" href="https://seal-docs.wal.app">
+    Learn more about the Seal protocol.
   </Card>
 </CardGroup>

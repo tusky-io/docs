@@ -13,8 +13,8 @@ Update a publisher's configuration. Only the fields included in the request body
 
 ## Request Body
 
-<ParamField body="active" type="boolean">
-  Whether the publisher is active. You cannot deactivate a publisher if it is the **only active publisher** on the account — there must always be at least one.
+<ParamField body="state" type="string">
+  Set the operational state. One of `ready`, `idle`, `deactivated`. You cannot set `deactivated` if it is the **only non-deactivated publisher** on the account.
 </ParamField>
 
 <ParamField body="epochs" type="number">
@@ -45,8 +45,8 @@ Returns the updated publisher object.
   Unique publisher identifier.
 </ResponseField>
 
-<ResponseField name="active" type="boolean">
-  Whether the publisher is active.
+<ResponseField name="state" type="string">
+  Current operational state. One of `ready`, `idle`, `working`, `deactivated`.
 </ResponseField>
 
 <ResponseField name="epochs" type="number">
@@ -79,7 +79,7 @@ Returns the updated publisher object.
 
 ```bash cURL
 curl -X PATCH https://api.tusky.io/v2/publishers/pub_7f3a2b1c \
-  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Api-Key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "epochs": 10,
@@ -95,7 +95,7 @@ curl -X PATCH https://api.tusky.io/v2/publishers/pub_7f3a2b1c \
 ```json
 {
   "id": "pub_7f3a2b1c",
-  "active": true,
+  "state": "ready",
   "epochs": 10,
   "quilt": true,
   "permanent": false,
@@ -110,5 +110,5 @@ curl -X PATCH https://api.tusky.io/v2/publishers/pub_7f3a2b1c \
 </Warning>
 
 <Note>
-  You cannot deactivate the last active publisher. If you need to change its config, update it instead. To deactivate, first create or activate another publisher.
+  You cannot set the last non-deactivated publisher to `deactivated`. Create another publisher first.
 </Note>

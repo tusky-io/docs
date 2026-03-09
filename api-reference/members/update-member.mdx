@@ -20,8 +20,8 @@ Update the role of an existing environment member.
 <ParamField body="role" type="string" required>
   The new role to assign. One of:
   - `viewer` — read-only access to environment files
-  - `contributor` — can upload, download, and delete files
-  - `admin` — full access including member management
+  - `manager` — can upload, download, and delete files
+  - `owner` — full access including member management
 </ParamField>
 
 ## Response
@@ -52,7 +52,7 @@ Update the role of an existing environment member.
 
 ```bash cURL
 curl -X PUT https://api.tusky.io/v2/environments/env_abc123def456/members/member_stu901vwx234 \
-  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Api-Key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "role": "admin"

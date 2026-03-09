@@ -12,7 +12,7 @@ Environments are the top-level containers in Tusky for organizing files, folders
     Files are stored **unencrypted** on Walrus. Anyone with the blob ID can read the data through any Walrus aggregator. Ideal for open data, public websites, NFT media, and shared assets.
   </Card>
   <Card title="Private environment" icon="lock">
-    Files are **encrypted client-side** before upload. Encryption keys are stored as [Secrets](/core-concepts/secrets) and managed through [Sui Seal](https://docs.mystenlabs.com/seal). The encrypted blobs are readable from any Walrus aggregator, but the data is ciphertext without the decryption key. The Tusky SDK handles encryption and decryption transparently.
+    Files are **encrypted client-side** before upload. Encryption keys are stored as [Secrets](/core-concepts/secrets) and managed through [Sui Seal](https://seal-docs.wal.app). The encrypted blobs are readable from any Walrus aggregator, but the data is ciphertext without the decryption key. The Tusky SDK handles encryption and decryption transparently.
   </Card>
 </CardGroup>
 
@@ -86,7 +86,7 @@ Environments support collaborative access through a role-based membership model.
 </Tabs>
 
 <Info>
-  For encrypted environments, adding a member shares the environment's decryption capability with that member's Sui wallet through Seal. Members never see raw encryption keys.
+  For encrypted environments, adding a member updates the on-chain [Seal](https://seal-docs.wal.app) policy. The member can decrypt using their wallet — no raw keys are shared.
 </Info>
 
 ## Environment lifecycle

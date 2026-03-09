@@ -7,8 +7,8 @@ Create a new publisher. Each account gets one active publisher automatically on 
 
 ## Request Body
 
-<ParamField body="active" type="boolean" default="true">
-  Whether the publisher is active. There must be at least one active publisher on the account at all times.
+<ParamField body="state" type="string" default="ready">
+  Initial state of the publisher. One of `ready`, `idle`, `deactivated`. At least one publisher must not be `deactivated`.
 </ParamField>
 
 <ParamField body="epochs" type="number" default="1" required>
@@ -37,8 +37,8 @@ Create a new publisher. Each account gets one active publisher automatically on 
   Unique publisher identifier.
 </ResponseField>
 
-<ResponseField name="active" type="boolean">
-  Whether the publisher is active.
+<ResponseField name="state" type="string">
+  Current operational state. One of `ready`, `idle`, `working`, `deactivated`.
 </ResponseField>
 
 <ResponseField name="epochs" type="number">
@@ -71,10 +71,9 @@ Create a new publisher. Each account gets one active publisher automatically on 
 
 ```bash cURL
 curl -X POST https://api.tusky.io/v2/publishers \
-  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Api-Key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "active": true,
     "epochs": 5,
     "quilt": false,
     "permanent": true,
@@ -90,7 +89,7 @@ curl -X POST https://api.tusky.io/v2/publishers \
 ```json
 {
   "id": "pub_7f3a2b1c",
-  "active": true,
+  "state": "ready",
   "epochs": 5,
   "quilt": false,
   "permanent": true,

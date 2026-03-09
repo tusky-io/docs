@@ -13,14 +13,14 @@ Each publisher has five configuration flags:
 
 | Setting | Type | Default | Description |
 | --- | --- | --- | --- |
-| **active** | boolean | `true` | Whether the publisher is active. There must be at least one active publisher on the account. |
+| **state** | string | `ready` | Operational state: `ready` (accepting uploads), `idle` (online, no active work), `working` (processing uploads), `deactivated` (disabled). At least one publisher must not be `deactivated`. |
 | **epochs** | number | `1` | Number of Walrus storage epochs. Each epoch is approximately **2 weeks**. Range: 1–100. |
 | **quilt** | boolean | `true` | Whether to batch files into quilts for cost efficiency. |
 | **permanent** | boolean | `false` | Whether blobs are permanent (non-deletable before epoch expiry). |
 | **share** | boolean | `false` | Whether published content is shared and accessible to other users via standard Walrus aggregators. |
 
 <Info>
-  Your account always has at least one active publisher. Tusky creates a default publisher automatically when you sign up — `epochs: 1`, `quilt: true`, `permanent: false`, `share: false`.
+  Your account always has at least one non-deactivated publisher. Tusky creates a default publisher on sign-up — `state: "ready"`, `epochs: 1`, `quilt: true`, `permanent: false`, `share: false`.
 </Info>
 
 ## How publishers work
@@ -181,7 +181,7 @@ When an environment has an attached publisher, all uploads to that environment u
     const publishers = await tusky.publisher.list();
 
     publishers.forEach(p => {
-      console.log(`${p.id}: active=${p.active}, epochs=${p.epochs}, quilt=${p.quilt}, environment=${p.environmentId || 'default'}`);
+      console.log(`${p.id}: state=${p.state}, epochs=${p.epochs}, quilt=${p.quilt}, environment=${p.environmentId || 'default'}`);
     });
     ```
   </Tab>
@@ -199,7 +199,7 @@ When an environment has an attached publisher, all uploads to that environment u
     ```
 
     <Warning>
-      You cannot delete the last active publisher. Create or activate another publisher first.
+      You cannot delete the last non-deactivated publisher. Create another publisher first.
     </Warning>
   </Tab>
 </Tabs>

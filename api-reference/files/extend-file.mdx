@@ -41,7 +41,7 @@ Extend the storage duration of a file by adding more Walrus epochs. This renews 
       WAL tokens charged for the extension.
     </ResponseField>
     <ResponseField name="sui" type="string">
-      SUI tokens charged (Tusky infrastructure fee).
+      SUI tokens charged (gas fee).
     </ResponseField>
   </Expandable>
 </ResponseField>
@@ -52,7 +52,7 @@ Extend the storage duration of a file by adding more Walrus epochs. This renews 
 
 ```bash cURL
 curl -X POST https://api.tusky.io/v2/files/file_abc123/extend \
-  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Api-Key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"epochs": 5}'
 ```

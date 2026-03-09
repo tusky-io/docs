@@ -26,7 +26,7 @@ List all members of an environment, including their roles.
     </ResponseField>
 
     <ResponseField name="role" type="string">
-      The assigned role (`viewer`, `contributor`, or `admin`).
+      The assigned role (`viewer`, `manager`, or `owner`).
     </ResponseField>
 
     <ResponseField name="environmentId" type="string">
@@ -45,7 +45,7 @@ List all members of an environment, including their roles.
 
 ```bash cURL
 curl https://api.tusky.io/v2/environments/env_abc123def456/members \
-  -H "Authorization: Bearer YOUR_API_KEY"
+  -H "Api-Key: YOUR_API_KEY"
 ```
 
 </CodeGroup>
@@ -65,7 +65,7 @@ curl https://api.tusky.io/v2/environments/env_abc123def456/members \
     {
       "id": "member_stu901vwx234",
       "address": "0x1a2b3c4d5e6f7890abcdef1234567890abcdef12",
-      "role": "contributor",
+      "role": "manager",
       "environmentId": "env_abc123def456",
       "createdAt": "2025-07-02T10:00:00.000Z"
     }

@@ -52,7 +52,7 @@ When the upload completes (final chunk), the response includes:
 
 ```bash cURL
 curl -X PATCH https://api.tusky.io/v2/uploads/upload_xyz789 \
-  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Api-Key: YOUR_API_KEY" \
   -H "Tus-Resumable: 1.0.0" \
   -H "Upload-Offset: 0" \
   -H "Content-Type: application/offset+octet-stream" \
