@@ -59,12 +59,16 @@ Monitor your storage consumption and API usage:
 ```typescript
 const usage = await tusky.account.usage();
 
-console.log("Transactions:", usage.transactions);
+console.log("Uploads:", usage.uploads);
+console.log("Deletions:", usage.deletions);
+console.log("Extends:", usage.extends);
 console.log("Ingress:", usage.ingressBytes, "bytes");
 console.log("Egress:", usage.egressBytes, "bytes");
 console.log("Storage used:", usage.usedBytes, "bytes");
 console.log("Active files:", usage.activeFiles);
 console.log("Expired files:", usage.expiredFiles);
+console.log("Blobs:", usage.blobs);
+console.log("Quilts:", usage.quilts);
 console.log("Environments:", usage.environments);
 console.log("Publishers:", usage.publishers);
 console.log("Aggregators:", usage.aggregators);
@@ -76,16 +80,20 @@ console.log("WAL spent:", usage.walSpent);
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `transactions` | `number` | Total transactions (uploads, extends, deletes) in the period. |
+| `uploads` | `number` | Number of file uploads in the period. |
+| `deletions` | `number` | Number of file deletions in the period. |
+| `extends` | `number` | Number of storage extensions in the period. |
 | `ingressBytes` | `number` | Data uploaded in the period (bytes). |
 | `egressBytes` | `number` | Data downloaded / served via aggregators in the period (bytes). |
 | `usedBytes` | `number` | Total bytes currently stored on Walrus. |
 | `activeFiles` | `number` | Number of active files. |
 | `expiredFiles` | `number` | Number of files whose storage epochs have already expired. |
+| `blobs` | `number` | Number of Walrus blobs currently stored (standalone blobs). |
+| `quilts` | `number` | Number of Walrus quilts currently stored (batched blobs). |
 | `environments` | `number` | Number of environments on the account. |
 | `publishers` | `number` | Number of publishers on the account. |
 | `aggregators` | `number` | Number of aggregators on the account. |
-| `suiSpent` | `string` | SUI spent in the period (gas fees). |
+| `suiSpent` | `string` | SUI spent in the period (gas fees + conversions). |
 | `walSpent` | `string` | WAL spent in the period (Walrus storage). |
 
 <Tip>
@@ -108,12 +116,13 @@ console.log(`WAL: ${account.managedWallet.walBalance}`);
 
 // Usage stats
 const usage = await tusky.account.usage();
+console.log(`Uploads: ${usage.uploads}`);
+console.log(`Deletions: ${usage.deletions}`);
+console.log(`Extends: ${usage.extends}`);
 console.log(`Storage: ${(usage.usedBytes / 1e9).toFixed(2)} GB`);
 console.log(`Active files: ${usage.activeFiles}`);
-console.log(`Expired files: ${usage.expiredFiles}`);
+console.log(`Blobs: ${usage.blobs}, Quilts: ${usage.quilts}`);
 console.log(`Egress: ${(usage.egressBytes / 1e9).toFixed(2)} GB`);
-console.log(`Publishers: ${usage.publishers}`);
-console.log(`Aggregators: ${usage.aggregators}`);
 ```
 
 ## What's Next

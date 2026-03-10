@@ -172,7 +172,7 @@
               {
                 "group": "Uploads",
                 "pages": [
-                  "api-reference/uploads/estimate-upload",
+                  "api-reference/uploads/upload-cost",
                   "api-reference/uploads/create-upload",
                   "api-reference/uploads/upload-chunk",
                   "api-reference/uploads/get-upload-status"

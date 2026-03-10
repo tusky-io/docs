@@ -9,22 +9,16 @@ Tusky's default billing model is **pay-as-you-go** — you pay only for the stor
 
 <Steps>
   <Step title="Estimate cost">
-    Before uploading, use the cost estimation endpoint to preview the exact cost in SUI for your file:
+    Before uploading, use the [upload cost endpoint](/api-reference/uploads/upload-cost) to preview the cost:
 
     ```bash
-    curl https://api.tusky.io/v1/files/estimate \
-      -H "Authorization: Bearer tsk_live_abc123" \
-      -G \
-      -d "size=10485760" \
-      -d "epochs=5"
-    ```
-
-    ```json
-    {
-      "walrusCost": "0.045 SUI",
-      "totalCost": "0.045 SUI",
-      "epochs": 5
-    }
+    curl -X POST https://api.tusky.io/v2/uploads/cost \
+      -H "Api-Key: YOUR_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "files": [{ "size": 10485760 }],
+        "epochs": 5
+      }'
     ```
   </Step>
   <Step title="Upload your file">

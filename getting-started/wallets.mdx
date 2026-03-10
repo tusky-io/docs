@@ -106,10 +106,10 @@ With x402, each API request includes a payment header, and Tusky charges the exa
 
 ## Cost Estimation
 
-Use the dashboard cost calculator or the [estimation API](/api-reference/uploads/estimate-upload) to preview costs before uploading. Pass a list of file sizes to get a per-file breakdown and totals:
+Use the dashboard cost calculator or the [upload cost API](/api-reference/uploads/upload-cost) to preview costs before uploading. Pass a list of file sizes to get a per-file breakdown and totals:
 
 ```typescript
-const estimate = await tusky.upload.estimate({
+const estimate = await tusky.upload.cost({
   files: [
     { size: 10 * 1024 * 1024, name: "video.mp4" },
     { size: 2 * 1024 * 1024, name: "report.pdf" },

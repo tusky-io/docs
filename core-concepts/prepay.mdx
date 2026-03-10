@@ -67,7 +67,7 @@ Preview the cost of uploading one or more files before committing. Pass a list o
 <CodeGroup>
 
 ```bash cURL
-curl -X POST https://api.tusky.io/v2/uploads/estimate \
+curl -X POST https://api.tusky.io/v2/uploads/cost \
   -H "Api-Key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -80,7 +80,7 @@ curl -X POST https://api.tusky.io/v2/uploads/estimate \
 ```
 
 ```typescript SDK
-const estimate = await tusky.upload.estimate({
+const estimate = await tusky.upload.cost({
   files: [
     { size: 10485760, name: "video.mp4" },
     { size: 2097152, name: "document.pdf" },
