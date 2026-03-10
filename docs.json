@@ -62,12 +62,10 @@
               "core-concepts/uploads",
               "core-concepts/secrets",
               "core-concepts/encryption",
-              "core-concepts/publishing",
               "core-concepts/publisher",
               "core-concepts/aggregators",
               "core-concepts/managed-wallet",
-              "core-concepts/prepay",
-              "core-concepts/api-keys"
+              "core-concepts/prepay"
             ]
           },
           {
