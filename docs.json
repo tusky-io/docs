@@ -65,7 +65,8 @@
               "core-concepts/publisher",
               "core-concepts/aggregators",
               "core-concepts/managed-wallet",
-              "core-concepts/prepay"
+              "core-concepts/prepay",
+              "core-concepts/subscriptions"
             ]
           },
           {
