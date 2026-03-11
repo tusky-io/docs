@@ -1,9 +1,9 @@
 ---
 title: Environments
-description: 'Public and private containers for your files and secrets'
+description: 'Public and private containers for your files'
 ---
 
-Environments are the top-level containers in Tusky for organizing files, folders, and secrets. Every Tusky account starts with **two environments** automatically created on sign-up: one public and one private (encrypted).
+Environments are the top-level containers in Tusky for organizing files and folders. Every Tusky account starts with **two environments** automatically created on sign-up: one public and one private (encrypted).
 
 ## Public vs Private
 
@@ -12,7 +12,7 @@ Environments are the top-level containers in Tusky for organizing files, folders
     Files are stored **unencrypted** on Walrus. Anyone with the blob ID can read the data through any Walrus aggregator. Ideal for open data, public websites, NFT media, and shared assets.
   </Card>
   <Card title="Private environment" icon="lock">
-    Files are **encrypted client-side** before upload. Encryption keys are stored as [Secrets](/core-concepts/secrets) and managed through [Sui Seal](https://seal-docs.wal.app). The encrypted blobs are readable from any Walrus aggregator, but the data is ciphertext without the decryption key. The Tusky SDK handles encryption and decryption transparently.
+    Files are **encrypted client-side** before upload. Encryption keys are managed through [Sui Seal](https://seal-docs.wal.app). The encrypted blobs are readable from any Walrus aggregator, but the data is ciphertext without the decryption key. The Tusky SDK handles encryption and decryption transparently.
   </Card>
 </CardGroup>
 
@@ -22,14 +22,14 @@ Environments are the top-level containers in Tusky for organizing files, folders
 
 ### How private environments work
 
-Private environment files are stored on Walrus like any other blob — they can be fetched through any standard Walrus aggregator. However, the content is encrypted ciphertext. Only users with access to the environment's encryption keys (stored as [Secrets](/core-concepts/secrets) via Sui Seal) can decrypt the data.
+Private environment files are stored on Walrus like any other blob — they can be fetched through any standard Walrus aggregator. However, the content is encrypted ciphertext. Only users with access to the environment's encryption keys (managed via [Sui Seal](https://seal-docs.wal.app)) can decrypt the data.
 
 <Steps>
   <Step title="Upload">
     The SDK encrypts the file client-side using keys derived from the environment's Seal policy, then uploads the ciphertext to Walrus.
   </Step>
   <Step title="Store keys">
-    Encryption keys are stored as secrets using Sui Seal. Access policies are defined on-chain — only authorized wallet addresses can retrieve the keys.
+    Encryption keys are managed by Sui Seal on-chain. Access policies are defined on the Sui blockchain — only authorized wallet addresses can retrieve the keys.
   </Step>
   <Step title="Read">
     Any Walrus aggregator can serve the encrypted blob. The SDK fetches the ciphertext, retrieves the decryption key from Seal, and decrypts client-side.
@@ -115,8 +115,8 @@ Create → Configure → Upload files → Share / add members → Manage → Arc
   <Card title="Encryption" icon="shield-halved" href="/core-concepts/encryption">
     Understand how Tusky encrypts data in private environments.
   </Card>
-  <Card title="Publishing" icon="cloud-arrow-up" href="/core-concepts/publishing">
-    See how Tusky publishes your data to the Walrus network.
+  <Card title="Publishers" icon="cloud-arrow-up" href="/core-concepts/publisher">
+    Configure how your data is published to the Walrus network.
   </Card>
   <Card title="Aggregators" icon="network-wired" href="/core-concepts/aggregators">
     Discover how to access your content through dedicated aggregators.
