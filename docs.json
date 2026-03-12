@@ -8,9 +8,9 @@
   },
   "favicon": "/favicon.svg",
   "colors": {
-    "primary": "#046994",
-    "light": "#a5e2fc",
-    "dark": "#035580"
+    "primary": "#0C7AB0",
+    "light": "#7ED4FC",
+    "dark": "#0369A1"
   },
   "topbarLinks": [
     {
@@ -20,7 +20,7 @@
   ],
   "topbarCtaButton": {
     "name": "Dashboard",
-    "url": "https://app.tusky.io"
+    "url": "https://app.tusky.dev"
   },
   "anchors": [
     {
