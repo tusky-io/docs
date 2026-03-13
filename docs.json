@@ -182,6 +182,7 @@
                 "pages": [
                   "api-reference/files/get-file",
                   "api-reference/files/list-files",
+                  "api-reference/files/download-file",
                   "api-reference/files/extend-file",
                   "api-reference/files/delete-file"
                 ]
