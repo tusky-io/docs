@@ -10,6 +10,10 @@ The endpoint is available at **any point after upload** — you do not need to w
 - **Before publishing** — the file binary is served directly from Tusky's scratch storage (temporary storage used during the upload and publishing pipeline).
 - **After publishing** — the file binary is read from the [Walrus decentralized storage network](https://walrus.site). If the temporary binary has already been removed from scratch storage, Walrus becomes the sole source of the file content.
 
+<Note>
+  To always serve file content directly from decentralized storage — bypassing scratch storage entirely — use an [Aggregator](/api-reference/aggregators/get-aggregator). Aggregators read exclusively from the Walrus network and are the recommended approach for production file delivery.
+</Note>
+
 ## Path Parameters
 
 <ParamField path="fileId" type="string" required>
