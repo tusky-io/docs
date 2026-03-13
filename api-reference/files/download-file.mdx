@@ -1,0 +1,58 @@
+---
+title: Download File
+api: 'GET https://api.tusky.io/v2/files/{fileId}/download'
+---
+
+Download the binary content of a file. This endpoint returns the raw file data with the appropriate `Content-Type` header set to the file's MIME type.
+
+The endpoint is available at **any point after upload** — you do not need to wait for the file to be published. Depending on the file's current state, the binary is served from different storage backends:
+
+- **Before publishing** — the file binary is served directly from Tusky's scratch storage (temporary storage used during the upload and publishing pipeline).
+- **After publishing** — the file binary is read from the [Walrus decentralized storage network](https://walrus.site). If the temporary binary has already been removed from scratch storage, Walrus becomes the sole source of the file content.
+
+## Path Parameters
+
+<ParamField path="fileId" type="string" required>
+  The unique identifier of the file to download.
+</ParamField>
+
+## Response
+
+Returns the raw binary content of the file. The response headers include:
+
+| Header | Description |
+|---|---|
+| `Content-Type` | The MIME type of the file (e.g. `image/png`, `application/pdf`). |
+| `Content-Length` | The size of the file in bytes. |
+| `Content-Disposition` | Set to `attachment; filename="<original filename>"`. |
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl https://api.tusky.io/v2/files/file_mno345pqr678/download \
+  -H "Api-Key: YOUR_API_KEY" \
+  --output document.pdf
+```
+
+```javascript JavaScript
+const response = await fetch(
+  "https://api.tusky.io/v2/files/file_mno345pqr678/download",
+  { headers: { "Api-Key": "YOUR_API_KEY" } }
+);
+const buffer = await response.arrayBuffer();
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    "https://api.tusky.io/v2/files/file_mno345pqr678/download",
+    headers={"Api-Key": "YOUR_API_KEY"},
+)
+with open("document.pdf", "wb") as f:
+    f.write(response.content)
+```
+
+</CodeGroup>
