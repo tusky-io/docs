@@ -1,14 +1,14 @@
 ---
 title: List Members
-api: 'GET https://api.tusky.io/v2/environments/{environmentId}/members'
+api: 'GET https://api.tusky.io/v2/volumes/{volumeId}/members'
 ---
 
-List all members of an environment, including their roles.
+List all members of a volume, including their roles.
 
 ## Path Parameters
 
-<ParamField path="environmentId" type="string" required>
-  The unique identifier of the environment.
+<ParamField path="volumeId" type="string" required>
+  The unique identifier of the volume.
 </ParamField>
 
 ## Response
@@ -29,8 +29,8 @@ List all members of an environment, including their roles.
       The assigned role (`viewer`, `manager`, or `owner`).
     </ResponseField>
 
-    <ResponseField name="environmentId" type="string">
-      The environment this membership belongs to.
+    <ResponseField name="volumeId" type="string">
+      The volume this membership belongs to.
     </ResponseField>
 
     <ResponseField name="createdAt" type="string">
@@ -44,7 +44,7 @@ List all members of an environment, including their roles.
 <CodeGroup>
 
 ```bash cURL
-curl https://api.tusky.io/v2/environments/env_abc123def456/members \
+curl https://api.tusky.io/v2/volumes/vol_abc123def456/members \
   -H "Api-Key: YOUR_API_KEY"
 ```
 
@@ -59,14 +59,14 @@ curl https://api.tusky.io/v2/environments/env_abc123def456/members \
       "id": "member_owner_001",
       "address": "0xowner1234567890abcdef1234567890abcdef12",
       "role": "admin",
-      "environmentId": "env_abc123def456",
+      "volumeId": "vol_abc123def456",
       "createdAt": "2025-07-01T12:00:00.000Z"
     },
     {
       "id": "member_stu901vwx234",
       "address": "0x1a2b3c4d5e6f7890abcdef1234567890abcdef12",
       "role": "manager",
-      "environmentId": "env_abc123def456",
+      "volumeId": "vol_abc123def456",
       "createdAt": "2025-07-02T10:00:00.000Z"
     }
   ]

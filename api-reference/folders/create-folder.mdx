@@ -1,14 +1,14 @@
 ---
 title: Create Folder
-api: 'POST https://api.tusky.io/v2/environments/{environmentId}/folders'
+api: 'POST https://api.tusky.io/v2/volumes/{volumeId}/folders'
 ---
 
-Create a new folder inside an environment to organize files.
+Create a new folder inside a volume to organize files.
 
 ## Path Parameters
 
-<ParamField path="environmentId" type="string" required>
-  The environment to create the folder in.
+<ParamField path="volumeId" type="string" required>
+  The volume to create the folder in.
 </ParamField>
 
 ## Request Body
@@ -18,7 +18,7 @@ Create a new folder inside an environment to organize files.
 </ParamField>
 
 <ParamField body="parentId" type="string">
-  Parent folder ID for nesting. Omit to create at the environment root.
+  Parent folder ID for nesting. Omit to create at the volume root.
 </ParamField>
 
 ## Response
@@ -31,12 +31,12 @@ Create a new folder inside an environment to organize files.
   Folder name.
 </ResponseField>
 
-<ResponseField name="environmentId" type="string">
-  The environment this folder belongs to.
+<ResponseField name="volumeId" type="string">
+  The volume this folder belongs to.
 </ResponseField>
 
 <ResponseField name="parentId" type="string">
-  Parent folder ID, or `null` if at environment root.
+  Parent folder ID, or `null` if at volume root.
 </ResponseField>
 
 <ResponseField name="createdAt" type="string">
@@ -48,7 +48,7 @@ Create a new folder inside an environment to organize files.
 <CodeGroup>
 
 ```bash cURL
-curl -X POST https://api.tusky.io/v2/environments/env_abc123/folders \
+curl -X POST https://api.tusky.io/v2/volumes/vol_abc123/folders \
   -H "Api-Key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"name": "Photos", "parentId": null}'
@@ -62,7 +62,7 @@ curl -X POST https://api.tusky.io/v2/environments/env_abc123/folders \
 {
   "id": "folder_xyz789",
   "name": "Photos",
-  "environmentId": "env_abc123",
+  "volumeId": "vol_abc123",
   "parentId": null,
   "createdAt": "2026-03-06T12:00:00Z"
 }

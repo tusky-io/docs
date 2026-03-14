@@ -1,0 +1,37 @@
+---
+title: Delete Volume
+api: 'DELETE https://api.tusky.io/v2/volumes/{volumeId}'
+---
+
+Permanently delete a volume and all of its files.
+
+## Path Parameters
+
+<ParamField path="volumeId" type="string" required>
+  The unique identifier of the volume to delete.
+</ParamField>
+
+## Response
+
+Returns a `204 No Content` response on success.
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X DELETE https://api.tusky.io/v2/volumes/vol_abc123def456 \
+  -H "Api-Key: YOUR_API_KEY"
+```
+
+</CodeGroup>
+
+### Response
+
+```
+204 No Content
+```
+
+<Warning>
+  This action is **irreversible**. Deleting a volume permanently removes the volume and all files within it. File data stored on the Walrus network may persist until the epoch expiry, but will no longer be accessible through Tusky.
+</Warning>

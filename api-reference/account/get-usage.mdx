@@ -57,8 +57,8 @@ Retrieve usage statistics for the authenticated account.
   Number of Walrus quilts currently stored (batched blobs).
 </ResponseField>
 
-<ResponseField name="environments" type="number">
-  Number of environments on the account.
+<ResponseField name="volumes" type="number">
+  Number of volumes on the account.
 </ResponseField>
 
 <ResponseField name="publishers" type="number">
@@ -102,7 +102,7 @@ curl "https://api.tusky.io/v2/account/usage?from=2026-03-01T00:00:00Z&to=2026-03
   "expiredFiles": 18,
   "blobs": 312,
   "quilts": 89,
-  "environments": 3,
+  "volumes": 3,
   "publishers": 4,
   "aggregators": 2,
   "suiSpent": "12.45",

@@ -69,7 +69,7 @@ console.log("Active files:", usage.activeFiles);
 console.log("Expired files:", usage.expiredFiles);
 console.log("Blobs:", usage.blobs);
 console.log("Quilts:", usage.quilts);
-console.log("Environments:", usage.environments);
+console.log("Volumes:", usage.volumes);
 console.log("Publishers:", usage.publishers);
 console.log("Aggregators:", usage.aggregators);
 console.log("SUI spent:", usage.suiSpent);
@@ -90,7 +90,7 @@ console.log("WAL spent:", usage.walSpent);
 | `expiredFiles` | `number` | Number of files whose storage epochs have already expired. |
 | `blobs` | `number` | Number of Walrus blobs currently stored (standalone blobs). |
 | `quilts` | `number` | Number of Walrus quilts currently stored (batched blobs). |
-| `environments` | `number` | Number of environments on the account. |
+| `volumes` | `number` | Number of volumes on the account. |
 | `publishers` | `number` | Number of publishers on the account. |
 | `aggregators` | `number` | Number of aggregators on the account. |
 | `suiSpent` | `string` | SUI spent in the period (gas fees + conversions). |

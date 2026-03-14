@@ -16,14 +16,14 @@ Walrus provides powerful decentralized blob storage on the Sui network, but usin
   <Card title="End-to-End Encryption" icon="lock">
     Every file is encrypted before it leaves your device. Encryption keys are tied to your connected Sui wallet or managed through [Seal](https://seal-docs.wal.app), eliminating password friction entirely.
   </Card>
-  <Card title="Environments & File Management" icon="folder-tree">
-    Organize files into environments — encrypted containers with granular access control. Environments give you a familiar file-system abstraction on top of Walrus blobs.
+  <Card title="Volumes & File Management" icon="folder-tree">
+    Organize files into volumes — encrypted containers with granular access control. Volumes give you a familiar file-system abstraction on top of Walrus blobs.
   </Card>
   <Card title="Private Aggregators" icon="shield-halved">
     Each user gets a private aggregator with custom subdomains or fully custom domains. Serve content directly from the Walrus network through your own branded endpoint.
   </Card>
   <Card title="SDK & API" icon="code">
-    A TypeScript SDK and REST API let you integrate Tusky into any application. Upload, download, manage environments, and control access programmatically.
+    A TypeScript SDK and REST API let you integrate Tusky into any application. Upload, download, manage volumes, and control access programmatically.
   </Card>
   <Card title="Self-Custody Ready" icon="key">
     Start with Tusky-managed infrastructure and eject at any time. Export your blobs and self-manage them directly on Walrus whenever you choose.
@@ -47,10 +47,10 @@ You interact with Tusky through the [dashboard](https://app.tusky.io), the [Type
 
 | Concept | Description |
 | --- | --- |
-| **Environments** | Encrypted containers that group files with shared access policies. |
-| **Files** | Individual objects stored inside environments, encrypted and published to Walrus. |
-| **Members** | Users or API keys granted access to an environment with role-based permissions. |
-| **Aggregators** | Private HTTP endpoints for serving environment content over custom domains. |
+| **Volumes** | Encrypted containers that group files with shared access policies. |
+| **Files** | Individual objects stored inside volumes, encrypted and published to Walrus. |
+| **Members** | Users or API keys granted access to a volume with role-based permissions. |
+| **Aggregators** | Private HTTP endpoints for serving volume content over custom domains. |
 | **Wallets** | Prepaid balances in SUI and WAL that fund storage operations. |
 
 ## Get Started

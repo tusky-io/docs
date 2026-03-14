@@ -3,7 +3,7 @@ title: Getting Started
 description: 'Install and configure the Tusky TypeScript SDK'
 ---
 
-The Tusky TypeScript SDK (`@tusky-io/ts-sdk`) gives you full programmatic access to the Tusky platform — create environments, upload files, manage members, and configure aggregators from any JavaScript or TypeScript application.
+The Tusky TypeScript SDK (`@tusky-io/ts-sdk`) gives you full programmatic access to the Tusky platform — create volumes, upload files, manage members, and configure aggregators from any JavaScript or TypeScript application.
 
 ## Prerequisites
 
@@ -30,7 +30,7 @@ pnpm add @tusky-io/ts-sdk
 
 ## Import the SDK
 
-The SDK ships with separate entry points for server and browser environments.
+The SDK ships with separate entry points for server and browser volumes.
 
 <Tabs>
   <Tab title="Node.js">
@@ -61,22 +61,22 @@ For browser applications you can authenticate with a connected Sui wallet instea
 
 ## Quick Example
 
-The following snippet creates an environment and uploads a file in just a few lines:
+The following snippet creates a volume and uploads a file in just a few lines:
 
 ```typescript
 import { Tusky } from "@tusky-io/ts-sdk";
 
 const tusky = new Tusky({ apiKey: "your-api-key" });
 
-// Create a new environment
-const environment = await tusky.environment.create("My First Environment", {
+// Create a new volume
+const volume = await tusky.volume.create("My First Volume", {
   encrypted: true,
 });
 
-console.log("Environment created:", environment.id);
+console.log("Volume created:", volume.id);
 
-// Upload a file to the environment
-const file = await tusky.file.upload(environment.id, "./hello.txt", {
+// Upload a file to the volume
+const file = await tusky.file.upload(volume.id, "./hello.txt", {
   name: "hello.txt",
 });
 
@@ -97,8 +97,8 @@ console.log("Downloaded", content.byteLength, "bytes");
   <Step title="Initialize Tusky">
     Import and instantiate the client with your API key.
   </Step>
-  <Step title="Create an environment and upload">
-    Use `tusky.environment.create()` and `tusky.file.upload()` to store your first file on Walrus.
+  <Step title="Create a volume and upload">
+    Use `tusky.volume.create()` and `tusky.file.upload()` to store your first file on Walrus.
   </Step>
 </Steps>
 
@@ -119,8 +119,8 @@ The `Tusky` constructor accepts an options object:
   <Card title="Authentication" icon="key" href="/sdk/authentication">
     Explore all authentication methods including Sui wallet integration.
   </Card>
-  <Card title="Environments" icon="vault" href="/sdk/environments">
-    Learn how to create, list, and manage environments programmatically.
+  <Card title="Volumes" icon="vault" href="/sdk/volumes">
+    Learn how to create, list, and manage volumes programmatically.
   </Card>
   <Card title="Files" icon="file" href="/sdk/files">
     Upload, download, and manage files with the SDK.

@@ -17,7 +17,7 @@ The Walrus network is designed for durability through redundant encoding across 
     In disaster recovery scenarios, restoring from a centralized backup can be faster than reconstructing from the decentralized network.
   </Card>
   <Card title="Compliance" icon="file-shield">
-    Some regulatory environments require data to be stored in identifiable, auditable infrastructure in addition to decentralized systems.
+    Some regulatory volumes require data to be stored in identifiable, auditable infrastructure in addition to decentralized systems.
   </Card>
   <Card title="Peace of Mind" icon="heart">
     For mission-critical data, a backup in a proven centralized system provides additional confidence.
@@ -27,11 +27,11 @@ The Walrus network is designed for durability through redundant encoding across 
 ## How It Works
 
 <Steps>
-  <Step title="Enable backup on an environment">
-    Turn on backup for any environment through the dashboard or API. Backup is configured per environment — you can choose which environments need the extra protection.
+  <Step title="Enable backup on a volume">
+    Turn on backup for any volume through the dashboard or API. Backup is configured per volume — you can choose which volumes need the extra protection.
   </Step>
   <Step title="Automatic on upload">
-    Once enabled, every file uploaded to the environment is automatically copied to Tusky's centralized blobstore in addition to being published to Walrus.
+    Once enabled, every file uploaded to the volume is automatically copied to Tusky's centralized blobstore in addition to being published to Walrus.
   </Step>
   <Step title="Transparent access">
     File retrieval works exactly the same whether backup is enabled or not. If the primary Walrus path is unavailable, the aggregator can fall back to the backup copy.
@@ -42,27 +42,27 @@ The Walrus network is designed for durability through redundant encoding across 
 
 <Tabs>
   <Tab title="Dashboard">
-    Navigate to your environment's **Settings → Backup** and toggle **Enable Backup**. All future uploads to this environment will be backed up automatically.
+    Navigate to your volume's **Settings → Backup** and toggle **Enable Backup**. All future uploads to this volume will be backed up automatically.
   </Tab>
   <Tab title="SDK">
-    Enable backup when creating or updating an environment:
+    Enable backup when creating or updating a volume:
 
     ```typescript
     // Enable on creation
-    const environment = await tusky.environment.create("Critical Data", {
+    const volume = await tusky.volume.create("Critical Data", {
       encrypted: true,
       backup: true,
     });
 
-    // Enable on existing environment
-    await tusky.environment.update("env_abc123", {
+    // Enable on existing volume
+    await tusky.volume.update("vol_abc123", {
       backup: true,
     });
     ```
   </Tab>
   <Tab title="API">
     ```bash
-    curl -X PATCH https://api.tusky.io/v1/environments/env_abc123 \
+    curl -X PATCH https://api.tusky.io/v1/volumes/vol_abc123 \
       -H "Authorization: Bearer tsk_live_abc123" \
       -H "Content-Type: application/json" \
       -d '{"backup": true}'
@@ -86,12 +86,12 @@ Backup is a **paid feature** with a per-GB monthly cost on top of your standard 
 
 | Included | Not Included |
 | --- | --- |
-| File content (encrypted if environment is encrypted) | Environment metadata (stored in Tusky's database) |
+| File content (encrypted if volume is encrypted) | Volume metadata (stored in Tusky's database) |
 | Original file names and structure | Member access control lists |
 | MIME types and custom metadata | Aggregator configuration |
 
 <Info>
-  For encrypted environments, the backup stores the **encrypted** file content. Tusky never has access to your unencrypted data, even in the backup.
+  For encrypted volumes, the backup stores the **encrypted** file content. Tusky never has access to your unencrypted data, even in the backup.
 </Info>
 
 ## Disabling Backup
@@ -111,7 +111,7 @@ You can disable backup at any time:
   <Card title="S3 Migration" icon="right-left" href="/tools/s3-migration">
     Migrate existing data from S3 to Tusky with automatic backup.
   </Card>
-  <Card title="Environments" icon="vault" href="/sdk/environments">
-    Manage the environments that contain your backed-up files.
+  <Card title="Volumes" icon="vault" href="/sdk/volumes">
+    Manage the volumes that contain your backed-up files.
   </Card>
 </CardGroup>

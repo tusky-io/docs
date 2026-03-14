@@ -32,7 +32,7 @@ Every Tusky account starts on the **Free** plan with no credit card required. Up
     | --- | --- |
     | **API requests / month** | 1,000 |
     | **Egress bandwidth / month** | 5 GB |
-    | **Environments** | 2 |
+    | **Volumes** | 2 |
     | **Publishers** | 1 |
     | **Aggregators** | Shared (tusky.io) |
     | **Team members per env** | 1 (owner only) |
@@ -54,7 +54,7 @@ Every Tusky account starts on the **Free** plan with no credit card required. Up
     | --- | --- |
     | **API requests / month** | 50,000 |
     | **Egress bandwidth / month** | 200 GB |
-    | **Environments** | 10 |
+    | **Volumes** | 10 |
     | **Publishers** | 3 |
     | **Aggregators** | 1 private |
     | **Team members per env** | 5 |
@@ -62,7 +62,7 @@ Every Tusky account starts on the **Free** plan with no credit card required. Up
 
     Includes:
     - Custom aggregator domain
-    - Encrypted environments
+    - Encrypted volumes
     - Aggregator access logs and analytics
 
   </Tab>
@@ -77,7 +77,7 @@ Every Tusky account starts on the **Free** plan with no credit card required. Up
     | --- | --- |
     | **API requests / month** | 500,000 |
     | **Egress bandwidth / month** | 2 TB |
-    | **Environments** | 50 |
+    | **Volumes** | 50 |
     | **Publishers** | 10 |
     | **Aggregators** | 3 private |
     | **Team members per env** | 25 |
@@ -85,7 +85,7 @@ Every Tusky account starts on the **Free** plan with no credit card required. Up
 
     Includes everything in Builder, plus:
     - Multiple private aggregators
-    - Token-gated environments (NFT / DAO access)
+    - Token-gated volumes (NFT / DAO access)
     - SUI → WAL auto-convert on publishers
     - Advanced usage analytics
 
@@ -101,7 +101,7 @@ Every Tusky account starts on the **Free** plan with no credit card required. Up
     | --- | --- |
     | **API requests / month** | 5,000,000 |
     | **Egress bandwidth / month** | 20 TB |
-    | **Environments** | Unlimited |
+    | **Volumes** | Unlimited |
     | **Publishers** | Unlimited |
     | **Aggregators** | 5 private |
     | **Team members per env** | Unlimited |
@@ -122,11 +122,11 @@ Every Tusky account starts on the **Free** plan with no credit card required. Up
 | **Monthly price (SUI)** | 0 | 12 | 50 | 200 |
 | **API requests / mo** | 1K | 50K | 500K | 5M |
 | **Egress bandwidth / mo** | 5 GB | 200 GB | 2 TB | 20 TB |
-| **Environments** | 2 | 10 | 50 | Unlimited |
+| **Volumes** | 2 | 10 | 50 | Unlimited |
 | **Publishers** | 1 | 3 | 10 | Unlimited |
 | **Private aggregators** | — | 1 | 3 | 5 |
 | **Team members / env** | 1 | 5 | 25 | Unlimited |
-| **Encrypted environments** | ✓ | ✓ | ✓ | ✓ |
+| **Encrypted volumes** | ✓ | ✓ | ✓ | ✓ |
 | **Token-gated access** | — | — | ✓ | ✓ |
 | **Auto-convert SUI → WAL** | — | — | ✓ | ✓ |
 | **Custom aggregator domain** | — | ✓ | ✓ | ✓ |
@@ -144,7 +144,7 @@ When you exceed a monthly limit the behaviour depends on which limit was hit:
 | --- | --- |
 | **API requests** | Requests return `429 Too Many Requests` until the next billing cycle or until you upgrade. |
 | **Egress bandwidth** | Downloads through your aggregator are throttled to a lower rate. Files remain accessible — just slower. |
-| **Environments / publishers / aggregators** | Creating new resources is blocked. Existing ones continue to work. |
+| **Volumes / publishers / aggregators** | Creating new resources is blocked. Existing ones continue to work. |
 
 <Tip>
   Watch your usage in the dashboard or via the [usage API](/api-reference/account/get-usage). You can upgrade mid-cycle at any time — the new limits apply immediately and you're charged the prorated difference in SUI.

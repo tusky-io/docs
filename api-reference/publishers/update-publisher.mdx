@@ -37,8 +37,8 @@ Update a publisher's configuration. Only the fields included in the request body
   Whether to automatically convert SUI to WAL before upload when WAL balance is insufficient. When `true`, the publisher swaps SUI → WAL via on-chain DEX at the best available rate.
 </ParamField>
 
-<ParamField body="environmentId" type="string">
-  Attach or detach the publisher to/from an environment. Set to an environment ID to attach, or `null` to detach and make it an account-level publisher.
+<ParamField body="volumeId" type="string">
+  Attach or detach the publisher to/from a volume. Set to a volume ID to attach, or `null` to detach and make it an account-level publisher.
 </ParamField>
 
 ## Response
@@ -73,8 +73,8 @@ Returns the updated publisher object.
   Whether SUI → WAL auto-conversion is enabled.
 </ResponseField>
 
-<ResponseField name="environmentId" type="string">
-  Attached environment ID, or `null`.
+<ResponseField name="volumeId" type="string">
+  Attached volume ID, or `null`.
 </ResponseField>
 
 <ResponseField name="updatedAt" type="string">
@@ -109,7 +109,7 @@ curl -X PATCH https://api.tusky.io/v2/publishers/pub_7f3a2b1c \
   "permanent": false,
   "share": false,
   "autoConvert": true,
-  "environmentId": "env_abc123",
+  "volumeId": "vol_abc123",
   "updatedAt": "2026-03-05T15:00:00Z"
 }
 ```

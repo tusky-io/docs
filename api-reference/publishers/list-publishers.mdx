@@ -11,8 +11,8 @@ List all publishers on the authenticated account.
   Filter by state. One of `ready`, `idle`, `working`, `deactivated`. Omit to return all publishers.
 </ParamField>
 
-<ParamField query="environmentId" type="string">
-  Filter by attached environment ID. Use `null` to return only the account-level default publishers.
+<ParamField query="volumeId" type="string">
+  Filter by attached volume ID. Use `null` to return only the account-level default publishers.
 </ParamField>
 
 ## Response
@@ -42,8 +42,8 @@ Returns an array of publisher objects.
     <ResponseField name="autoConvert" type="boolean">
       Whether SUI → WAL auto-conversion is enabled.
     </ResponseField>
-    <ResponseField name="environmentId" type="string">
-      Attached environment ID, or `null`.
+    <ResponseField name="volumeId" type="string">
+      Attached volume ID, or `null`.
     </ResponseField>
     <ResponseField name="createdAt" type="string">
       ISO 8601 creation timestamp.
@@ -80,7 +80,7 @@ curl "https://api.tusky.io/v2/publishers?state=ready" \
       "permanent": false,
       "share": false,
       "autoConvert": true,
-      "environmentId": null,
+      "volumeId": null,
       "createdAt": "2026-01-15T10:00:00Z"
     },
     {
@@ -91,7 +91,7 @@ curl "https://api.tusky.io/v2/publishers?state=ready" \
       "permanent": true,
       "share": false,
       "autoConvert": true,
-      "environmentId": "env_abc123",
+      "volumeId": "vol_abc123",
       "createdAt": "2026-03-05T12:00:00Z"
     }
   ]

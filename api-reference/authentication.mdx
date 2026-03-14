@@ -14,7 +14,7 @@ Api-Key: YOUR_API_KEY
 ### Example Request
 
 ```bash
-curl https://api.tusky.io/v2/environments \
+curl https://api.tusky.io/v2/volumes \
   -H "Api-Key: tsk_live_abc123def456"
 ```
 
@@ -75,5 +75,5 @@ Returned when the API key is valid but does not have sufficient permissions.
 - **Use the `Api-Key` header** — do not pass keys as query parameters
 - **Rotate keys regularly** — delete old keys and generate new ones periodically
 - **Use scoped keys** — limit each key to only the permissions it needs
-- **Use environment variables** — store keys in env vars, not in source code
+- **Use volume variables** — store keys in env vars, not in source code
 - **Monitor usage** — review API key activity in the dashboard to detect anomalies

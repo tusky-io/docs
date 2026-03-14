@@ -3,7 +3,7 @@ title: Create Publisher
 api: 'POST https://api.tusky.io/v2/publishers'
 ---
 
-Create a new publisher. Each account gets one active publisher automatically on sign-up. You can create additional publishers with different configurations and attach them to specific environments.
+Create a new publisher. Each account gets one active publisher automatically on sign-up. You can create additional publishers with different configurations and attach them to specific volumes.
 
 ## Request Body
 
@@ -31,8 +31,8 @@ Create a new publisher. Each account gets one active publisher automatically on 
   Whether to automatically convert SUI to WAL before upload when the managed wallet's WAL balance is insufficient. When `true`, the publisher swaps SUI → WAL via on-chain DEX at the best available rate. When `false`, uploads fail with `402` if WAL balance is too low.
 </ParamField>
 
-<ParamField body="environmentId" type="string">
-  Optional environment ID to attach this publisher to. When set, this publisher configuration is used for all uploads to the specified environment, overriding the account default.
+<ParamField body="volumeId" type="string">
+  Optional volume ID to attach this publisher to. When set, this publisher configuration is used for all uploads to the specified volume, overriding the account default.
 </ParamField>
 
 ## Response
@@ -65,8 +65,8 @@ Create a new publisher. Each account gets one active publisher automatically on 
   Whether SUI → WAL auto-conversion is enabled.
 </ResponseField>
 
-<ResponseField name="environmentId" type="string">
-  The environment this publisher is attached to, or `null` if it is the account default.
+<ResponseField name="volumeId" type="string">
+  The volume this publisher is attached to, or `null` if it is the account default.
 </ResponseField>
 
 <ResponseField name="createdAt" type="string">
@@ -87,7 +87,7 @@ curl -X POST https://api.tusky.io/v2/publishers \
     "permanent": true,
     "share": false,
     "autoConvert": true,
-    "environmentId": "env_abc123"
+    "volumeId": "vol_abc123"
   }'
 ```
 
@@ -104,11 +104,11 @@ curl -X POST https://api.tusky.io/v2/publishers \
   "permanent": true,
   "share": false,
   "autoConvert": true,
-  "environmentId": "env_abc123",
+  "volumeId": "vol_abc123",
   "createdAt": "2026-03-05T12:00:00Z"
 }
 ```
 
 <Note>
-  When an environment has an attached publisher, uploads to that environment use the attached publisher's configuration instead of the account default.
+  When a volume has an attached publisher, uploads to that volume use the attached publisher's configuration instead of the account default.
 </Note>

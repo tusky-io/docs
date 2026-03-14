@@ -1,14 +1,14 @@
 ---
-title: Create Environment
-api: 'POST https://api.tusky.io/v2/environments'
+title: Create Volume
+api: 'POST https://api.tusky.io/v2/volumes'
 ---
 
-Create a new environment. Environments are containers for files, folders, and secrets. They can be public or private (encrypted).
+Create a new volume. Volumes are containers for decentralized files and folders. They can be optionally encrypted.
 
 ## Request Body
 
 <ParamField body="name" type="string" required>
-  Environment name. 1–128 characters.
+  Volume name. 1–128 characters.
 </ParamField>
 
 <ParamField body="encrypted" type="boolean" default="false">
@@ -16,13 +16,13 @@ Create a new environment. Environments are containers for files, folders, and se
 </ParamField>
 
 <ParamField body="publisherIds" type="array">
-  Array of publisher IDs to assign to this environment. Assigning multiple publishers enables **horizontal scaling** — uploads are distributed across publishers for shorter publishing times. If omitted, the account's default publisher is used.
+  Array of publisher IDs to assign to this volume. Assigning multiple publishers enables **horizontal scaling** — uploads are distributed across publishers for shorter publishing times. If omitted, the account's default publisher is used.
 </ParamField>
 
 ## Response
 
-<ResponseField name="id" type="string">Environment ID.</ResponseField>
-<ResponseField name="name" type="string">Environment name.</ResponseField>
+<ResponseField name="id" type="string">Volume ID.</ResponseField>
+<ResponseField name="name" type="string">Volume name.</ResponseField>
 <ResponseField name="encrypted" type="boolean">Whether encrypted.</ResponseField>
 <ResponseField name="publisherIds" type="array">Assigned publisher IDs.</ResponseField>
 <ResponseField name="createdAt" type="string">ISO 8601 creation timestamp.</ResponseField>
@@ -32,7 +32,7 @@ Create a new environment. Environments are containers for files, folders, and se
 <CodeGroup>
 
 ```bash cURL
-curl -X POST https://api.tusky.io/v2/environments \
+curl -X POST https://api.tusky.io/v2/volumes \
   -H "Api-Key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -48,7 +48,7 @@ curl -X POST https://api.tusky.io/v2/environments \
 
 ```json
 {
-  "id": "env_abc123",
+  "id": "vol_abc123",
   "name": "Production Assets",
   "encrypted": false,
   "publisherIds": ["pub_primary", "pub_secondary"],
@@ -61,5 +61,5 @@ curl -X POST https://api.tusky.io/v2/environments \
 </Note>
 
 <Tip>
-  Assigning multiple publishers to an environment scales your publishing infrastructure horizontally. Incoming uploads are load-balanced across all assigned publishers, reducing publishing latency for high-throughput workloads.
+  Assigning multiple publishers to a volume scales your publishing infrastructure horizontally. Incoming uploads are load-balanced across all assigned publishers, reducing publishing latency for high-throughput workloads.
 </Tip>

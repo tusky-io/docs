@@ -70,14 +70,14 @@ This guide walks you through creating an account, funding your wallet, and uploa
       // Initialize the SDK with your API key
       const tusky = new Tusky({ apiKey: process.env.TUSKY_API_KEY });
 
-      // Create an environment to organize your files
-      const environment = await tusky.environments.create({
-        name: "My First Environment",
+      // Create a volume to organize your files
+      const volume = await tusky.volumes.create({
+        name: "My First Volume",
       });
-      console.log("Environment created:", environment.id);
+      console.log("Volume created:", volume.id);
 
-      // Upload a file to the environment
-      const file = await tusky.files.upload(environment.id, {
+      // Upload a file to the volume
+      const file = await tusky.files.upload(volume.id, {
         data: Buffer.from("Hello, Walrus! Stored with Tusky."),
         name: "hello.txt",
         mimeType: "text/plain",
@@ -98,7 +98,7 @@ This guide walks you through creating an account, funding your wallet, and uploa
     npx tsx upload.ts
     ```
 
-    You should see your environment ID, file ID, and the downloaded content printed to the console. Your file is now stored on the Walrus decentralized network.
+    You should see your volume ID, file ID, and the downloaded content printed to the console. Your file is now stored on the Walrus decentralized network.
   </Step>
 </Steps>
 
@@ -109,7 +109,7 @@ Behind the scenes, Tusky:
 1. **Encrypted** your file using keys derived from your connected wallet
 2. **Encoded** the data into Walrus blob format using your dedicated publisher
 3. **Stored** the blob across Walrus storage nodes for the configured number of epochs
-4. **Indexed** the file metadata in your environment for easy retrieval
+4. **Indexed** the file metadata in your volume for easy retrieval
 
 The file is now persistently stored on the decentralized Walrus network. You can access it through the SDK, REST API, or your private aggregator.
 
@@ -117,7 +117,7 @@ The file is now persistently stored on the decentralized Walrus network. You can
 
 <CardGroup cols={3}>
   <Card title="SDK Guide" icon="code" href="/sdk/getting-started">
-    Explore the full SDK — environments, files, members, encryption, and more.
+    Explore the full SDK — volumes, files, members, encryption, and more.
   </Card>
   <Card title="API Reference" icon="terminal" href="/api-reference/overview">
     Use the REST API directly for maximum control.
