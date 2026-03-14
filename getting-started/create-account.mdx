@@ -1,33 +1,35 @@
 ---
 title: Create an Account
-description: 'Set up your Tusky account and connect your wallet'
+description: 'Set up your Tusky account'
 ---
 
 Tusky accounts are tied to Sui wallets. There are no usernames, passwords, or email sign-ups — your wallet is your identity.
 
-## Connect Your Sui Wallet
+You don't need an existing Sui wallet to get started. Tusky supports **zkLogin**, which generates a self-custodial Sui address for you using a standard social login — no wallet installation required.
+
+## Sign Up Options
+
+<CardGroup cols={2}>
+  <Card title="Social login (zkLogin)" icon="right-to-bracket">
+    Sign in with Google, Apple, or Twitch. Tusky uses [zkLogin](https://docs.sui.io/concepts/cryptography/zklogin) to derive a self-custodial Sui address from your OAuth credential — no seed phrases, no wallet extension needed.
+  </Card>
+  <Card title="Sui wallet" icon="wallet">
+    Connect an existing Sui wallet directly. Tusky supports [Slush](https://slush.app), [Phantom](https://phantom.app), [Suiet](https://suiet.app), and [Surf](https://surf.tech), as well as any wallet implementing the [Sui Wallet Standard](https://docs.sui.io/standards/wallet-standard).
+  </Card>
+</CardGroup>
+
+## Create Your Account
 
 <Steps>
-  <Step title="Install a Sui wallet">
-    If you don't already have one, install a Sui-compatible browser wallet extension. Tusky supports any wallet that implements the [Sui Wallet Standard](https://docs.sui.io/standards/wallet-standard):
+  <Step title="Choose your sign-in method">
+    Go to [app.tusky.io](https://app.tusky.io) and select how you want to sign in:
 
-    - [Sui Wallet](https://chrome.google.com/webstore/detail/sui-wallet/) — official wallet from Mysten Labs
-    - [Suiet](https://suiet.app/) — popular community wallet
-    - [Ethos Wallet](https://ethoswallet.xyz/) — developer-friendly option
-
-    <Tip>
-      Make sure your wallet is connected to the Sui **mainnet** network for production use, or **testnet** for development.
-    </Tip>
-  </Step>
-
-  <Step title="Sign in to Tusky">
-    Go to [app.tusky.io](https://app.tusky.io) and click **Connect Wallet**. Select your wallet from the connection prompt and approve the sign-in request.
-
-    Tusky will ask your wallet to sign a message to verify ownership. This does not cost any gas and does not submit a transaction to the chain.
+    - **Social login** — click **Sign in with Google**, **Apple**, or **Twitch**. zkLogin will generate a self-custodial Sui address from your OAuth credential. You own this address — Tusky never holds your keys.
+    - **Sui wallet** — click **Connect Wallet** and select your wallet (Slush, Phantom, Suiet, Surf, or any Sui Wallet Standard wallet). Approve the sign-in message in your wallet — this does not cost gas or submit a transaction.
   </Step>
 
   <Step title="Account provisioned">
-    Once your wallet is connected, Tusky automatically provisions your account with:
+    Once signed in, Tusky automatically provisions your account with:
 
     - A **dedicated managed wallet** for publishing to the Walrus network
     - A **prepaid wallet balance** (initially unfunded — you will add SUI and WAL in the next step)
@@ -41,7 +43,7 @@ Tusky accounts are tied to Sui wallets. There are no usernames, passwords, or em
 When you create a Tusky account, Tusky generates a **dedicated managed wallet** on your behalf. This wallet is used exclusively for publishing blobs to the Walrus network.
 
 <Note>
-  The managed wallet is distinct from the Sui wallet you connect with. Your connected wallet is used for **authentication and encryption**. The managed wallet is used for **Walrus publishing transactions**.
+  The managed wallet is distinct from the Sui wallet you sign in with. Your sign-in identity is used for **authentication and encryption**. The managed wallet is used for **Walrus publishing transactions**.
 </Note>
 
 ### Why a managed wallet?
@@ -69,12 +71,10 @@ If you decide to leave Tusky or manage your Walrus blobs directly, you can **eje
 
 ## Account Security
 
-Your Tusky account inherits the security of your Sui wallet:
-
 | Layer | Mechanism |
 | --- | --- |
-| **Authentication** | Wallet signature verification — no passwords stored |
-| **Encryption keys** | Derived from your connected wallet or managed via [Seal](https://seal-docs.wal.app) |
+| **Authentication** | zkLogin (Google, Apple, Twitch) or Sui wallet signature — no passwords stored |
+| **Encryption keys** | Derived from your Sui address or managed via [Seal](https://seal-docs.wal.app) |
 | **API access** | Scoped API keys with rotation support |
 | **Publishing** | Isolated managed wallet with view-only access for you |
 
