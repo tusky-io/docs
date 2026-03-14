@@ -57,7 +57,7 @@
           {
             "group": "Core Concepts",
             "pages": [
-              "core-concepts/environments",
+              "core-concepts/volumes",
               "core-concepts/files",
               "core-concepts/uploads",
               "core-concepts/secrets",
@@ -142,16 +142,16 @@
             ]
           },
           {
-            "group": "Environments",
+            "group": "Volumes",
             "pages": [
               {
-                "group": "Environments",
+                "group": "Volumes",
                 "pages": [
-                  "api-reference/environments/create-environment",
-                  "api-reference/environments/get-environment",
-                  "api-reference/environments/list-environments",
-                  "api-reference/environments/update-environment",
-                  "api-reference/environments/delete-environment"
+                  "api-reference/volumes/create-volume",
+                  "api-reference/volumes/get-volume",
+                  "api-reference/volumes/list-volumes",
+                  "api-reference/volumes/update-volume",
+                  "api-reference/volumes/delete-volume"
                 ]
               },
               {
@@ -285,7 +285,7 @@
           {
             "group": "SDK Modules",
             "pages": [
-              "sdk/environments",
+              "sdk/volumes",
               "sdk/files",
               "sdk/members",
               "sdk/aggregators",

@@ -23,11 +23,11 @@ Create a new API key with specific permission scopes.
 
 | Scope | Description |
 | --- | --- |
-| `environments:read` | List and retrieve environments |
-| `environments:write` | Create, update, delete environments |
+| `volumes:read` | List and retrieve volumes |
+| `volumes:write` | Create, update, delete volumes |
 | `files:read` | List, retrieve, and download files |
 | `files:write` | Upload and delete files |
-| `members:read` | List environment members |
+| `members:read` | List volume members |
 | `members:write` | Add, update, remove members |
 | `publishers:read` | Read publisher configuration |
 | `publishers:write` | Create, update, delete publishers |
@@ -56,7 +56,7 @@ curl -X POST https://api.tusky.io/v2/api-keys \
   -H "Content-Type: application/json" \
   -d '{
     "name": "production-backend",
-    "scopes": ["files:read", "files:write", "environments:read"]
+    "scopes": ["files:read", "files:write", "volumes:read"]
   }'
 ```
 
@@ -69,7 +69,7 @@ curl -X POST https://api.tusky.io/v2/api-keys \
   "id": "key_abc123",
   "key": "tsk_live_xK9m2...",
   "name": "production-backend",
-  "scopes": ["files:read", "files:write", "environments:read"],
+  "scopes": ["files:read", "files:write", "volumes:read"],
   "expiresAt": null,
   "createdAt": "2026-03-07T14:00:00Z"
 }

@@ -31,18 +31,18 @@ API keys can be scoped to limit what operations they are allowed to perform:
 
 | Scope | Description |
 | --- | --- |
-| `environments:read` | List and retrieve environment metadata |
-| `environments:write` | Create, update, and delete environments |
+| `volumes:read` | List and retrieve volume metadata |
+| `volumes:write` | Create, update, and delete volumes |
 | `files:read` | List, retrieve, and download files |
 | `files:write` | Upload and delete files |
-| `members:read` | List environment members |
-| `members:write` | Add, update, and remove environment members |
+| `members:read` | List volume members |
+| `members:write` | Add, update, and remove volume members |
 | `account:read` | Read account info, usage, and balance |
 | `aggregators:read` | Read aggregator configuration |
 | `aggregators:write` | Update aggregator settings and custom domains |
 
 <Tip>
-  Follow the **principle of least privilege**: only grant the scopes your application needs. A key used solely for reading files should not have `environments:write` or `members:write` permissions.
+  Follow the **principle of least privilege**: only grant the scopes your application needs. A key used solely for reading files should not have `volumes:write` or `members:write` permissions.
 </Tip>
 
 ## Using Your API Key
@@ -64,7 +64,7 @@ const tusky = new Tusky({
 Include the API key in the `Authorization` header of every request:
 
 ```bash
-curl https://api.tusky.io/v1/environments \
+curl https://api.tusky.io/v1/volumes \
   -H "Authorization: Bearer $TUSKY_API_KEY"
 ```
 
@@ -93,7 +93,7 @@ Revoke a key instantly from the [API keys page](https://app.tusky.io/account/api
   API keys grant programmatic access to your Tusky account. Treat them like passwords.
 </Warning>
 
-- **Use environment variables** — never hardcode API keys in source code
+- **Use volume variables** — never hardcode API keys in source code
 
   ```bash
   # .env (add to .gitignore)
@@ -101,7 +101,7 @@ Revoke a key instantly from the [API keys page](https://app.tusky.io/account/api
   ```
 
 - **Never commit keys to version control** — use `.gitignore` to exclude `.env` files and audit your git history if a key is accidentally committed
-- **Use separate keys per environment** — create distinct keys for development, staging, and production
+- **Use separate keys per volume** — create distinct keys for development, staging, and production
 - **Scope keys narrowly** — grant only the permissions each integration needs
 - **Revoke unused keys** — regularly audit your active keys and revoke any that are no longer needed
 - **Monitor usage** — check the dashboard for unexpected API activity that could indicate a compromised key

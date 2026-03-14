@@ -3,9 +3,9 @@ title: Publishers
 description: 'Configure how your data is published to Walrus'
 ---
 
-A **publisher** defines how files are written to the Walrus network — storage duration, batching strategy, deletability, and sharing. Every Tusky account starts with one active publisher automatically. You can create additional publishers with different configurations and assign them to environments.
+A **publisher** defines how files are written to the Walrus network — storage duration, batching strategy, deletability, and sharing. Every Tusky account starts with one active publisher automatically. You can create additional publishers with different configurations and assign them to volumes.
 
-Assigning **multiple publishers** to a single environment enables **horizontal scaling** — incoming uploads are load-balanced across publishers, each with its own managed wallet and transaction capacity. This reduces publishing latency for high-throughput workloads.
+Assigning **multiple publishers** to a single volume enables **horizontal scaling** — incoming uploads are load-balanced across publishers, each with its own managed wallet and transaction capacity. This reduces publishing latency for high-throughput workloads.
 
 ## Publisher configuration
 
@@ -28,16 +28,16 @@ Each publisher has six configuration flags:
 
 <Steps>
   <Step title="Account default">
-    When you sign up, Tusky provisions a default publisher. All uploads use this publisher unless an environment has a specific publisher attached.
+    When you sign up, Tusky provisions a default publisher. All uploads use this publisher unless a volume has a specific publisher attached.
   </Step>
   <Step title="Create additional publishers">
     You can create publishers with different configurations for different use cases — for example, one publisher for short-lived temp files (1 epoch, deletable) and another for archival data (50 epochs, permanent).
   </Step>
-  <Step title="Attach to environments">
-    Publishers can be attached to specific environments. When an environment has an attached publisher, all uploads to that environment use that publisher's configuration instead of the account default.
+  <Step title="Attach to volumes">
+    Publishers can be attached to specific volumes. When a volume has an attached publisher, all uploads to that volume use that publisher's configuration instead of the account default.
   </Step>
   <Step title="Upload">
-    When you upload a file, Tusky uses the publisher attached to the target environment, or the account default if none is attached. The publisher's settings (epochs, quilt, permanent, share) determine how the blob is written to Walrus.
+    When you upload a file, Tusky uses the publisher attached to the target volume, or the account default if none is attached. The publisher's settings (epochs, quilt, permanent, share) determine how the blob is written to Walrus.
   </Step>
 </Steps>
 
@@ -151,9 +151,9 @@ When `autoConvert` is enabled, the publisher automatically swaps SUI for WAL via
   The swap uses the best available rate across Sui DEX liquidity pools at the time of the transaction. A small amount of additional SUI covers the swap gas. The exact conversion rate and fee are included in the upload receipt.
 </Note>
 
-## Attaching publishers to environments
+## Attaching publishers to volumes
 
-You can attach a publisher to an environment to give that environment a specific publishing configuration. This is useful when different environments have different storage requirements.
+You can attach a publisher to a volume to give that volume a specific publishing configuration. This is useful when different volumes have different storage requirements.
 
 <Tabs>
   <Tab title="SDK">
@@ -167,9 +167,9 @@ You can attach a publisher to an environment to give that environment a specific
       autoConvert: true,
     });
 
-    // Attach it to an environment
+    // Attach it to a volume
     await tusky.publisher.update(archivalPub.id, {
-      environmentId: "env_archive",
+      volumeId: "env_archive",
     });
     ```
   </Tab>
@@ -185,13 +185,13 @@ You can attach a publisher to an environment to give that environment a specific
         "permanent": true,
         "share": false,
         "autoConvert": true,
-        "environmentId": "env_archive"
+        "volumeId": "env_archive"
       }'
     ```
   </Tab>
 </Tabs>
 
-When an environment has an attached publisher, all uploads to that environment use the attached publisher's config. If an environment does not have a publisher attached, it uses the account's default publisher.
+When a volume has an attached publisher, all uploads to that volume use the attached publisher's config. If a volume does not have a publisher attached, it uses the account's default publisher.
 
 ## Managing publishers
 
@@ -201,7 +201,7 @@ When an environment has an attached publisher, all uploads to that environment u
     const publishers = await tusky.publisher.list();
 
     publishers.forEach(p => {
-      console.log(`${p.id}: state=${p.state}, epochs=${p.epochs}, quilt=${p.quilt}, autoConvert=${p.autoConvert}, environment=${p.environmentId || 'default'}`);
+      console.log(`${p.id}: state=${p.state}, epochs=${p.epochs}, quilt=${p.quilt}, autoConvert=${p.autoConvert}, volume=${p.volumeId || 'default'}`);
     });
     ```
   </Tab>
@@ -242,8 +242,8 @@ When an environment has an attached publisher, all uploads to that environment u
   <Accordion title="I want to simplify token management">
     Enable `autoConvert: true` on your publisher. Fund your wallet with SUI only — the publisher swaps SUI → WAL automatically at upload time.
   </Accordion>
-  <Accordion title="Different environments need different settings">
-    Create multiple publishers with different configs and attach each to the appropriate environment.
+  <Accordion title="Different volumes need different settings">
+    Create multiple publishers with different configs and attach each to the appropriate volume.
   </Accordion>
 </AccordionGroup>
 
@@ -260,6 +260,6 @@ When an environment has an attached publisher, all uploads to that environment u
     See the full API reference for managing publishers.
   </Card>
   <Card title="Files" icon="file" href="/core-concepts/files">
-    Learn how files are uploaded and managed inside environments.
+    Learn how files are uploaded and managed inside volumes.
   </Card>
 </CardGroup>

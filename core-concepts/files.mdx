@@ -8,11 +8,11 @@ Files are the fundamental units of storage in Tusky. Every file you upload is pu
 ## Upload process
 
 <Steps>
-  <Step title="Select an environment">
-    Choose the environment where the file will live. The environment's encryption setting determines whether the file is encrypted before upload.
+  <Step title="Select a volume">
+    Choose the volume where the file will live. The volume's encryption setting determines whether the file is encrypted before upload.
   </Step>
   <Step title="Upload the file">
-    Drag-and-drop or select a file from your device. If the environment is encrypted, Tusky encrypts the file **client-side** in your browser before any data leaves your machine.
+    Drag-and-drop or select a file from your device. If the volume is encrypted, Tusky encrypts the file **client-side** in your browser before any data leaves your machine.
   </Step>
   <Step title="Publish to Walrus">
     Tusky sends the (optionally encrypted) file data to Walrus using your dedicated managed wallet. The Walrus network encodes the data with erasure coding and distributes it across storage nodes.
@@ -37,7 +37,7 @@ Every file stored in Tusky carries the following metadata:
 | **Size** | File size in bytes. |
 | **Blob ID** | The Walrus blob identifier — a unique content-addressed hash. |
 | **Quilt patch ID** | If the file was batched into a quilt, this ID addresses the individual file within that quilt. |
-| **Environment** | The parent environment containing this file. |
+| **Volume** | The parent volume containing this file. |
 | **Storage epochs** | Number of Walrus epochs the file is stored for. |
 | **Auto-extend** | Whether automatic storage renewal is enabled. |
 | **Created at** | Timestamp of the initial upload. |
@@ -80,12 +80,12 @@ Walrus measures storage time in **epochs**. When you upload a file you choose ho
     Select a specific number of epochs at upload time. The file is guaranteed to be available for that duration. Once the epochs expire, the data is no longer replicated by Walrus storage nodes.
   </Tab>
   <Tab title="Auto-extend">
-    Enable **auto-extend** on a file or at the environment level. Tusky automatically renews the storage allocation before the current epochs expire, ensuring uninterrupted availability. Auto-extend charges are billed to your account.
+    Enable **auto-extend** on a file or at the volume level. Tusky automatically renews the storage allocation before the current epochs expire, ensuring uninterrupted availability. Auto-extend charges are billed to your account.
   </Tab>
 </Tabs>
 
 <Note>
-  You can change the auto-extend setting for individual files or apply it as an environment-wide default. Environment-level settings are inherited by new uploads but can be overridden per file.
+  You can change the auto-extend setting for individual files or apply it as a volume-wide default. Volume-level settings are inherited by new uploads but can be overridden per file.
 </Note>
 
 ## Blob IDs and quilt patch IDs
@@ -111,10 +111,10 @@ https://<your-aggregator>/v1/blobs/by-quilt-patch-id/{quiltPatchId}
 ## File lifecycle
 
 ```
-Upload → Encrypt (if private environment) → Batch into quilt → Publish to Walrus → Retrieve via aggregator
+Upload → Encrypt (if private volume) → Batch into quilt → Publish to Walrus → Retrieve via aggregator
 ```
 
-1. **Upload** — File data is sent to Tusky (encrypted client-side for private environments).
+1. **Upload** — File data is sent to Tusky (encrypted client-side for private volumes).
 2. **Batch** — Small files may be combined into a quilt for cost efficiency.
 3. **Publish** — The quilt or standalone blob is published to Walrus through your dedicated managed wallet.
 4. **Store** — Walrus erasure-codes the data and distributes it across storage nodes for the chosen number of epochs.
@@ -126,7 +126,7 @@ Upload → Encrypt (if private environment) → Batch into quilt → Publish to 
 Deleting a file in Tusky removes its metadata and stops serving it through your aggregator. However, the underlying Walrus blob persists on the network until its storage epochs expire. This is a property of decentralized storage — data availability is governed by the protocol, not by any single party.
 
 <Warning>
-  If a file was uploaded to a public environment, anyone who recorded the blob ID can still retrieve it directly from Walrus until the epochs expire, even after you delete it in Tusky.
+  If a file was uploaded to a public volume, anyone who recorded the blob ID can still retrieve it directly from Walrus until the epochs expire, even after you delete it in Tusky.
 </Warning>
 
 ## What's next?

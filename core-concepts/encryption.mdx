@@ -3,19 +3,19 @@ title: Encryption
 description: 'End-to-end encryption powered by Sui Seal'
 ---
 
-Tusky provides **end-to-end encryption** for private environments. Data is encrypted client-side before upload and decrypted client-side on download. Tusky never sees plaintext. Encryption keys are managed through [Seal](https://seal-docs.wal.app) — a decentralized key management protocol on Sui.
+Tusky provides **end-to-end encryption** for private volumes. Data is encrypted client-side before upload and decrypted client-side on download. Tusky never sees plaintext. Encryption keys are managed through [Seal](https://seal-docs.wal.app) — a decentralized key management protocol on Sui.
 
 ## How it works
 
 <Steps>
-  <Step title="Environment key creation">
-    When you create an encrypted environment, Tusky generates a symmetric AES-256-GCM key and encrypts it through Seal using the environment's on-chain access policy. The encrypted key is stored as a [managed secret](/core-concepts/secrets).
+  <Step title="Volume key creation">
+    When you create an encrypted volume, Tusky generates a symmetric AES-256-GCM key and encrypts it through Seal using the volume's on-chain access policy. The encrypted key is stored as a [managed secret](/core-concepts/secrets).
   </Step>
   <Step title="Client-side encryption">
-    Before upload, the SDK retrieves the environment key from Seal, encrypts the file locally with AES-256-GCM, then uploads the ciphertext. Plaintext never reaches Tusky servers or Walrus nodes.
+    Before upload, the SDK retrieves the volume key from Seal, encrypts the file locally with AES-256-GCM, then uploads the ciphertext. Plaintext never reaches Tusky servers or Walrus nodes.
   </Step>
   <Step title="Client-side decryption">
-    On download, the SDK fetches the encrypted blob from an aggregator, retrieves the environment key from Seal, and decrypts locally. The SDK auto-detects encrypted content — no separate method needed.
+    On download, the SDK fetches the encrypted blob from an aggregator, retrieves the volume key from Seal, and decrypts locally. The SDK auto-detects encrypted content — no separate method needed.
   </Step>
 </Steps>
 
@@ -31,37 +31,37 @@ Seal is not used to encrypt file data directly — that would be too slow for la
                                         │ encrypts with
                                         │
 ┌────────────┐   Seal threshold  ┌──────┴───────────┐
-│ Your wallet│──────────────────▶│  Environment key  │
+│ Your wallet│──────────────────▶│  Volume key  │
 └────────────┘   decryption      └──────────────────┘
                                    (stored as Seal secret)
 ```
 
 | Layer | What | How |
 |---|---|---|
-| **Data encryption** | File content | AES-256-GCM with the environment key |
-| **Key encryption** | Environment key | Seal threshold encryption across decentralized key servers |
+| **Data encryption** | File content | AES-256-GCM with the volume key |
+| **Key encryption** | Volume key | Seal threshold encryption across decentralized key servers |
 | **Access control** | Who can decrypt | On-chain Move policy verified by Seal key servers |
 
-## Per-environment keys
+## Per-volume keys
 
-All files in an environment share **one encryption key**. This is both a performance and a security design choice:
+All files in a volume share **one encryption key**. This is both a performance and a security design choice:
 
-- **Single Seal request** per session — the SDK caches the environment key after the first retrieval, so subsequent uploads and downloads require no additional Seal round-trips.
+- **Single Seal request** per session — the SDK caches the volume key after the first retrieval, so subsequent uploads and downloads require no additional Seal round-trips.
 - **Batch operations** — listing, downloading, or migrating many files only needs one key fetch.
-- **Sharing is simple** — granting access means adding a wallet to the environment's Seal policy. One policy change covers all files.
+- **Sharing is simple** — granting access means adding a wallet to the volume's Seal policy. One policy change covers all files.
 
 ### Why this is safe
 
-Each file encryption uses a **unique random nonce** (IV). Even though the same key encrypts every file, AES-256-GCM produces cryptographically independent ciphertexts — this is exactly how AES-GCM is designed to operate. The environment already defines the trust boundary: everyone with access can see all files in it, so the key boundary matches the access boundary.
+Each file encryption uses a **unique random nonce** (IV). Even though the same key encrypts every file, AES-256-GCM produces cryptographically independent ciphertexts — this is exactly how AES-GCM is designed to operate. The volume already defines the trust boundary: everyone with access can see all files in it, so the key boundary matches the access boundary.
 
-Per-file keys would add no security benefit — the same Seal policy protects the entire environment — while adding significant cost (N Seal round-trips, N on-chain key objects, N policy updates for sharing).
+Per-file keys would add no security benefit — the same Seal policy protects the entire volume — while adding significant cost (N Seal round-trips, N on-chain key objects, N policy updates for sharing).
 
 <Tip>
-  Use **separate environments** for separate trust levels. Each environment has its own key and its own Seal access policy — this is your security boundary.
+  Use **separate volumes** for separate trust levels. Each volume has its own key and its own Seal access policy — this is your security boundary.
 </Tip>
 
 <Info>
-  The environment key is stored as a managed secret at `tusky/environments/{environmentId}/encryption`. You can read it via the [Secrets API](/api-reference/secrets/get-secret), but it cannot be deleted manually.
+  The volume key is stored as a managed secret at `tusky/volumes/{volumeId}/encryption`. You can read it via the [Secrets API](/api-reference/secrets/get-secret), but it cannot be deleted manually.
 </Info>
 
 ## Decryption without Tusky
@@ -72,7 +72,7 @@ Encrypted blobs live on Walrus and encryption keys are managed by Seal — both 
 
 1. **The encrypted blob** — fetch from any Walrus aggregator (Tusky's, a public one, or your own)
 2. **Seal access** — Seal key servers are decentralized and available as long as the Sui network is running
-3. **Your wallet** — the Sui wallet authorized in the environment's Seal policy
+3. **Your wallet** — the Sui wallet authorized in the volume's Seal policy
 
 ### SDK with any aggregator
 
@@ -114,11 +114,11 @@ sessionKey.setPersonalMessageSignature(await wallet.sign(msg));
 const tx = new Transaction();
 tx.moveCall({
   target: `${policyPackageId}::environment_policy::seal_approve`,
-  arguments: [tx.pure.vector("u8", environmentId)],
+  arguments: [tx.pure.vector("u8", volumeId)],
 });
 const txBytes = await tx.build({ client: suiClient, onlyTransactionKind: true });
 
-// 3. Retrieve and decrypt the environment key
+// 3. Retrieve and decrypt the volume key
 const sealClient = new SealClient({ suiClient, serverConfigs: [...] });
 const envKey = await sealClient.decrypt({
   data: encryptedKeyBytes,
@@ -126,7 +126,7 @@ const envKey = await sealClient.decrypt({
   txBytes,
 });
 
-// 4. Decrypt the file with AES-256-GCM using the environment key
+// 4. Decrypt the file with AES-256-GCM using the volume key
 ```
 
 <Tip>
@@ -137,20 +137,20 @@ const envKey = await sealClient.decrypt({
 
 ### Share with specific wallets
 
-Add a member to the environment. Tusky updates the on-chain Seal policy to include the new wallet:
+Add a member to the volume. Tusky updates the on-chain Seal policy to include the new wallet:
 
 ```typescript
-await tusky.environment.addMember("env_abc123", {
+await tusky.volume.addMember("vol_abc123", {
   address: "0xRecipientWallet",
   role: "viewer",
 });
-// The recipient can now decrypt all files in the environment
+// The recipient can now decrypt all files in the volume
 ```
 
 Removing a member revokes future decryption access by removing their address from the Seal policy.
 
 <Warning>
-  Data the member already downloaded locally cannot be un-shared. Treat environment membership as a trust decision.
+  Data the member already downloaded locally cannot be un-shared. Treat volume membership as a trust decision.
 </Warning>
 
 ### Token-gated access (anyone who qualifies)
@@ -158,7 +158,7 @@ Removing a member revokes future decryption access by removing their address fro
 Gate access on any on-chain condition — no need to add members individually:
 
 ```typescript
-const env = await tusky.environment.create("NFT Holders Only", {
+const env = await tusky.volume.create("NFT Holders Only", {
   encrypted: true,
   sealPolicy: {
     type: "nft",
@@ -175,7 +175,7 @@ Anyone holding an NFT from the collection can decrypt. Seal key servers verify o
 
 ### Public sharing
 
-For files that should be accessible to anyone with the URL, use a **public environment** instead. Public environments store unencrypted blobs accessible through any aggregator.
+For files that should be accessible to anyone with the URL, use a **public volume** instead. Public volumes store unencrypted blobs accessible through any aggregator.
 
 ## Security properties
 
@@ -194,8 +194,8 @@ For files that should be accessible to anyone with the URL, use a **public envir
   <Card title="Secrets" icon="key" href="/core-concepts/secrets">
     How encryption keys are stored as managed secrets.
   </Card>
-  <Card title="Environments" icon="vault" href="/core-concepts/environments">
-    Public vs private environments and membership.
+  <Card title="Volumes" icon="vault" href="/core-concepts/volumes">
+    Public vs private volumes and membership.
   </Card>
   <Card title="SDK Files" icon="file" href="/sdk/files">
     Upload and download encrypted files with the SDK.

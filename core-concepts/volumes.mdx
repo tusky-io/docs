@@ -1,32 +1,32 @@
 ---
-title: Environments
+title: Volumes
 description: 'Public and private containers for your files'
 ---
 
-Environments are the top-level containers in Tusky for organizing files and folders. Every Tusky account starts with **two environments** automatically created on sign-up: one public and one private (encrypted).
+Volumes are the top-level containers in Tusky for organizing files and folders. Every Tusky account starts with **two volumes** automatically created on sign-up: one public and one private (encrypted).
 
 ## Public vs Private
 
 <CardGroup cols={2}>
-  <Card title="Public environment" icon="globe">
+  <Card title="Public volume" icon="globe">
     Files are stored **unencrypted** on Walrus. Anyone with the blob ID can read the data through any Walrus aggregator. Ideal for open data, public websites, NFT media, and shared assets.
   </Card>
-  <Card title="Private environment" icon="lock">
+  <Card title="Private volume" icon="lock">
     Files are **encrypted client-side** before upload. Encryption keys are managed through [Sui Seal](https://seal-docs.wal.app). The encrypted blobs are readable from any Walrus aggregator, but the data is ciphertext without the decryption key. The Tusky SDK handles encryption and decryption transparently.
   </Card>
 </CardGroup>
 
 <Info>
-  On sign-up, every account receives a **default public environment** and a **default private environment**. You can create additional environments of either type at any time.
+  On sign-up, every account receives a **default public volume** and a **default private volume**. You can create additional volumes of either type at any time.
 </Info>
 
-### How private environments work
+### How private volumes work
 
-Private environment files are stored on Walrus like any other blob — they can be fetched through any standard Walrus aggregator. However, the content is encrypted ciphertext. Only users with access to the environment's encryption keys (managed via [Sui Seal](https://seal-docs.wal.app)) can decrypt the data.
+Private volume files are stored on Walrus like any other blob — they can be fetched through any standard Walrus aggregator. However, the content is encrypted ciphertext. Only users with access to the volume's encryption keys (managed via [Sui Seal](https://seal-docs.wal.app)) can decrypt the data.
 
 <Steps>
   <Step title="Upload">
-    The SDK encrypts the file client-side using keys derived from the environment's Seal policy, then uploads the ciphertext to Walrus.
+    The SDK encrypts the file client-side using keys derived from the volume's Seal policy, then uploads the ciphertext to Walrus.
   </Step>
   <Step title="Store keys">
     Encryption keys are managed by Sui Seal on-chain. Access policies are defined on the Sui blockchain — only authorized wallet addresses can retrieve the keys.
@@ -41,44 +41,44 @@ Private environment files are stored on Walrus like any other blob — they can 
 </Tip>
 
 <Warning>
-  A environment's encryption setting is permanent. You cannot convert a public environment to an encrypted environment (or vice-versa) after creation.
+  A volume's encryption setting is permanent. You cannot convert a public volume to an encrypted volume (or vice-versa) after creation.
 </Warning>
 
-## Creating an environment
+## Creating a volume
 
 <Steps>
   <Step title="Choose a name and type">
-    Give your environment a descriptive name and select either **Public** or **Encrypted**. This choice is immutable.
+    Give your volume a descriptive name and select either **Public** or **Encrypted**. This choice is immutable.
   </Step>
   <Step title="Configure settings">
     Set default storage duration (in epochs), enable auto-extend if desired, and optionally add a description or tags.
   </Step>
   <Step title="Start uploading">
-    Once the environment is created you can immediately upload files, add members, or connect the environment to an aggregator.
+    Once the volume is created you can immediately upload files, add members, or connect the volume to an aggregator.
   </Step>
 </Steps>
 
-## Environment settings
+## Volume settings
 
-Every environment exposes a settings panel where you can manage:
+Every volume exposes a settings panel where you can manage:
 
 | Setting | Description |
 |---|---|
-| **Name & description** | Human-readable metadata for the environment. |
+| **Name & description** | Human-readable metadata for the volume. |
 | **Default storage epochs** | The number of Walrus storage epochs applied to new uploads unless overridden per-file. |
 | **Auto-extend** | When enabled, Tusky automatically renews storage before expiry so your data is never lost. |
 | **Encryption** | Displays the encryption status (read-only after creation). |
 
 ## Members and roles
 
-Environments support collaborative access through a role-based membership model.
+Volumes support collaborative access through a role-based membership model.
 
 <Tabs>
   <Tab title="Owner">
-    Full control over the environment — can upload, download, delete files, manage members, and modify settings. Each environment has exactly one owner (the creator).
+    Full control over the volume — can upload, download, delete files, manage members, and modify settings. Each volume has exactly one owner (the creator).
   </Tab>
   <Tab title="Manager">
-    Can upload, download, and delete files and invite or remove Viewers. Cannot change environment settings or remove other Managers.
+    Can upload, download, and delete files and invite or remove Viewers. Cannot change volume settings or remove other Managers.
   </Tab>
   <Tab title="Viewer">
     Read-only access — can download and view files but cannot upload, delete, or manage membership.
@@ -86,34 +86,34 @@ Environments support collaborative access through a role-based membership model.
 </Tabs>
 
 <Info>
-  For encrypted environments, adding a member updates the on-chain [Seal](https://seal-docs.wal.app) policy. The member can decrypt using their wallet — no raw keys are shared.
+  For encrypted volumes, adding a member updates the on-chain [Seal](https://seal-docs.wal.app) policy. The member can decrypt using their wallet — no raw keys are shared.
 </Info>
 
-## Environment lifecycle
+## Volume lifecycle
 
-Understanding the full lifecycle of an environment helps you plan storage and collaboration effectively.
+Understanding the full lifecycle of a volume helps you plan storage and collaboration effectively.
 
 ```
 Create → Configure → Upload files → Share / add members → Manage → Archive / Delete
 ```
 
-1. **Create** — A new environment is provisioned and linked to your account.
+1. **Create** — A new volume is provisioned and linked to your account.
 2. **Active** — Files are uploaded, accessed, and managed. Members collaborate as needed.
 3. **Archive** *(optional)* — You can stop new uploads while keeping existing files accessible for their remaining storage duration.
-4. **Delete** — Removing an environment deletes all Tusky metadata. Files already published to Walrus remain available until their storage epochs expire; however, they will no longer be served through your Tusky aggregator.
+4. **Delete** — Removing a volume deletes all Tusky metadata. Files already published to Walrus remain available until their storage epochs expire; however, they will no longer be served through your Tusky aggregator.
 
 <Note>
-  Deleting an environment does **not** immediately delete data from the Walrus network. Walrus blobs persist until their purchased storage epochs expire. If you have ejected blobs to your own wallet, those blobs remain fully under your control regardless of environment status.
+  Deleting a volume does **not** immediately delete data from the Walrus network. Walrus blobs persist until their purchased storage epochs expire. If you have ejected blobs to your own wallet, those blobs remain fully under your control regardless of volume status.
 </Note>
 
 ## What's next?
 
 <CardGroup cols={2}>
   <Card title="Files" icon="file" href="/core-concepts/files">
-    Learn how files are uploaded, stored, and retrieved inside an environment.
+    Learn how files are uploaded, stored, and retrieved inside a volume.
   </Card>
   <Card title="Encryption" icon="shield-halved" href="/core-concepts/encryption">
-    Understand how Tusky encrypts data in private environments.
+    Understand how Tusky encrypts data in private volumes.
   </Card>
   <Card title="Publishers" icon="cloud-arrow-up" href="/core-concepts/publisher">
     Configure how your data is published to the Walrus network.

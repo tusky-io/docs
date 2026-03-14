@@ -1,20 +1,20 @@
 ---
-title: Update Environment
-api: 'PATCH https://api.tusky.io/v2/environments/{environmentId}'
+title: Update Volume
+api: 'PATCH https://api.tusky.io/v2/volumes/{volumeId}'
 ---
 
-Update an environment's settings. Only included fields are changed.
+Update a volume's settings. Only included fields are changed.
 
 ## Path Parameters
 
-<ParamField path="environmentId" type="string" required>
-  The environment ID.
+<ParamField path="volumeId" type="string" required>
+  The volume ID.
 </ParamField>
 
 ## Request Body
 
 <ParamField body="name" type="string">
-  New environment name.
+  New volume name.
 </ParamField>
 
 <ParamField body="publisherIds" type="array">
@@ -23,21 +23,21 @@ Update an environment's settings. Only included fields are changed.
 
 ## Response
 
-Returns the updated environment object.
+Returns the updated volume object.
 
 ## Example
 
 <CodeGroup>
 
 ```bash Scale up — add a third publisher
-curl -X PATCH https://api.tusky.io/v2/environments/env_abc123 \
+curl -X PATCH https://api.tusky.io/v2/volumes/vol_abc123 \
   -H "Api-Key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"publisherIds": ["pub_primary", "pub_secondary", "pub_tertiary"]}'
 ```
 
 ```bash Scale down — single publisher
-curl -X PATCH https://api.tusky.io/v2/environments/env_abc123 \
+curl -X PATCH https://api.tusky.io/v2/volumes/vol_abc123 \
   -H "Api-Key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"publisherIds": ["pub_primary"]}'
@@ -49,7 +49,7 @@ curl -X PATCH https://api.tusky.io/v2/environments/env_abc123 \
 
 ```json
 {
-  "id": "env_abc123",
+  "id": "vol_abc123",
   "name": "Production Assets",
   "encrypted": false,
   "publisherIds": ["pub_primary", "pub_secondary", "pub_tertiary"],

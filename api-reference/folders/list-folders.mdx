@@ -1,14 +1,14 @@
 ---
 title: List Folders
-api: 'GET https://api.tusky.io/v2/environments/{environmentId}/folders'
+api: 'GET https://api.tusky.io/v2/volumes/{volumeId}/folders'
 ---
 
-List folders in an environment.
+List folders in a volume.
 
 ## Path Parameters
 
-<ParamField path="environmentId" type="string" required>
-  The environment ID.
+<ParamField path="volumeId" type="string" required>
+  The volume ID.
 </ParamField>
 
 ## Query Parameters
@@ -30,7 +30,7 @@ List folders in an environment.
 <CodeGroup>
 
 ```bash cURL
-curl "https://api.tusky.io/v2/environments/env_abc123/folders" \
+curl "https://api.tusky.io/v2/volumes/vol_abc123/folders" \
   -H "Api-Key: YOUR_API_KEY"
 ```
 
@@ -44,7 +44,7 @@ curl "https://api.tusky.io/v2/environments/env_abc123/folders" \
     {
       "id": "folder_xyz789",
       "name": "Photos",
-      "environmentId": "env_abc123",
+      "volumeId": "vol_abc123",
       "parentId": null,
       "createdAt": "2026-03-06T12:00:00Z"
     }
