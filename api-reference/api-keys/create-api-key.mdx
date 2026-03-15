@@ -3,7 +3,7 @@ title: Create API Key
 api: 'POST https://api.tusky.io/v2/api-keys'
 ---
 
-Create a new API key with specific permission scopes. Following the principle of least privilege, grant only the scopes your application actually needs.
+Create a new API key. Keys can be **admin** (full access) or **scoped** (restricted to specific operations).
 
 ## Request Body
 
@@ -11,8 +11,8 @@ Create a new API key with specific permission scopes. Following the principle of
   A descriptive name for the key (e.g., `production-backend`, `ci-pipeline`).
 </ParamField>
 
-<ParamField body="scopes" type="array" required>
-  Permission scopes to grant. See [scopes reference](#available-scopes) below.
+<ParamField body="scopes" type="array">
+  Permission scopes to grant. Omit (or pass `null`) to create an **admin key** with full access to all operations. See [scopes reference](#available-scopes) below.
 </ParamField>
 
 <ParamField body="expiresAt" type="string">
@@ -32,6 +32,20 @@ Create a new API key with specific permission scopes. Following the principle of
 | `account:read` | Read account info and usage |
 
 ## Use Cases
+
+### Admin key (full access)
+
+Omit `scopes` entirely to create an admin key. Admin keys have unrestricted access to all API operations — equivalent to acting as the account owner.
+
+```json
+{
+  "name": "admin"
+}
+```
+
+<Warning>
+  Use admin keys only in trusted, server-side environments. Never expose them in client-side code or share them with third parties.
+</Warning>
 
 ### Frontend uploads
 
