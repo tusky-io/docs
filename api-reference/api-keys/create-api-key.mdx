@@ -3,7 +3,7 @@ title: Create API Key
 api: 'POST https://api.tusky.io/v2/api-keys'
 ---
 
-Create a new API key with specific permission scopes.
+Create a new API key. Keys can be **admin** (full access) or **scoped** (restricted to specific operations).
 
 ## Request Body
 
@@ -11,8 +11,8 @@ Create a new API key with specific permission scopes.
   A descriptive name for the key (e.g., `production-backend`, `ci-pipeline`).
 </ParamField>
 
-<ParamField body="scopes" type="array" required>
-  Permission scopes to grant. See [scopes reference](#available-scopes) below.
+<ParamField body="scopes" type="array">
+  Permission scopes to grant. Omit (or pass `null`) to create an **admin key** with full access to all operations. See [scopes reference](#available-scopes) below.
 </ParamField>
 
 <ParamField body="expiresAt" type="string">
@@ -29,13 +29,76 @@ Create a new API key with specific permission scopes.
 | `files:write` | Upload and delete files |
 | `members:read` | List volume members |
 | `members:write` | Add, update, remove members |
-| `publishers:read` | Read publisher configuration |
-| `publishers:write` | Create, update, delete publishers |
-| `aggregators:read` | Read aggregator configuration |
-| `aggregators:write` | Update, delete aggregators |
-| `secrets:read` | Read secrets |
-| `secrets:write` | Create, update, delete secrets |
 | `account:read` | Read account info and usage |
+
+## Use Cases
+
+### Admin key (full access)
+
+Omit `scopes` entirely to create an admin key. Admin keys have unrestricted access to all API operations — equivalent to acting as the account owner.
+
+```json
+{
+  "name": "admin"
+}
+```
+
+<Warning>
+  Use admin keys only in trusted, server-side environments. Never expose them in client-side code or share them with third parties.
+</Warning>
+
+### Frontend uploads
+
+When users upload files directly from your frontend (e.g. a web app or NFT minting page), generate a short-lived key scoped only to writing files. Never expose a full-access key in client-side code.
+
+```json
+{
+  "name": "frontend-upload-session",
+  "scopes": ["files:write", "volumes:read"],
+  "expiresAt": "2026-03-15T12:00:00Z"
+}
+```
+
+<Tip>
+  Generate this key server-side per authenticated user session and return it to the client. Set a short `expiresAt` — minutes to hours, not days.
+</Tip>
+
+### Read-only access
+
+For frontends that only need to list or display files — dashboards, media galleries, content sites — a read-only key can be used safely in client-side code since it cannot modify any data.
+
+```json
+{
+  "name": "public-frontend",
+  "scopes": ["files:read", "volumes:read"]
+}
+```
+
+### Backend server
+
+Server-side applications typically need to read and write files. Scope tightly even here — if your backend never manages members, don't include member scopes.
+
+```json
+{
+  "name": "production-backend",
+  "scopes": ["files:read", "files:write", "volumes:read"]
+}
+```
+
+### Third-party or CI access
+
+When granting access to an external collaborator, agency, or CI pipeline, issue a dedicated key with only the operations they need. This limits exposure if the key is ever compromised.
+
+```json
+{
+  "name": "ci-pipeline",
+  "scopes": ["files:write", "volumes:read"]
+}
+```
+
+<Tip>
+  Set an `expiresAt` for any key issued to an external party. Rotate regularly.
+</Tip>
 
 ## Response
 
