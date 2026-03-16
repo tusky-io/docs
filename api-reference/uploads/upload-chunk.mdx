@@ -1,0 +1,75 @@
+---
+title: Upload Chunk
+api: 'PATCH https://api.tusky.io/v2/uploads/{uploadId}'
+---
+
+Upload a chunk of file data to an existing upload session. The `Upload-Offset` must match the server's current offset exactly.
+
+When the final chunk is received (offset equals `Upload-Length`), Tusky processes the file — encrypting if applicable, creating the file record, and queuing for Walrus publishing.
+
+## Path Parameters
+
+<ParamField path="uploadId" type="string" required>
+  The upload ID from the `Location` header returned by [Create Upload](/api-reference/uploads/create-upload).
+</ParamField>
+
+## Headers
+
+<ParamField header="Tus-Resumable" type="string" required>
+  Must be `1.0.0`.
+</ParamField>
+
+<ParamField header="Upload-Offset" type="number" required>
+  Byte offset where this chunk starts. Must match the server's current offset.
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  Must be `application/offset+octet-stream`.
+</ParamField>
+
+## Request Body
+
+Raw binary data for this chunk. Max chunk size: **50 MB**.
+
+## Response
+
+Returns `204 No Content` on success.
+
+<ResponseField name="Upload-Offset" type="number (header)">
+  New byte offset after this chunk. When equal to `Upload-Length`, the upload is complete.
+</ResponseField>
+
+When the upload completes (final chunk), the response includes:
+```json
+{
+  "uploadId": "upload_xyz789"
+}
+```
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X PATCH https://api.tusky.io/v2/uploads/upload_xyz789 \
+  -H "Api-Key: YOUR_API_KEY" \
+  -H "Tus-Resumable: 1.0.0" \
+  -H "Upload-Offset: 0" \
+  -H "Content-Type: application/offset+octet-stream" \
+  --data-binary @chunk1.bin \
+  -D -
+```
+
+</CodeGroup>
+
+### Response Headers
+
+```
+HTTP/1.1 204 No Content
+Upload-Offset: 5242880
+Tus-Resumable: 1.0.0
+```
+
+<Warning>
+  `Upload-Offset` must exactly match the server's current offset. On mismatch the server returns `409 Conflict`. Use [Get Upload Status](/api-reference/uploads/get-upload-status) to check the current offset before retrying.
+</Warning>

@@ -1,0 +1,122 @@
+---
+title: API Keys
+description: 'Generate and manage API keys for programmatic access'
+---
+
+API keys let you interact with Tusky programmatically through the [REST API](/api-reference/overview) and the [TypeScript SDK](/sdk/getting-started). Each key is scoped to your account and can be configured with specific permissions.
+
+## Creating an API Key
+
+<Steps>
+  <Step title="Open the API keys page">
+    Navigate to [app.tusky.io/account/api-keys](https://app.tusky.io/account/api-keys) in the Tusky dashboard.
+  </Step>
+
+  <Step title="Generate a new key">
+    Click **Create API Key**. Provide a descriptive name (for example, `production-backend` or `ci-pipeline`) and select the permission scopes you need.
+  </Step>
+
+  <Step title="Copy your key">
+    Your API key is displayed once after creation. Copy it immediately and store it securely.
+
+    <Warning>
+      You will not be able to view the full API key again. If you lose it, you must revoke the key and create a new one.
+    </Warning>
+  </Step>
+</Steps>
+
+## Permission Scopes
+
+API keys can be scoped to limit what operations they are allowed to perform:
+
+| Scope | Description |
+| --- | --- |
+| `volumes:read` | List and retrieve volume metadata |
+| `volumes:write` | Create, update, and delete volumes |
+| `files:read` | List, retrieve, and download files |
+| `files:write` | Upload and delete files |
+| `members:read` | List volume members |
+| `members:write` | Add, update, and remove volume members |
+| `account:read` | Read account info, usage, and balance |
+| `aggregators:read` | Read aggregator configuration |
+| `aggregators:write` | Update aggregator settings and custom domains |
+
+<Tip>
+  Follow the **principle of least privilege**: only grant the scopes your application needs. A key used solely for reading files should not have `volumes:write` or `members:write` permissions.
+</Tip>
+
+## Using Your API Key
+
+### With the SDK
+
+Pass your API key when initializing the Tusky client:
+
+```typescript
+import Tusky from "@tusky-io/ts-sdk";
+
+const tusky = new Tusky({
+  apiKey: process.env.TUSKY_API_KEY,
+});
+```
+
+### With the REST API
+
+Include the API key in the `Authorization` header of every request:
+
+```bash
+curl https://api.tusky.io/v1/volumes \
+  -H "Authorization: Bearer $TUSKY_API_KEY"
+```
+
+## Key Management
+
+### Rotation
+
+Rotate API keys regularly, especially if they may have been exposed. To rotate:
+
+1. Create a new API key with the same scopes
+2. Update your application configuration to use the new key
+3. Verify the application works with the new key
+4. Revoke the old key
+
+<Info>
+  Tusky does not enforce automatic key expiration. You are responsible for rotating keys according to your organization's security policy.
+</Info>
+
+### Revocation
+
+Revoke a key instantly from the [API keys page](https://app.tusky.io/account/api-keys). Revocation takes effect immediately — any in-flight requests using the revoked key will fail.
+
+## Security Best Practices
+
+<Warning>
+  API keys grant programmatic access to your Tusky account. Treat them like passwords.
+</Warning>
+
+- **Use volume variables** — never hardcode API keys in source code
+
+  ```bash
+  # .env (add to .gitignore)
+  TUSKY_API_KEY=tsk_live_...
+  ```
+
+- **Never commit keys to version control** — use `.gitignore` to exclude `.env` files and audit your git history if a key is accidentally committed
+- **Use separate keys per volume** — create distinct keys for development, staging, and production
+- **Scope keys narrowly** — grant only the permissions each integration needs
+- **Revoke unused keys** — regularly audit your active keys and revoke any that are no longer needed
+- **Monitor usage** — check the dashboard for unexpected API activity that could indicate a compromised key
+
+<Note>
+  If you suspect a key has been compromised, revoke it immediately from the dashboard at [app.tusky.io/account/api-keys](https://app.tusky.io/account/api-keys). Then create a new key and update your application.
+</Note>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Fund Your Wallet" icon="wallet" href="/getting-started/wallets">
+    Add SUI and WAL to start uploading files.
+  </Card>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Upload your first file using the SDK.
+  </Card>
+</CardGroup>

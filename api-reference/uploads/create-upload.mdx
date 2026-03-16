@@ -1,0 +1,115 @@
+---
+title: Create Upload
+api: 'POST https://api.tusky.io/v2/uploads'
+---
+
+Create a new upload. Supports two modes:
+
+- **Resumable (tus)**: Send only metadata headers to create the upload session, then upload data in chunks via [Upload Chunk](/api-reference/uploads/upload-chunk).
+- **Single request**: Include the full file body in this request for a one-shot upload. Works with both `application/offset+octet-stream` and `multipart/form-data`.
+
+The upload ID returned is also the file ID in the file system.
+
+## Query Parameters
+
+<ParamField query="vaultId" type="string" required>
+  Target volume ID. Can also be provided in `Upload-Metadata`.  Query params take precedence.
+</ParamField>
+
+<ParamField query="parentId" type="string">
+  Parent folder ID. Defaults to volume root. Can also be in `Upload-Metadata`.
+</ParamField>
+
+<ParamField query="filename" type="string">
+  File name. Can also be provided in `Upload-Metadata`, or `Content-Disposition` header. Defaults to `unnamed`.
+</ParamField>
+
+<ParamField query="filetype" type="string">
+  MIME type. Can also be provided in `Upload-Metadata`, or `Content-Type` header. Auto-detected from filename if omitted.
+</ParamField>
+
+## Headers
+
+<ParamField header="Upload-Length" type="number">
+  Total file size in bytes. Required for multi-chunk resumable uploads. For single-request uploads, `Content-Length` is used if this is omitted. Max: **2,621,440,000** (2.5 GB).
+</ParamField>
+
+<ParamField header="Upload-Metadata" type="string">
+  Base64-encoded key-value pairs. Supported keys: `filename`, `filetype`, `vaultId`, `parentId`, `chunkSize`, `numberOfChunks`.
+
+  Format: `key1 {base64_value},key2 {base64_value}`
+</ParamField>
+
+<ParamField header="Tus-Resumable" type="string">
+  tus protocol version. Defaults to `1.0.0` if omitted.
+</ParamField>
+
+<ParamField header="Content-Type" type="string">
+  `application/offset+octet-stream` for tus uploads, or `multipart/form-data` for single-request multipart uploads.
+</ParamField>
+
+## Response
+
+Returns `201 Created`.
+
+<ResponseField name="Location" type="string (header)">
+  Upload URL for subsequent `PATCH` and `HEAD` requests.
+</ResponseField>
+
+<ResponseField name="Upload-Offset" type="number (header)">
+  Current byte offset. `0` for a new upload, or equal to `Upload-Length` if the full file was included in this request.
+</ResponseField>
+
+When the upload completes (single request or final chunk), the response body contains:
+
+```json
+{
+  "uploadId": "upload_xyz789"
+}
+```
+
+## Examples
+
+<Tabs>
+  <Tab title="Single request (multipart)">
+    ```bash
+    curl -X POST "https://api.tusky.io/v2/uploads?vaultId=vol_abc123&filename=photo.jpg" \
+      -H "Api-Key: YOUR_API_KEY" \
+      -F "file=@./photo.jpg"
+    ```
+  </Tab>
+  <Tab title="Single request (binary)">
+    ```bash
+    curl -X POST "https://api.tusky.io/v2/uploads?vaultId=vol_abc123&filename=photo.jpg&filetype=image/jpeg" \
+      -H "Api-Key: YOUR_API_KEY" \
+      -H "Content-Type: application/offset+octet-stream" \
+      --data-binary @./photo.jpg
+    ```
+  </Tab>
+  <Tab title="Resumable (create only)">
+    ```bash
+    curl -X POST https://api.tusky.io/v2/uploads \
+      -H "Api-Key: YOUR_API_KEY" \
+      -H "Tus-Resumable: 1.0.0" \
+      -H "Upload-Length: 10485760" \
+      -H "Upload-Metadata: filename $(echo -n 'video.mp4' | base64),vaultId $(echo -n 'vol_abc123' | base64),filetype $(echo -n 'video/mp4' | base64)" \
+      -D -
+    ```
+
+    Response headers:
+    ```
+    HTTP/1.1 201 Created
+    Location: https://api.tusky.io/v2/uploads/upload_xyz789
+    Tus-Resumable: 1.0.0
+    Upload-Offset: 0
+    ```
+  </Tab>
+</Tabs>
+
+<Note>
+  `vaultId` is required. Provide it via query parameter or `Upload-Metadata`. Query parameters take precedence over metadata headers.
+</Note>
+
+<Warning>
+  Maximum file size is **2.5 GB**. Maximum individual chunk size is **50 MB**. Maximum number of chunks per upload is **10,000**.
+</Warning>

@@ -1,0 +1,303 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "palm",
+  "name": "Tusky",
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#046994",
+    "light": "#a5e2fc",
+    "dark": "#035580"
+  },
+  "topbarLinks": [
+    {
+      "name": "Support",
+      "url": "mailto:support@tusky.io"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Dashboard",
+    "url": "https://app.tusky.io"
+  },
+  "anchors": [
+    {
+      "name": "GitHub",
+      "icon": "github",
+      "url": "https://github.com/tusky-io"
+    },
+    {
+      "name": "Blog",
+      "icon": "newspaper",
+      "url": "https://tusky.io/blog"
+    }
+  ],
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Getting Started",
+            "pages": [
+              "getting-started/create-account",
+              "getting-started/api-keys",
+              "getting-started/wallets"
+            ]
+          },
+          {
+            "group": "Core Concepts",
+            "pages": [
+              "core-concepts/volumes",
+              "core-concepts/files",
+              "core-concepts/uploads",
+              "core-concepts/secrets",
+              "core-concepts/encryption",
+              "core-concepts/publisher",
+              "core-concepts/aggregators",
+              "core-concepts/managed-wallet",
+              "core-concepts/prepay",
+              "core-concepts/subscriptions"
+            ]
+          },
+          {
+            "group": "Aggregators",
+            "pages": [
+              "aggregators/overview",
+              "aggregators/private-aggregators",
+              "aggregators/custom-domains",
+              "aggregators/analytics"
+            ]
+          },
+          {
+            "group": "Billing",
+            "pages": [
+              "billing/pay-as-you-go",
+              "billing/prepaid",
+              "billing/subscriptions",
+              "billing/enterprise"
+            ]
+          },
+          {
+            "group": "Tools",
+            "pages": [
+              "tools/s3-migration",
+              "tools/backup"
+            ]
+          },
+          {
+            "group": "Architecture",
+            "pages": [
+              "architecture/overview",
+              "architecture/walrus-network"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "API Reference",
+            "pages": [
+              "api-reference/overview",
+              "api-reference/authentication",
+              "api-reference/pagination",
+              "api-reference/rate-limiting",
+              "api-reference/errors"
+            ]
+          },
+          {
+            "group": "Infrastructure",
+            "pages": [
+              {
+                "group": "Publishers",
+                "pages": [
+                  "api-reference/publishers/create-publisher",
+                  "api-reference/publishers/get-publisher",
+                  "api-reference/publishers/list-publishers",
+                  "api-reference/publishers/update-publisher",
+                  "api-reference/publishers/delete-publisher"
+                ]
+              },
+              {
+                "group": "Aggregators",
+                "pages": [
+                  "api-reference/aggregators/create-aggregator",
+                  "api-reference/aggregators/get-aggregator",
+                  "api-reference/aggregators/update-aggregator",
+                  "api-reference/aggregators/delete-aggregator",
+                  "api-reference/aggregators/get-aggregator-analytics"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Volumes",
+            "pages": [
+              {
+                "group": "Volumes",
+                "pages": [
+                  "api-reference/volumes/create-volume",
+                  "api-reference/volumes/get-volume",
+                  "api-reference/volumes/list-volumes",
+                  "api-reference/volumes/update-volume",
+                  "api-reference/volumes/delete-volume"
+                ]
+              },
+              {
+                "group": "Members",
+                "pages": [
+                  "api-reference/members/add-member",
+                  "api-reference/members/list-members",
+                  "api-reference/members/update-member",
+                  "api-reference/members/remove-member"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "File Management",
+            "pages": [
+              {
+                "group": "Uploads",
+                "pages": [
+                  "api-reference/uploads/upload-cost",
+                  "api-reference/uploads/create-upload",
+                  "api-reference/uploads/upload-chunk",
+                  "api-reference/uploads/get-upload-status"
+                ]
+              },
+              {
+                "group": "Files",
+                "pages": [
+                  "api-reference/files/get-file",
+                  "api-reference/files/list-files",
+                  "api-reference/files/download-file",
+                  "api-reference/files/extend-file",
+                  "api-reference/files/delete-file"
+                ]
+              },
+              {
+                "group": "Folders",
+                "pages": [
+                  "api-reference/folders/create-folder",
+                  "api-reference/folders/get-folder",
+                  "api-reference/folders/list-folders",
+                  "api-reference/folders/update-folder",
+                  "api-reference/folders/delete-folder"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Secrets",
+            "pages": [
+              "api-reference/secrets/put-secret",
+              "api-reference/secrets/get-secret",
+              "api-reference/secrets/list-secrets",
+              "api-reference/secrets/delete-secret"
+            ]
+          },
+          {
+            "group": "Authentication",
+            "pages": [
+              {
+                "group": "API Keys",
+                "pages": [
+                  "api-reference/api-keys/create-api-key",
+                  "api-reference/api-keys/list-api-keys",
+                  "api-reference/api-keys/delete-api-key"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Notifications",
+            "pages": [
+              {
+                "group": "Email",
+                "pages": [
+                  "api-reference/notifications/get-email-settings",
+                  "api-reference/notifications/update-email-settings"
+                ]
+              },
+              {
+                "group": "Webhooks",
+                "pages": [
+                  "api-reference/notifications/list-webhooks",
+                  "api-reference/notifications/create-webhook",
+                  "api-reference/notifications/delete-webhook"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Account",
+            "pages": [
+              {
+                "group": "Prepay",
+                "pages": [
+                  "api-reference/billing/get-balance",
+                  "api-reference/billing/prepay-crypto",
+                  "api-reference/billing/generate-fiat-url",
+                  "api-reference/billing/withdraw"
+                ]
+              },
+              {
+                "group": "Subscriptions",
+                "pages": [
+                  "api-reference/billing/get-subscription",
+                  "api-reference/billing/update-subscription",
+                  "api-reference/billing/subscribe-with-balance",
+                  "api-reference/billing/generate-subscription-url"
+                ]
+              },
+              {
+                "group": "Analytics",
+                "pages": [
+                  "api-reference/account/get-usage"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "SDK",
+        "groups": [
+          {
+            "group": "SDK",
+            "pages": [
+              "sdk/getting-started",
+              "sdk/authentication"
+            ]
+          },
+          {
+            "group": "SDK Modules",
+            "pages": [
+              "sdk/volumes",
+              "sdk/files",
+              "sdk/members",
+              "sdk/aggregators",
+              "sdk/account"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "footerSocials": {
+    "x": "https://x.com/tusky_io",
+    "github": "https://github.com/tusky-io"
+  }
+}

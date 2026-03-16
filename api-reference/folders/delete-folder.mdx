@@ -1,0 +1,37 @@
+---
+title: Delete Folder
+api: 'DELETE https://api.tusky.io/v2/folders/{folderId}'
+---
+
+Delete a folder and optionally all files within it.
+
+## Path Parameters
+
+<ParamField path="folderId" type="string" required>
+  The folder ID.
+</ParamField>
+
+## Query Parameters
+
+<ParamField query="recursive" type="boolean" default="false">
+  If `true`, deletes all files and subfolders inside the folder. If `false`, the folder must be empty or the request returns `409 Conflict`.
+</ParamField>
+
+## Response
+
+Returns `204 No Content` on success.
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X DELETE "https://api.tusky.io/v2/folders/folder_xyz789?recursive=true" \
+  -H "Api-Key: YOUR_API_KEY"
+```
+
+</CodeGroup>
+
+<Warning>
+  With `recursive=true`, all files and subfolders are permanently deleted. Files on Walrus remain until their storage epochs expire, but they are removed from your volume and no longer accessible through Tusky.
+</Warning>

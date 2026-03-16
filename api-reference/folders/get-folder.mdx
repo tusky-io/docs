@@ -1,0 +1,45 @@
+---
+title: Get Folder
+api: 'GET https://api.tusky.io/v2/folders/{folderId}'
+---
+
+Retrieve a folder by ID.
+
+## Path Parameters
+
+<ParamField path="folderId" type="string" required>
+  The folder ID.
+</ParamField>
+
+## Response
+
+<ResponseField name="id" type="string">Folder ID.</ResponseField>
+<ResponseField name="name" type="string">Folder name.</ResponseField>
+<ResponseField name="volumeId" type="string">Parent volume ID.</ResponseField>
+<ResponseField name="parentId" type="string">Parent folder ID, or `null`.</ResponseField>
+<ResponseField name="createdAt" type="string">ISO 8601 creation timestamp.</ResponseField>
+<ResponseField name="updatedAt" type="string">ISO 8601 last-updated timestamp.</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl https://api.tusky.io/v2/folders/folder_xyz789 \
+  -H "Api-Key: YOUR_API_KEY"
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "id": "folder_xyz789",
+  "name": "Photos",
+  "volumeId": "vol_abc123",
+  "parentId": null,
+  "createdAt": "2026-03-06T12:00:00Z",
+  "updatedAt": "2026-03-06T12:00:00Z"
+}
+```

@@ -1,0 +1,265 @@
+---
+title: Publishers
+description: 'Configure how your data is published to Walrus'
+---
+
+A **publisher** defines how files are written to the Walrus network — storage duration, batching strategy, deletability, and sharing. Every Tusky account starts with one active publisher automatically. You can create additional publishers with different configurations and assign them to volumes.
+
+Assigning **multiple publishers** to a single volume enables **horizontal scaling** — incoming uploads are load-balanced across publishers, each with its own managed wallet and transaction capacity. This reduces publishing latency for high-throughput workloads.
+
+## Publisher configuration
+
+Each publisher has six configuration flags:
+
+| Setting | Type | Default | Description |
+| --- | --- | --- | --- |
+| **state** | string | `ready` | Operational state: `ready` (accepting uploads), `idle` (online, no active work), `working` (processing uploads), `deactivated` (disabled). At least one publisher must not be `deactivated`. |
+| **epochs** | number | `1` | Number of Walrus storage epochs. Each epoch is approximately **2 weeks**. Range: 1–100. |
+| **quilt** | boolean | `true` | Whether to batch files into quilts for cost efficiency. |
+| **permanent** | boolean | `false` | Whether blobs are permanent (non-deletable before epoch expiry). |
+| **share** | boolean | `false` | Whether published content is shared and accessible to other users via standard Walrus aggregators. |
+| **autoConvert** | boolean | `true` | Whether to automatically convert SUI to WAL before upload when WAL balance is insufficient. |
+
+<Info>
+  Your account always has at least one non-deactivated publisher. Tusky creates a default publisher on sign-up — `state: "ready"`, `epochs: 1`, `quilt: true`, `permanent: false`, `share: false`, `autoConvert: true`.
+</Info>
+
+## How publishers work
+
+<Steps>
+  <Step title="Account default">
+    When you sign up, Tusky provisions a default publisher. All uploads use this publisher unless a volume has a specific publisher attached.
+  </Step>
+  <Step title="Create additional publishers">
+    You can create publishers with different configurations for different use cases — for example, one publisher for short-lived temp files (1 epoch, deletable) and another for archival data (50 epochs, permanent).
+  </Step>
+  <Step title="Attach to volumes">
+    Publishers can be attached to specific volumes. When a volume has an attached publisher, all uploads to that volume use that publisher's configuration instead of the account default.
+  </Step>
+  <Step title="Upload">
+    When you upload a file, Tusky uses the publisher attached to the target volume, or the account default if none is attached. The publisher's settings (epochs, quilt, permanent, share) determine how the blob is written to Walrus.
+  </Step>
+</Steps>
+
+## Configuration details
+
+### Epochs
+
+Storage on Walrus is purchased in discrete units of time called **epochs**. Each Walrus epoch is approximately **2 weeks** long.
+
+| Setting | Description |
+| --- | --- |
+| **Default** | 1 epoch (~2 weeks) |
+| **Range** | 1–100 epochs |
+| **Override** | Can be overridden per-upload via the API or SDK |
+| **Cost** | Linear — 10 epochs costs 10x what 1 epoch costs for the same file |
+
+<Tip>
+  Start with a low epoch count for experimental data and increase for production assets that need long-term availability.
+</Tip>
+
+### Quilt mode
+
+Controls whether files are batched into **quilts** or published as standalone blobs.
+
+<Tabs>
+  <Tab title="Quilts (quilt: true)">
+    Multiple files are batched into a single Walrus blob called a **quilt**. Each file within the quilt receives a unique **quilt patch ID** for individual retrieval.
+
+    **Advantages:**
+    - Significantly more cost-efficient for many small files
+    - Reduced gas costs — one Sui transaction covers multiple files
+
+    **Trade-offs:**
+    - Files in a quilt are **managed together** — they are deleted and extended as a group, not individually
+
+    ```
+    ┌─────────────────────────────────────────────────┐
+    │               Quilt (single Walrus blob)         │
+    │  ┌──────────┐  ┌──────────┐  ┌──────────┐      │
+    │  │ Patch #1  │  │ Patch #2  │  │ Patch #3  │      │
+    │  │ file-a.md │  │ img.png   │  │ data.json │      │
+    │  └──────────┘  └──────────┘  └──────────┘      │
+    └─────────────────────────────────────────────────┘
+    ```
+  </Tab>
+  <Tab title="Simple blobs (quilt: false)">
+    Each file is published as a **standalone Walrus blob** with its own unique blob ID.
+
+    **Advantages:**
+    - Each file is independently manageable (delete, extend, eject individually)
+    - Better for large files where batching provides minimal savings
+
+    **Trade-offs:**
+    - Higher per-file gas costs
+    - More Sui transactions for the same number of files
+  </Tab>
+</Tabs>
+
+<Warning>
+  Files published in quilts are managed as a group. If a quilt is deleted, **all files** in that quilt are deleted. If a quilt's storage is extended, all files in it are extended together.
+</Warning>
+
+| Feature | Quilts (`quilt: true`) | Simple Blobs (`quilt: false`) |
+| --- | --- | --- |
+| **Cost efficiency** | High — batches reduce gas and storage overhead | Lower — each file incurs individual transaction costs |
+| **Per-file management** | No — files in a quilt are managed together | Yes — each file is independently deletable/extendable |
+| **Best for** | Many small files, cost-sensitive workloads | Large files, files needing independent lifecycle control |
+| **Deletion** | Entire quilt is deleted (all files) | Individual files deleted independently |
+| **On-chain objects** | Fewer (one blob per batch) | More (one blob per file) |
+
+### Permanent flag
+
+Controls whether published blobs can be deleted before their epochs expire.
+
+<CardGroup cols={2}>
+  <Card title="permanent: false (default)" icon="trash-can">
+    Blobs can be deleted before their storage epochs expire. When deleted, the remaining storage cost is reclaimed.
+  </Card>
+  <Card title="permanent: true" icon="lock">
+    Blobs persist for the full epoch duration regardless of any delete requests. Provides stronger immutability guarantees.
+  </Card>
+</CardGroup>
+
+<Note>
+  The permanent setting interacts with quilt mode: if you use quilts with `permanent: false` and delete a quilt, **all files** in that quilt are removed. There is no way to delete individual files from a quilt.
+</Note>
+
+### Share flag
+
+Controls whether published content is accessible beyond your own account.
+
+| `share` | Behavior |
+| --- | --- |
+| `false` (default) | Content is private — accessible only through your account's aggregator. |
+| `true` | Content is shared — accessible via any standard Walrus aggregator using the blob ID. |
+
+### Auto-convert (SUI → WAL)
+
+When `autoConvert` is enabled, the publisher automatically swaps SUI for WAL via on-chain DEX before an upload if your managed wallet's WAL balance is insufficient. This means **you only need to hold SUI** — the publisher acquires WAL on demand at current market rates.
+
+| `autoConvert` | Behavior |
+| --- | --- |
+| `true` (default) | If WAL balance is too low for the upload, the publisher swaps the required amount of SUI → WAL through a Sui DEX (best available rate across Cetus, DeepBook, and other liquidity sources) and proceeds with the upload. |
+| `false` | No conversion. Upload fails with `402 Payment Required` if WAL balance is insufficient. You must deposit WAL manually. |
+
+<Tip>
+  With `autoConvert: true`, you can fund your managed wallet with **SUI only** and never think about WAL. The conversion happens atomically as part of the upload transaction, so there is no extra delay.
+</Tip>
+
+<Note>
+  The swap uses the best available rate across Sui DEX liquidity pools at the time of the transaction. A small amount of additional SUI covers the swap gas. The exact conversion rate and fee are included in the upload receipt.
+</Note>
+
+## Attaching publishers to volumes
+
+You can attach a publisher to a volume to give that volume a specific publishing configuration. This is useful when different volumes have different storage requirements.
+
+<Tabs>
+  <Tab title="SDK">
+    ```typescript
+    // Create a publisher for archival data
+    const archivalPub = await tusky.publisher.create({
+      epochs: 50,
+      quilt: true,
+      permanent: true,
+      share: false,
+      autoConvert: true,
+    });
+
+    // Attach it to a volume
+    await tusky.publisher.update(archivalPub.id, {
+      volumeId: "env_archive",
+    });
+    ```
+  </Tab>
+  <Tab title="cURL">
+    ```bash
+    # Create a publisher
+    curl -X POST https://api.tusky.io/v2/publishers \
+      -H "Api-Key: YOUR_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "epochs": 50,
+        "quilt": true,
+        "permanent": true,
+        "share": false,
+        "autoConvert": true,
+        "volumeId": "env_archive"
+      }'
+    ```
+  </Tab>
+</Tabs>
+
+When a volume has an attached publisher, all uploads to that volume use the attached publisher's config. If a volume does not have a publisher attached, it uses the account's default publisher.
+
+## Managing publishers
+
+<Tabs>
+  <Tab title="List publishers">
+    ```typescript
+    const publishers = await tusky.publisher.list();
+
+    publishers.forEach(p => {
+      console.log(`${p.id}: state=${p.state}, epochs=${p.epochs}, quilt=${p.quilt}, autoConvert=${p.autoConvert}, volume=${p.volumeId || 'default'}`);
+    });
+    ```
+  </Tab>
+  <Tab title="Update publisher">
+    ```typescript
+    await tusky.publisher.update("pub_7f3a2b1c", {
+      epochs: 10,
+      permanent: false,
+    });
+    ```
+  </Tab>
+  <Tab title="Delete publisher">
+    ```typescript
+    await tusky.publisher.delete("pub_7f3a2b1c");
+    ```
+
+    <Warning>
+      You cannot delete the last non-deactivated publisher. Create another publisher first.
+    </Warning>
+  </Tab>
+</Tabs>
+
+## Choosing the right configuration
+
+<AccordionGroup>
+  <Accordion title="I upload many small files (< 1 MB each)">
+    Use `quilt: true` with a reasonable epoch count. Quilts batch small files together, dramatically reducing per-file costs.
+  </Accordion>
+  <Accordion title="I upload large files that need independent management">
+    Use `quilt: false`. Each file gets its own blob ID and can be deleted, extended, or ejected independently.
+  </Accordion>
+  <Accordion title="I need immutable archival storage">
+    Set a high `epochs` value (e.g., 50–100) and `permanent: true`. Blobs cannot be deleted early and will persist for the full duration.
+  </Accordion>
+  <Accordion title="I want publicly accessible content">
+    Set `share: true`. Your content will be resolvable through any Walrus aggregator, not just your private Tusky aggregator.
+  </Accordion>
+  <Accordion title="I want to simplify token management">
+    Enable `autoConvert: true` on your publisher. Fund your wallet with SUI only — the publisher swaps SUI → WAL automatically at upload time.
+  </Accordion>
+  <Accordion title="Different volumes need different settings">
+    Create multiple publishers with different configs and attach each to the appropriate volume.
+  </Accordion>
+</AccordionGroup>
+
+## What's next?
+
+<CardGroup cols={2}>
+  <Card title="Managed Wallet" icon="wallet" href="/core-concepts/managed-wallet">
+    Understand the wallet your publishers use for on-chain operations.
+  </Card>
+  <Card title="Prepay" icon="coins" href="/core-concepts/prepay">
+    Fund your wallet so your publishers can execute transactions.
+  </Card>
+  <Card title="Publishers API" icon="code" href="/api-reference/publishers/create-publisher">
+    See the full API reference for managing publishers.
+  </Card>
+  <Card title="Files" icon="file" href="/core-concepts/files">
+    Learn how files are uploaded and managed inside volumes.
+  </Card>
+</CardGroup>

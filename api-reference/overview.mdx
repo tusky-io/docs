@@ -1,0 +1,25 @@
+---
+title: Overview
+description: 'The Tusky REST API'
+---
+
+The Tusky API is a RESTful interface for managing decentralized storage on the [Sui Walrus](https://walrus.xyz) network. Use it to create volumes, upload and download files, manage access control, configure publishers, and control your aggregators.
+
+## Base URL
+
+```
+https://api.tusky.io/v2
+```
+
+All API requests must be made over HTTPS. Requests made over plain HTTP will be rejected.
+
+## Request format
+
+Include your API key in the `Api-Key` header of every request:
+
+```bash
+curl https://api.tusky.io/v2/volumes \
+  -H "Api-Key: YOUR_API_KEY"
+```
+
+See [Authentication](/api-reference/authentication) for details on generating and managing API keys.

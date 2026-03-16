@@ -1,0 +1,47 @@
+---
+title: Update Folder
+api: 'PATCH https://api.tusky.io/v2/folders/{folderId}'
+---
+
+Rename or move a folder.
+
+## Path Parameters
+
+<ParamField path="folderId" type="string" required>
+  The folder ID.
+</ParamField>
+
+## Request Body
+
+<ParamField body="name" type="string">
+  New folder name.
+</ParamField>
+
+<ParamField body="parentId" type="string">
+  New parent folder ID. Set to `null` to move to volume root.
+</ParamField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X PATCH https://api.tusky.io/v2/folders/folder_xyz789 \
+  -H "Api-Key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Vacation Photos"}'
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "id": "folder_xyz789",
+  "name": "Vacation Photos",
+  "volumeId": "vol_abc123",
+  "parentId": null,
+  "updatedAt": "2026-03-06T14:00:00Z"
+}
+```

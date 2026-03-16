@@ -1,0 +1,258 @@
+---
+title: Upload Cost
+api: 'POST https://api.tusky.io/v2/uploads/cost'
+---
+
+Calculate the storage cost for one or more files before uploading. Accepts a list of file sizes and returns a per-file breakdown, totals, conversion requirements, and subscription coverage.
+
+Use this to preview costs, build budgeting tools, or validate that your balance is sufficient before starting an upload batch.
+
+## Request Body
+
+<ParamField body="files" type="array" required>
+  List of file size objects to estimate. Each entry represents one file.
+
+  <Expandable title="File size object">
+    <ParamField body="size" type="number" required>
+      File size in bytes.
+    </ParamField>
+    <ParamField body="name" type="string">
+      Optional label for this file — returned in the response for easy matching.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="epochs" type="number" default="Publisher default">
+  Number of Walrus storage epochs. Overrides the publisher default. Range: 1–100.
+</ParamField>
+
+<ParamField body="publisherId" type="string">
+  Optional publisher ID. When provided, the cost uses the publisher's `epochs`, `quilt`, and `autoConvert` settings. When omitted, the account default publisher is used.
+</ParamField>
+
+## Response
+
+<ResponseField name="files" type="array">
+  Per-file cost breakdown.
+  <Expandable title="File cost object">
+    <ResponseField name="name" type="string">
+      The label from the request, or `"file_0"`, `"file_1"`, etc. if not provided.
+    </ResponseField>
+    <ResponseField name="size" type="number">
+      File size in bytes.
+    </ResponseField>
+    <ResponseField name="encodedSize" type="number">
+      Walrus-encoded size in bytes (includes erasure coding overhead).
+    </ResponseField>
+    <ResponseField name="walCost" type="string">
+      WAL cost for this file.
+    </ResponseField>
+    <ResponseField name="gasCost" type="string">
+      Estimated SUI gas cost for this file.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="totals" type="object">
+  Aggregate totals across all files.
+  <Expandable title="Totals object">
+    <ResponseField name="fileCount" type="number">
+      Number of files in the request.
+    </ResponseField>
+    <ResponseField name="totalSize" type="number">
+      Combined file size in bytes.
+    </ResponseField>
+    <ResponseField name="totalEncodedSize" type="number">
+      Combined Walrus-encoded size in bytes.
+    </ResponseField>
+    <ResponseField name="totalWal" type="string">
+      Total WAL cost.
+    </ResponseField>
+    <ResponseField name="totalGas" type="string">
+      Total estimated SUI gas cost.
+    </ResponseField>
+    <ResponseField name="totalSui" type="string">
+      Total SUI needed (gas + conversion gas if applicable).
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="epochs" type="number">
+  The epoch count used for this calculation.
+</ResponseField>
+
+<ResponseField name="balance" type="object">
+  Current wallet balances and whether they cover the cost.
+  <Expandable title="Balance object">
+    <ResponseField name="walBalance" type="string">
+      Current WAL balance.
+    </ResponseField>
+    <ResponseField name="suiBalance" type="string">
+      Current SUI balance.
+    </ResponseField>
+    <ResponseField name="sufficient" type="boolean">
+      Whether current balances cover the total cost (accounting for auto-conversion if enabled).
+    </ResponseField>
+    <ResponseField name="walDeficit" type="string">
+      WAL shortfall (`"0"` if sufficient).
+    </ResponseField>
+    <ResponseField name="suiDeficit" type="string">
+      SUI shortfall (`"0"` if sufficient).
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="conversion" type="object">
+  SUI → WAL conversion details. Present when the publisher has `autoConvert: true` and the WAL balance is insufficient.
+  <Expandable title="Conversion object">
+    <ResponseField name="required" type="boolean">
+      Whether a SUI → WAL swap is needed for this upload batch.
+    </ResponseField>
+    <ResponseField name="walNeeded" type="string">
+      Amount of WAL that must be acquired via swap.
+    </ResponseField>
+    <ResponseField name="estimatedSuiCost" type="string">
+      Estimated SUI cost of the swap (including swap gas) at current DEX rates.
+    </ResponseField>
+    <ResponseField name="rate" type="string">
+      Current SUI/WAL exchange rate used for the estimate.
+    </ResponseField>
+    <ResponseField name="source" type="string">
+      DEX liquidity source (e.g. `"cetus"`, `"deepbook"`, `"aggregated"`).
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="subscription" type="object">
+  Subscription coverage details. Present when the account has an active subscription.
+  <Expandable title="Subscription object">
+    <ResponseField name="plan" type="string">
+      Current subscription plan name (e.g. `"starter"`, `"growth"`, `"scale"`).
+    </ResponseField>
+    <ResponseField name="coveredGas" type="boolean">
+      Whether gas fees for this batch are covered by the subscription.
+    </ResponseField>
+    <ResponseField name="monthlyUploadsRemaining" type="number">
+      Remaining upload transactions included in the subscription this billing period.
+    </ResponseField>
+    <ResponseField name="monthlyBandwidthRemaining" type="number">
+      Remaining ingress bandwidth in bytes included in the subscription this billing period.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.tusky.io/v2/uploads/cost \
+  -H "Api-Key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "files": [
+      { "size": 10485760, "name": "video.mp4" },
+      { "size": 2097152, "name": "document.pdf" },
+      { "size": 524288, "name": "image.png" }
+    ],
+    "epochs": 5
+  }'
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "files": [
+    {
+      "name": "video.mp4",
+      "size": 10485760,
+      "encodedSize": 52428800,
+      "walCost": "0.045",
+      "gasCost": "0.002"
+    },
+    {
+      "name": "document.pdf",
+      "size": 2097152,
+      "encodedSize": 10485760,
+      "walCost": "0.012",
+      "gasCost": "0.002"
+    },
+    {
+      "name": "image.png",
+      "size": 524288,
+      "encodedSize": 2621440,
+      "walCost": "0.008",
+      "gasCost": "0.001"
+    }
+  ],
+  "totals": {
+    "fileCount": 3,
+    "totalSize": 13107200,
+    "totalEncodedSize": 65536000,
+    "totalWal": "0.065",
+    "totalGas": "0.005",
+    "totalSui": "0.005"
+  },
+  "epochs": 5,
+  "balance": {
+    "walBalance": "120.0",
+    "suiBalance": "45.2",
+    "sufficient": true,
+    "walDeficit": "0",
+    "suiDeficit": "0"
+  },
+  "conversion": {
+    "required": false,
+    "walNeeded": "0",
+    "estimatedSuiCost": "0",
+    "rate": "0.38",
+    "source": "aggregated"
+  },
+  "subscription": {
+    "plan": "growth",
+    "coveredGas": true,
+    "monthlyUploadsRemaining": 8750,
+    "monthlyBandwidthRemaining": 96636764160
+  }
+}
+```
+
+### Response when conversion is needed
+
+When `autoConvert` is enabled and WAL balance is insufficient, the `conversion` object shows the swap details:
+
+```json
+{
+  "totals": {
+    "fileCount": 3,
+    "totalWal": "0.065",
+    "totalGas": "0.005",
+    "totalSui": "0.019"
+  },
+  "balance": {
+    "walBalance": "0.02",
+    "suiBalance": "45.2",
+    "sufficient": true,
+    "walDeficit": "0",
+    "suiDeficit": "0"
+  },
+  "conversion": {
+    "required": true,
+    "walNeeded": "0.045",
+    "estimatedSuiCost": "0.014",
+    "rate": "0.38",
+    "source": "cetus"
+  }
+}
+```
+
+<Info>
+  When `conversion.required` is `true`, the `totals.totalSui` includes the estimated swap cost. The `balance.sufficient` field accounts for the conversion — if your SUI balance covers both gas and the swap, it reports `true` even if WAL balance alone is too low.
+</Info>
+
+<Note>
+  Cost estimates are based on current Walrus network rates and DEX liquidity. Actual costs are determined at transaction time. The `encodedSize` includes Walrus erasure coding overhead (~5x the original size).
+</Note>

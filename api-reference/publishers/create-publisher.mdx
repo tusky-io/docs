@@ -1,0 +1,114 @@
+---
+title: Create Publisher
+api: 'POST https://api.tusky.io/v2/publishers'
+---
+
+Create a new publisher. Each account gets one active publisher automatically on sign-up. You can create additional publishers with different configurations and attach them to specific volumes.
+
+## Request Body
+
+<ParamField body="state" type="string" default="ready">
+  Initial state of the publisher. One of `ready`, `idle`, `deactivated`. At least one publisher must not be `deactivated`.
+</ParamField>
+
+<ParamField body="epochs" type="number" default="1" required>
+  Default number of Walrus storage epochs for uploads made through this publisher. Each epoch is approximately **2 weeks**. Range: 1–100.
+</ParamField>
+
+<ParamField body="quilt" type="boolean" default="true">
+  Whether to batch files into quilts. When `true`, multiple files are combined into a single Walrus blob for cost efficiency. When `false`, each file is published as a standalone blob.
+</ParamField>
+
+<ParamField body="permanent" type="boolean" default="false">
+  Whether blobs are permanent (non-deletable). When `true`, blobs persist for the full epoch duration and cannot be deleted early. When `false`, blobs can be deleted before their epochs expire.
+</ParamField>
+
+<ParamField body="share" type="boolean" default="false">
+  Whether blobs published by this publisher are shared. When `true`, the published content is accessible to other Tusky users via standard Walrus aggregators. When `false`, content is private to the account.
+</ParamField>
+
+<ParamField body="autoConvert" type="boolean" default="true">
+  Whether to automatically convert SUI to WAL before upload when the managed wallet's WAL balance is insufficient. When `true`, the publisher swaps SUI → WAL via on-chain DEX at the best available rate. When `false`, uploads fail with `402` if WAL balance is too low.
+</ParamField>
+
+<ParamField body="volumeId" type="string">
+  Optional volume ID to attach this publisher to. When set, this publisher configuration is used for all uploads to the specified volume, overriding the account default.
+</ParamField>
+
+## Response
+
+<ResponseField name="id" type="string">
+  Unique publisher identifier.
+</ResponseField>
+
+<ResponseField name="state" type="string">
+  Current operational state. One of `ready`, `idle`, `working`, `deactivated`.
+</ResponseField>
+
+<ResponseField name="epochs" type="number">
+  Default storage epoch count.
+</ResponseField>
+
+<ResponseField name="quilt" type="boolean">
+  Whether quilt batching is enabled.
+</ResponseField>
+
+<ResponseField name="permanent" type="boolean">
+  Whether blobs are non-deletable.
+</ResponseField>
+
+<ResponseField name="share" type="boolean">
+  Whether blobs are shared.
+</ResponseField>
+
+<ResponseField name="autoConvert" type="boolean">
+  Whether SUI → WAL auto-conversion is enabled.
+</ResponseField>
+
+<ResponseField name="volumeId" type="string">
+  The volume this publisher is attached to, or `null` if it is the account default.
+</ResponseField>
+
+<ResponseField name="createdAt" type="string">
+  ISO 8601 creation timestamp.
+</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.tusky.io/v2/publishers \
+  -H "Api-Key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "epochs": 5,
+    "quilt": false,
+    "permanent": true,
+    "share": false,
+    "autoConvert": true,
+    "volumeId": "vol_abc123"
+  }'
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "id": "pub_7f3a2b1c",
+  "state": "ready",
+  "epochs": 5,
+  "quilt": false,
+  "permanent": true,
+  "share": false,
+  "autoConvert": true,
+  "volumeId": "vol_abc123",
+  "createdAt": "2026-03-05T12:00:00Z"
+}
+```
+
+<Note>
+  When a volume has an attached publisher, uploads to that volume use the attached publisher's configuration instead of the account default.
+</Note>

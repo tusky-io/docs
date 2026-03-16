@@ -1,0 +1,99 @@
+---
+title: List Publishers
+api: 'GET https://api.tusky.io/v2/publishers'
+---
+
+List all publishers on the authenticated account.
+
+## Query Parameters
+
+<ParamField query="state" type="string">
+  Filter by state. One of `ready`, `idle`, `working`, `deactivated`. Omit to return all publishers.
+</ParamField>
+
+<ParamField query="volumeId" type="string">
+  Filter by attached volume ID. Use `null` to return only the account-level default publishers.
+</ParamField>
+
+## Response
+
+Returns an array of publisher objects.
+
+<ResponseField name="data" type="array">
+  <Expandable title="Publisher object">
+    <ResponseField name="id" type="string">
+      Unique publisher identifier.
+    </ResponseField>
+    <ResponseField name="state" type="string">
+      Current operational state. One of `ready`, `idle`, `working`, `deactivated`.
+    </ResponseField>
+    <ResponseField name="epochs" type="number">
+      Default storage epoch count.
+    </ResponseField>
+    <ResponseField name="quilt" type="boolean">
+      Whether quilt batching is enabled.
+    </ResponseField>
+    <ResponseField name="permanent" type="boolean">
+      Whether blobs are non-deletable.
+    </ResponseField>
+    <ResponseField name="share" type="boolean">
+      Whether blobs are shared.
+    </ResponseField>
+    <ResponseField name="autoConvert" type="boolean">
+      Whether SUI → WAL auto-conversion is enabled.
+    </ResponseField>
+    <ResponseField name="volumeId" type="string">
+      Attached volume ID, or `null`.
+    </ResponseField>
+    <ResponseField name="createdAt" type="string">
+      ISO 8601 creation timestamp.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl https://api.tusky.io/v2/publishers \
+  -H "Api-Key: YOUR_API_KEY"
+```
+
+```bash Filter by state
+curl "https://api.tusky.io/v2/publishers?state=ready" \
+  -H "Api-Key: YOUR_API_KEY"
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "data": [
+    {
+      "id": "pub_default",
+      "state": "idle",
+      "epochs": 1,
+      "quilt": true,
+      "permanent": false,
+      "share": false,
+      "autoConvert": true,
+      "volumeId": null,
+      "createdAt": "2026-01-15T10:00:00Z"
+    },
+    {
+      "id": "pub_7f3a2b1c",
+      "state": "working",
+      "epochs": 5,
+      "quilt": false,
+      "permanent": true,
+      "share": false,
+      "autoConvert": true,
+      "volumeId": "vol_abc123",
+      "createdAt": "2026-03-05T12:00:00Z"
+    }
+  ]
+}
+```

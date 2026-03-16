@@ -1,0 +1,61 @@
+---
+title: Withdraw
+api: 'POST https://api.tusky.io/v2/billing/withdraw'
+---
+
+Withdraw SUI or WAL tokens from your managed wallet to an external Sui wallet address.
+
+## Request Body
+
+<ParamField body="token" type="string" required>
+  Token to withdraw: `sui` or `wal`.
+</ParamField>
+
+<ParamField body="amount" type="string" required>
+  Amount to withdraw (e.g., `"10.0"`).
+</ParamField>
+
+<ParamField body="destination" type="string" required>
+  Destination Sui wallet address.
+</ParamField>
+
+## Response
+
+<ResponseField name="txHash" type="string">Sui blockchain transaction hash.</ResponseField>
+<ResponseField name="token" type="string">Token withdrawn.</ResponseField>
+<ResponseField name="amount" type="string">Amount withdrawn.</ResponseField>
+<ResponseField name="destination" type="string">Destination address.</ResponseField>
+<ResponseField name="newBalance" type="string">Remaining balance of the withdrawn token.</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.tusky.io/v2/billing/withdraw \
+  -H "Api-Key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "token": "sui",
+    "amount": "10.0",
+    "destination": "0xabcdef1234567890abcdef1234567890abcdef12"
+  }'
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "txHash": "0x9f8e7d6c5b4a3210...",
+  "token": "sui",
+  "amount": "10.0",
+  "destination": "0xabcdef1234567890abcdef1234567890abcdef12",
+  "newBalance": "35.2"
+}
+```
+
+<Warning>
+  Ensure sufficient balance remains for ongoing storage operations and upcoming epoch renewals. Withdrawing too much may cause upload failures or missed auto-extend renewals.
+</Warning>

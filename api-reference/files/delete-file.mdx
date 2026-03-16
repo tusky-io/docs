@@ -1,0 +1,37 @@
+---
+title: Delete File
+api: 'DELETE https://api.tusky.io/v2/files/{fileId}'
+---
+
+Delete a file from Tusky.
+
+## Path Parameters
+
+<ParamField path="fileId" type="string" required>
+  The unique identifier of the file to delete.
+</ParamField>
+
+## Response
+
+Returns a `204 No Content` response on success.
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X DELETE https://api.tusky.io/v2/files/file_mno345pqr678 \
+  -H "Api-Key: YOUR_API_KEY"
+```
+
+</CodeGroup>
+
+### Response
+
+```
+204 No Content
+```
+
+<Warning>
+  Deleting a file removes it from Tusky immediately, but the underlying data on the Walrus network may persist until the storage epoch expires. The file will no longer be accessible through the Tusky API or aggregators after deletion.
+</Warning>

@@ -1,0 +1,55 @@
+---
+title: List Folders
+api: 'GET https://api.tusky.io/v2/volumes/{volumeId}/folders'
+---
+
+List folders in a volume.
+
+## Path Parameters
+
+<ParamField path="volumeId" type="string" required>
+  The volume ID.
+</ParamField>
+
+## Query Parameters
+
+<ParamField query="parentId" type="string">
+  Filter by parent folder. Use `null` or omit to list root-level folders.
+</ParamField>
+
+<ParamField query="cursor" type="string">
+  Pagination cursor.
+</ParamField>
+
+<ParamField query="limit" type="number" default="20">
+  Items per page. Max `100`.
+</ParamField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl "https://api.tusky.io/v2/volumes/vol_abc123/folders" \
+  -H "Api-Key: YOUR_API_KEY"
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "data": [
+    {
+      "id": "folder_xyz789",
+      "name": "Photos",
+      "volumeId": "vol_abc123",
+      "parentId": null,
+      "createdAt": "2026-03-06T12:00:00Z"
+    }
+  ],
+  "nextCursor": null,
+  "hasMore": false
+}
+```

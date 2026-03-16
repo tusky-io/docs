@@ -1,0 +1,33 @@
+---
+title: Rate Limiting
+description: 'API request rate limits and throttling'
+---
+
+API requests are rate-limited to ensure fair usage across all accounts. Current limits are returned in response headers on every request.
+
+## Rate limit headers
+
+| Header | Description |
+| --- | --- |
+| `X-RateLimit-Limit` | Maximum requests allowed per window |
+| `X-RateLimit-Remaining` | Remaining requests in the current window |
+| `X-RateLimit-Reset` | Unix timestamp when the window resets |
+
+## Exceeding the limit
+
+If you exceed the rate limit, the API returns a `429 Too Many Requests` response:
+
+```json
+{
+  "error": {
+    "code": "RATE_LIMIT_EXCEEDED",
+    "message": "Too many requests. Retry after 1709654400."
+  }
+}
+```
+
+Back off and retry after the time indicated in the `X-RateLimit-Reset` header.
+
+<Tip>
+  Implement exponential backoff in your client to handle rate limits gracefully. The Tusky SDK handles this automatically.
+</Tip>

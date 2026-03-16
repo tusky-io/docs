@@ -1,0 +1,92 @@
+---
+title: Aggregator Analytics
+description: 'Monitor your aggregator traffic and usage'
+---
+
+Tusky provides per-aggregator analytics so you can monitor how your content is being accessed. Track requests, bandwidth, geographic distribution, and identify your most popular files — all from the dashboard or API.
+
+## Available Metrics
+
+| Metric | Description |
+| --- | --- |
+| **Total Requests** | Number of HTTP requests served by your aggregator in the selected period. |
+| **Bandwidth** | Total bytes transferred through your aggregator. |
+| **Cache Hit Rate** | Percentage of requests served from the CDN edge cache vs. origin. |
+| **Geographic Distribution** | Breakdown of requests by country and region. |
+| **Top Files** | Most frequently accessed files ranked by request count. |
+| **Status Codes** | Distribution of HTTP response codes (2xx, 3xx, 4xx, 5xx). |
+| **Latency** | Average and p95 response times from the edge. |
+
+## Accessing Analytics
+
+### Dashboard
+
+Navigate to **Analytics** in the [Tusky dashboard](https://app.tusky.io) to view an interactive overview of your aggregator metrics. Filter by date range, file type, or status code.
+
+<Tip>
+  The dashboard updates in near real-time with a delay of approximately 1–2 minutes for the most recent data points.
+</Tip>
+
+### API
+
+Retrieve analytics data programmatically for integration with your monitoring systems:
+
+```bash
+curl https://api.tusky.io/v2/aggregator/analytics \
+  -H "Authorization: Bearer tsk_live_abc123" \
+  -G \
+  -d "from=2025-01-01T00:00:00Z" \
+  -d "to=2025-01-31T23:59:59Z"
+```
+
+The response includes all metrics in a structured JSON format suitable for dashboarding tools like Grafana, Datadog, or custom internal dashboards.
+
+### SDK
+
+```typescript
+const analytics = await tusky.aggregator.analytics({
+  from: "2025-01-01T00:00:00Z",
+  to: "2025-01-31T23:59:59Z",
+});
+
+console.log("Total requests:", analytics.totalRequests);
+console.log("Bandwidth:", analytics.bandwidthBytes, "bytes");
+console.log("Cache hit rate:", analytics.cacheHitRate, "%");
+console.log("Top file:", analytics.topFiles[0]?.name);
+```
+
+## Understanding Your Analytics
+
+<AccordionGroup>
+  <Accordion title="High cache hit rate">
+    A high cache hit rate (above 80%) means most of your content is being served from CDN edge nodes close to your users. This results in lower latency and reduced origin load.
+  </Accordion>
+  <Accordion title="Low cache hit rate">
+    A low cache hit rate may indicate that your content is infrequently accessed or that your files have short cache TTLs. Consider whether your access patterns benefit from edge caching.
+  </Accordion>
+  <Accordion title="Geographic distribution">
+    Use geographic data to understand where your users are located. If most traffic comes from a specific region, consider optimizing your application for that audience.
+  </Accordion>
+  <Accordion title="4xx and 5xx errors">
+    Monitor error rates to detect broken links (404), permission issues (403), or infrastructure problems (5xx). A spike in errors may indicate a misconfiguration or an ongoing incident.
+  </Accordion>
+</AccordionGroup>
+
+## Enabling Analytics
+
+Analytics are **enabled by default** for all Tusky aggregators. No configuration is required to start collecting data. Historical data is retained for 90 days on standard plans and 1 year on enterprise plans.
+
+<Info>
+  Analytics data is collected at the CDN edge, so it captures all requests including cached responses. This gives you a complete picture of traffic to your aggregator, not just origin hits.
+</Info>
+
+## What's Next
+
+<CardGroup cols={2}>
+  <Card title="Private Aggregators" icon="shield-halved" href="/aggregators/private-aggregators">
+    Learn how your aggregator scopes content to your account.
+  </Card>
+  <Card title="Custom Domains" icon="globe" href="/aggregators/custom-domains">
+    Brand your aggregator with a custom domain.
+  </Card>
+</CardGroup>

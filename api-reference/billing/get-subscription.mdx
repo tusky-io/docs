@@ -1,0 +1,53 @@
+---
+title: Get Subscription
+api: 'GET https://api.tusky.io/v2/billing/subscription'
+---
+
+Retrieve the current subscription plan and status.
+
+## Response
+
+<ResponseField name="plan" type="string">Current plan: `payg`, `starter`, `growth`, `scale`, `enterprise`.</ResponseField>
+<ResponseField name="status" type="string">Subscription status: `active`, `past_due`, `cancelled`.</ResponseField>
+<ResponseField name="limits" type="object">
+  <Expandable title="Plan limits">
+    <ResponseField name="transactionsPerMonth" type="number">Monthly transaction limit (`-1` for unlimited).</ResponseField>
+    <ResponseField name="bandwidthPerMonth" type="number">Monthly bandwidth limit in bytes (`-1` for unlimited).</ResponseField>
+  </Expandable>
+</ResponseField>
+<ResponseField name="currentPeriod" type="object">
+  <Expandable title="Current period">
+    <ResponseField name="start" type="string">Period start (ISO 8601).</ResponseField>
+    <ResponseField name="end" type="string">Period end (ISO 8601).</ResponseField>
+  </Expandable>
+</ResponseField>
+<ResponseField name="renewsAt" type="string">Next renewal date, or `null` if cancelled.</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl https://api.tusky.io/v2/billing/subscription \
+  -H "Api-Key: YOUR_API_KEY"
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "plan": "growth",
+  "status": "active",
+  "limits": {
+    "transactionsPerMonth": 10000,
+    "bandwidthPerMonth": 107374182400
+  },
+  "currentPeriod": {
+    "start": "2026-03-01T00:00:00Z",
+    "end": "2026-03-31T23:59:59Z"
+  },
+  "renewsAt": "2026-04-01T00:00:00Z"
+}
+```

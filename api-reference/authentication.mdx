@@ -1,0 +1,79 @@
+---
+title: Authentication
+description: 'Authenticate your API requests'
+---
+
+## API Key Authentication
+
+The Tusky API uses API key authentication. Include your key in the `Api-Key` header of every request:
+
+```bash
+Api-Key: YOUR_API_KEY
+```
+
+### Example Request
+
+```bash
+curl https://api.tusky.io/v2/volumes \
+  -H "Api-Key: tsk_live_abc123def456"
+```
+
+## Generating API Keys
+
+API keys are created and managed from the [Tusky Dashboard](https://app.tusky.io) or the [API Keys endpoint](/api-reference/api-keys/create-api-key):
+
+1. Sign in at [app.tusky.io](https://app.tusky.io).
+2. Navigate to **Settings** → **API Keys**.
+3. Click **Create API Key**, give it a name and select scopes.
+4. Copy the key immediately — it will only be displayed once.
+
+<Warning>
+  Store your API key securely. Do not commit it to version control or expose it in client-side code.
+</Warning>
+
+## Key Scoping
+
+API keys carry fine-grained scopes that control access. See the [Create API Key](/api-reference/api-keys/create-api-key) endpoint for the full scopes reference.
+
+Use the **principle of least privilege** — grant only the scopes your application needs.
+
+## Authentication Errors
+
+| Status Code | Error Code | Description |
+| --- | --- | --- |
+| `401` | `UNAUTHORIZED` | No API key provided, or the key is invalid or expired |
+| `403` | `FORBIDDEN` | The API key does not have permission for this action |
+
+### 401 Unauthorized
+
+Returned when the `Api-Key` header is missing or contains an invalid key.
+
+```json
+{
+  "error": {
+    "code": "UNAUTHORIZED",
+    "message": "Invalid or missing API key"
+  }
+}
+```
+
+### 403 Forbidden
+
+Returned when the API key is valid but does not have sufficient permissions.
+
+```json
+{
+  "error": {
+    "code": "FORBIDDEN",
+    "message": "API key does not have access to this resource"
+  }
+}
+```
+
+## Best Practices
+
+- **Use the `Api-Key` header** — do not pass keys as query parameters
+- **Rotate keys regularly** — delete old keys and generate new ones periodically
+- **Use scoped keys** — limit each key to only the permissions it needs
+- **Use volume variables** — store keys in env vars, not in source code
+- **Monitor usage** — review API key activity in the dashboard to detect anomalies

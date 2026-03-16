@@ -1,0 +1,173 @@
+---
+title: Get Aggregator Analytics
+api: 'GET https://api.tusky.io/v2/aggregators/{aggregatorId}/analytics'
+---
+
+Retrieve detailed usage statistics for an aggregator. Analytics data is sourced from Cloudflare edge metrics and includes traffic, bandwidth, device breakdown, geographic distribution, and top files.
+
+## Path Parameters
+
+<ParamField path="aggregatorId" type="string" required>
+  The aggregator ID.
+</ParamField>
+
+## Query Parameters
+
+<ParamField query="from" type="string" required>
+  Start of the time range (ISO 8601). Example: `2026-03-01T00:00:00Z`.
+</ParamField>
+
+<ParamField query="to" type="string" required>
+  End of the time range (ISO 8601). Example: `2026-03-07T23:59:59Z`.
+</ParamField>
+
+<ParamField query="granularity" type="string" default="hour">
+  Time series granularity. One of: `minute`, `hour`, `day`.
+</ParamField>
+
+## Response
+
+<ResponseField name="aggregatorId" type="string">
+  The aggregator ID.
+</ResponseField>
+
+<ResponseField name="period" type="object">
+  <Expandable title="Period">
+    <ResponseField name="from" type="string">Start timestamp.</ResponseField>
+    <ResponseField name="to" type="string">End timestamp.</ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="requests" type="object">
+  <Expandable title="Request metrics">
+    <ResponseField name="total" type="number">Total requests in the period.</ResponseField>
+    <ResponseField name="rpm" type="number">Average requests per minute.</ResponseField>
+    <ResponseField name="cached" type="number">Requests served from Cloudflare edge cache.</ResponseField>
+    <ResponseField name="uncached" type="number">Requests that hit origin.</ResponseField>
+    <ResponseField name="cacheHitRate" type="number">Cache hit percentage (0–100).</ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="bandwidth" type="object">
+  <Expandable title="Bandwidth metrics">
+    <ResponseField name="totalBytes" type="number">Total bytes transferred.</ResponseField>
+    <ResponseField name="bytesPerMinute" type="number">Average bytes per minute.</ResponseField>
+    <ResponseField name="cached" type="number">Bytes served from cache.</ResponseField>
+    <ResponseField name="uncached" type="number">Bytes from origin.</ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="topFiles" type="array">
+  Top 20 most requested files.
+  <Expandable title="File entry">
+    <ResponseField name="path" type="string">File path or blob ID.</ResponseField>
+    <ResponseField name="requests" type="number">Request count.</ResponseField>
+    <ResponseField name="bytes" type="number">Total bytes served.</ResponseField>
+    <ResponseField name="mimeType" type="string">Content type.</ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="devices" type="object">
+  <Expandable title="Device breakdown">
+    <ResponseField name="desktop" type="number">Desktop requests.</ResponseField>
+    <ResponseField name="mobile" type="number">Mobile requests.</ResponseField>
+    <ResponseField name="bot" type="number">Bot/crawler requests.</ResponseField>
+    <ResponseField name="other" type="number">Other/unknown.</ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="locations" type="array">
+  Per-country breakdown.
+  <Expandable title="Location entry">
+    <ResponseField name="country" type="string">ISO 3166-1 alpha-2 country code.</ResponseField>
+    <ResponseField name="requests" type="number">Request count.</ResponseField>
+    <ResponseField name="bytes" type="number">Bytes transferred.</ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="statusCodes" type="object">
+  <Expandable title="Status codes">
+    <ResponseField name="2xx" type="number">Successful responses.</ResponseField>
+    <ResponseField name="3xx" type="number">Redirects.</ResponseField>
+    <ResponseField name="4xx" type="number">Client errors.</ResponseField>
+    <ResponseField name="5xx" type="number">Server errors.</ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="timeSeries" type="array">
+  Time-bucketed data at the requested granularity.
+  <Expandable title="Bucket">
+    <ResponseField name="timestamp" type="string">Bucket start (ISO 8601).</ResponseField>
+    <ResponseField name="requests" type="number">Requests in this bucket.</ResponseField>
+    <ResponseField name="bytes" type="number">Bytes in this bucket.</ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl "https://api.tusky.io/v2/aggregators/agg_default/analytics?from=2026-03-01T00:00:00Z&to=2026-03-07T23:59:59Z&granularity=day" \
+  -H "Api-Key: YOUR_API_KEY"
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "aggregatorId": "agg_default",
+  "period": {
+    "from": "2026-03-01T00:00:00Z",
+    "to": "2026-03-07T23:59:59Z"
+  },
+  "requests": {
+    "total": 145200,
+    "rpm": 14.3,
+    "cached": 130680,
+    "uncached": 14520,
+    "cacheHitRate": 90.0
+  },
+  "bandwidth": {
+    "totalBytes": 8523694080,
+    "bytesPerMinute": 839280,
+    "cached": 7671324672,
+    "uncached": 852369408
+  },
+  "topFiles": [
+    {
+      "path": "/v1/blobs/abc123",
+      "requests": 12450,
+      "bytes": 1245000000,
+      "mimeType": "video/mp4"
+    }
+  ],
+  "devices": {
+    "desktop": 87120,
+    "mobile": 50820,
+    "bot": 5808,
+    "other": 1452
+  },
+  "locations": [
+    { "country": "US", "requests": 58080, "bytes": 3409477632 },
+    { "country": "DE", "requests": 21780, "bytes": 1278554112 }
+  ],
+  "statusCodes": {
+    "2xx": 140000,
+    "3xx": 1200,
+    "4xx": 3500,
+    "5xx": 500
+  },
+  "timeSeries": [
+    { "timestamp": "2026-03-01T00:00:00Z", "requests": 20743, "bytes": 1217670583 }
+  ]
+}
+```
+
+<Note>
+  **Content-Type behavior on aggregators without a custom domain:** For security, aggregators without a custom domain return potentially insecure MIME types as `application/octet-stream` instead of their actual type. This includes: `text/html`, `text/xml`, `application/xhtml+xml`, `text/x-handlebars-template` (`.hbs`), `application/javascript`, `text/css`, `image/svg+xml`.
+
+  Aggregators with a **custom domain** serve all MIME types as-is. Set up a [custom domain](/aggregators/custom-domains) if you need to serve HTML, SVG, or other renderable content directly.
+</Note>

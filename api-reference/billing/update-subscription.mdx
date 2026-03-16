@@ -1,0 +1,51 @@
+---
+title: Update Subscription
+api: 'PATCH https://api.tusky.io/v2/billing/subscription'
+---
+
+Change or cancel the subscription plan. Upgrades take effect immediately; downgrades apply at the end of the current billing period.
+
+## Request Body
+
+<ParamField body="plan" type="string" required>
+  Target plan: `payg`, `starter`, `growth`, `scale`.
+</ParamField>
+
+## Response
+
+Returns the updated subscription object.
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X PATCH https://api.tusky.io/v2/billing/subscription \
+  -H "Api-Key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"plan": "scale"}'
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "plan": "scale",
+  "status": "active",
+  "limits": {
+    "transactionsPerMonth": 100000,
+    "bandwidthPerMonth": 1099511627776
+  },
+  "currentPeriod": {
+    "start": "2026-03-01T00:00:00Z",
+    "end": "2026-03-31T23:59:59Z"
+  },
+  "renewsAt": "2026-04-01T00:00:00Z"
+}
+```
+
+<Note>
+  Set `plan` to `payg` to cancel the subscription and switch to pay-as-you-go. This takes effect at the end of the current billing period.
+</Note>

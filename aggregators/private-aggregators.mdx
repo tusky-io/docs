@@ -1,0 +1,100 @@
+---
+title: Private Aggregators
+description: 'Dedicated aggregators scoped to your content'
+---
+
+Every Tusky user is automatically assigned a **private aggregator** — a dedicated HTTP endpoint that serves only content from your volumes. Unlike public Walrus aggregators that resolve any blob on the network, your private aggregator is scoped exclusively to your account.
+
+## How It Works
+
+When you create a Tusky account, a private aggregator is provisioned automatically. No setup required.
+
+<Steps>
+  <Step title="Account created">
+    Upon account creation, Tusky provisions an aggregator with a unique subdomain on the `mytusky.xyz` domain.
+  </Step>
+  <Step title="Subdomain assigned">
+    Your default aggregator URL follows the pattern `https://{subdomain}.mytusky.xyz`. You can customize the subdomain at any time.
+  </Step>
+  <Step title="Content scoped">
+    The aggregator is linked to your account. It only resolves files that you have uploaded — requests for content belonging to other users return a `404`.
+  </Step>
+</Steps>
+
+## Default URL
+
+Your aggregator URL is:
+
+```
+https://{subdomain}.mytusky.xyz
+```
+
+For example, if your subdomain is `acme-corp`, your aggregator URL is `https://acme-corp.mytusky.xyz`. All standard [URL schemes](/aggregators/overview#url-schemes) work under this domain.
+
+## Security Benefits
+
+<AccordionGroup>
+  <Accordion title="Content isolation">
+    Your aggregator will not resolve blobs that belong to other users, even if you know their blob IDs. This prevents unauthorized hotlinking and ensures your aggregator only serves your own content.
+  </Accordion>
+  <Accordion title="Abuse prevention">
+    Since your aggregator only serves your own content, it cannot be used as an open proxy. This eliminates the risk of your aggregator being exploited to serve malicious content uploaded by third parties.
+  </Accordion>
+  <Accordion title="Predictable traffic">
+    All traffic to your aggregator is driven by your own applications and users. This makes it easier to monitor, forecast, and scale your content delivery.
+  </Accordion>
+  <Accordion title="Audit trail">
+    Every request to your aggregator is logged and available through [Aggregator Analytics](/aggregators/analytics), providing a complete picture of who is accessing your content.
+  </Accordion>
+</AccordionGroup>
+
+## Configuration
+
+You can configure your aggregator through the [Tusky dashboard](https://app.tusky.io) or the [SDK](/sdk/aggregators).
+
+### Change Your Subdomain
+
+<Tabs>
+  <Tab title="Dashboard">
+    Navigate to **Settings → Aggregator** in the Tusky dashboard and enter your desired subdomain.
+  </Tab>
+  <Tab title="SDK">
+    ```typescript
+    const updated = await tusky.aggregator.update({
+      subdomain: "my-brand",
+    });
+    console.log("New URL:", updated.url);
+    // https://my-brand.mytusky.xyz
+    ```
+  </Tab>
+  <Tab title="API">
+    ```bash
+    curl -X PATCH https://api.tusky.io/v1/aggregator \
+      -H "Authorization: Bearer tsk_live_abc123" \
+      -H "Content-Type: application/json" \
+      -d '{"subdomain": "my-brand"}'
+    ```
+  </Tab>
+</Tabs>
+
+<Note>
+  Subdomain changes take effect immediately. The previous subdomain becomes available for other users after a short cooldown period.
+</Note>
+
+### Custom Domain
+
+For a fully branded experience, you can attach your own domain to the aggregator. See [Custom Domains](/aggregators/custom-domains) for the full setup guide.
+
+## What's Next
+
+<CardGroup cols={2}>
+  <Card title="Custom Domains" icon="globe" href="/aggregators/custom-domains">
+    Serve content from your own domain with automatic SSL.
+  </Card>
+  <Card title="Aggregator Analytics" icon="chart-line" href="/aggregators/analytics">
+    Monitor requests, bandwidth, and geographic distribution.
+  </Card>
+  <Card title="SDK: Aggregators" icon="code" href="/sdk/aggregators">
+    Configure your aggregator programmatically.
+  </Card>
+</CardGroup>

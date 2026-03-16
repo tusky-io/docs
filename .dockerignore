@@ -1,0 +1,7 @@
+.git
+node_modules
+.github
+k8s
+*.md
+!README.md
+static/search-index.json

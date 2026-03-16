@@ -1,0 +1,94 @@
+---
+title: Create an Account
+description: 'Set up your Tusky account'
+---
+
+Tusky accounts are tied to Sui wallets. There are no usernames, passwords, or email sign-ups — your wallet is your identity.
+
+You don't need an existing Sui wallet to get started. Tusky supports **zkLogin**, which generates a self-custodial Sui address for you using a standard social login — no wallet installation required.
+
+## Sign Up Options
+
+<CardGroup cols={2}>
+  <Card title="Social login (zkLogin)" icon="right-to-bracket">
+    Sign in with Google, Apple, or Twitch. Tusky uses [zkLogin](https://docs.sui.io/concepts/cryptography/zklogin) to derive a self-custodial Sui address from your OAuth credential — no seed phrases, no wallet extension needed.
+  </Card>
+  <Card title="Sui wallet" icon="wallet">
+    Connect an existing Sui wallet directly. Tusky supports [Slush](https://slush.app), [Phantom](https://phantom.app), [Suiet](https://suiet.app), and [Surf](https://surf.tech), as well as any wallet implementing the [Sui Wallet Standard](https://docs.sui.io/standards/wallet-standard).
+  </Card>
+</CardGroup>
+
+## Create Your Account
+
+<Steps>
+  <Step title="Choose your sign-in method">
+    Go to [app.tusky.io](https://app.tusky.io) and select how you want to sign in:
+
+    - **Social login** — click **Sign in with Google**, **Apple**, or **Twitch**. zkLogin will generate a self-custodial Sui address from your OAuth credential. You own this address — Tusky never holds your keys.
+    - **Sui wallet** — click **Connect Wallet** and select your wallet (Slush, Phantom, Suiet, Surf, or any Sui Wallet Standard wallet). Approve the sign-in message in your wallet — this does not cost gas or submit a transaction.
+  </Step>
+
+  <Step title="Account provisioned">
+    Once signed in, Tusky automatically provisions your account with:
+
+    - A **dedicated managed wallet** for publishing to the Walrus network
+    - A **prepaid wallet balance** (initially unfunded — you will add SUI and WAL in the next step)
+    - A **private aggregator** endpoint for serving your content
+    - Access to the **dashboard** for managing volumes, files, and settings
+  </Step>
+</Steps>
+
+## Your Managed Publishing Wallet
+
+When you create a Tusky account, Tusky generates a **dedicated managed wallet** on your behalf. This wallet is used exclusively for publishing blobs to the Walrus network.
+
+<Note>
+  The managed wallet is distinct from the Sui wallet you sign in with. Your sign-in identity is used for **authentication and encryption**. The managed wallet is used for **Walrus publishing transactions**.
+</Note>
+
+### Why a managed wallet?
+
+Publishing to Walrus requires submitting on-chain transactions — registering blobs, paying storage fees, and managing epochs. Running these transactions from your personal wallet would require you to approve every upload individually.
+
+The managed wallet removes this friction:
+
+- **Automatic publishing** — uploads happen without manual transaction approval
+- **Funded from your prepaid balance** — SUI and WAL are transferred from your prepaid wallet to the managed wallet as needed
+- **Isolated** — the managed wallet is only used for Walrus storage operations and cannot access other assets in your personal wallet
+- **Transparent** — you can view all managed wallet transactions in the dashboard or on a Sui explorer
+
+### Ejecting to self-management
+
+If you decide to leave Tusky or manage your Walrus blobs directly, you can **eject** your data at any time:
+
+1. Export a list of all blob IDs associated with your account
+2. Transfer blob ownership to your personal wallet
+3. Manage renewals, deletions, and access independently on Walrus
+
+<Info>
+  Ejection is a one-way operation per blob. Once a blob is transferred to your personal wallet, Tusky no longer manages its lifecycle. You are responsible for renewals and storage epoch management.
+</Info>
+
+## Account Security
+
+| Layer | Mechanism |
+| --- | --- |
+| **Authentication** | zkLogin (Google, Apple, Twitch) or Sui wallet signature — no passwords stored |
+| **Encryption keys** | Derived from your Sui address or managed via [Seal](https://seal-docs.wal.app) |
+| **API access** | Scoped API keys with rotation support |
+| **Publishing** | Isolated managed wallet with view-only access for you |
+
+<Warning>
+  Never share your wallet seed phrase or private keys. Tusky will never ask for them. If your wallet is compromised, revoke all API keys immediately from the dashboard.
+</Warning>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Fund Your Wallet" icon="wallet" href="/getting-started/wallets">
+    Deposit SUI and WAL to start uploading files.
+  </Card>
+  <Card title="Generate API Keys" icon="key" href="/getting-started/api-keys">
+    Create API keys for programmatic access.
+  </Card>
+</CardGroup>

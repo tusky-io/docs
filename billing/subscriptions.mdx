@@ -1,0 +1,104 @@
+---
+title: Subscriptions
+description: 'Fixed-rate monthly plans in SUI with bandwidth and transaction limits'
+---
+
+Subscriptions provide **predictable monthly pricing** in SUI for Tusky infrastructure. For the full plan breakdown including the free tier, limits, and feature comparison, see [Subscriptions & Plans](/core-concepts/subscriptions).
+
+## Plans at a glance
+
+| | **Free** | **Builder** | **Pro** | **Scale** |
+| --- | :---: | :---: | :---: | :---: |
+| **Monthly (SUI)** | 0 | 12 | 50 | 200 |
+| **API requests / mo** | 1K | 50K | 500K | 5M |
+| **Egress bandwidth / mo** | 5 GB | 200 GB | 2 TB | 20 TB |
+| **Private aggregators** | — | 1 | 3 | 5 |
+| **Volumes** | 2 | 10 | 50 | Unlimited |
+
+<Note>
+  Walrus storage (WAL) is not included in any plan. WAL is deducted from your [managed wallet](/core-concepts/managed-wallet) at current network rates on each upload.
+</Note>
+
+## How billing works
+
+<Steps>
+  <Step title="Choose a plan">
+    All accounts start on the **Free** plan automatically — no card required. Upgrade anytime in **Settings → Billing**.
+  </Step>
+  <Step title="Pay in SUI at cycle start">
+    Subscription fees are charged monthly in SUI from your connected wallet at the start of each billing cycle.
+  </Step>
+  <Step title="Use your allowances">
+    API requests and egress bandwidth are tracked in real time. Check the dashboard or the [usage API](/api-reference/account/get-usage) to monitor consumption.
+  </Step>
+  <Step title="Walrus costs remain separate">
+    WAL for blob storage is always pay-per-use, deducted from your prepaid wallet on each upload — independent of your plan.
+  </Step>
+</Steps>
+
+## Overage behavior
+
+| Limit exceeded | Behavior |
+| --- | --- |
+| **API requests** | `429 Too Many Requests` until next cycle or upgrade. |
+| **Egress bandwidth** | Aggregator downloads throttled. Files remain accessible. |
+| **Volumes / publishers** | Creating new resources blocked. Existing ones unaffected. |
+
+## Subscriptions vs pay-as-you-go
+
+| | **Subscription** | **Pay-As-You-Go** |
+| --- | --- | --- |
+| Monthly fee | Fixed SUI | None |
+| API requests | Capped per plan | Unlimited (metered per request) |
+| Bandwidth | Capped per plan | Unlimited (metered per GB) |
+| Best for | Predictable workloads | Variable / experimental traffic |
+
+## Managing your subscription
+
+<Tabs>
+  <Tab title="Dashboard">
+    Go to **Settings → Billing** to upgrade, downgrade, or cancel. Upgrades apply immediately with prorated SUI charge. Downgrades take effect at end of cycle.
+  </Tab>
+  <Tab title="API">
+    ```bash
+    # Get current subscription
+    curl https://api.tusky.io/v2/billing/subscription \
+      -H "Api-Key: YOUR_API_KEY"
+    ```
+    ```json
+    {
+      "plan": "pro",
+      "status": "active",
+      "currentPeriodEnd": "2026-04-10T00:00:00Z",
+      "monthlyPriceSui": "50"
+    }
+    ```
+  </Tab>
+  <Tab title="SDK">
+    ```typescript
+    const account = await tusky.account.get();
+    console.log("Plan:", account.plan);
+
+    const usage = await tusky.account.usage();
+    console.log("Requests this month:", usage.uploads + usage.deletions + usage.extends);
+    console.log("Egress bandwidth:", usage.egressBytes);
+    ```
+  </Tab>
+</Tabs>
+
+## What's next?
+
+<CardGroup cols={2}>
+  <Card title="Full plan details" icon="list" href="/core-concepts/subscriptions">
+    Per-feature comparison, overage rules, and upgrade guide.
+  </Card>
+  <Card title="Enterprise" icon="building" href="/billing/enterprise">
+    Custom limits, SLAs, and volume pricing.
+  </Card>
+  <Card title="Pay As You Go" icon="credit-card" href="/billing/pay-as-you-go">
+    Unlimited metered billing with no monthly fee.
+  </Card>
+  <Card title="Usage API" icon="chart-bar" href="/api-reference/account/get-usage">
+    Monitor your consumption programmatically.
+  </Card>
+</CardGroup>

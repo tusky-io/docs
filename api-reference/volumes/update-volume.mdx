@@ -1,0 +1,62 @@
+---
+title: Update Volume
+api: 'PATCH https://api.tusky.io/v2/volumes/{volumeId}'
+---
+
+Update a volume's settings. Only included fields are changed.
+
+## Path Parameters
+
+<ParamField path="volumeId" type="string" required>
+  The volume ID.
+</ParamField>
+
+## Request Body
+
+<ParamField body="name" type="string">
+  New volume name.
+</ParamField>
+
+<ParamField body="publisherIds" type="array">
+  Replace the assigned publishers. Pass an array of publisher IDs. Multiple publishers enable horizontal scaling — uploads are distributed across them for shorter publishing times. Set to `[]` to revert to the account default publisher.
+</ParamField>
+
+## Response
+
+Returns the updated volume object.
+
+## Example
+
+<CodeGroup>
+
+```bash Scale up — add a third publisher
+curl -X PATCH https://api.tusky.io/v2/volumes/vol_abc123 \
+  -H "Api-Key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"publisherIds": ["pub_primary", "pub_secondary", "pub_tertiary"]}'
+```
+
+```bash Scale down — single publisher
+curl -X PATCH https://api.tusky.io/v2/volumes/vol_abc123 \
+  -H "Api-Key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"publisherIds": ["pub_primary"]}'
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "id": "vol_abc123",
+  "name": "Production Assets",
+  "encrypted": false,
+  "publisherIds": ["pub_primary", "pub_secondary", "pub_tertiary"],
+  "updatedAt": "2026-03-07T15:00:00Z"
+}
+```
+
+<Note>
+  The `encrypted` flag cannot be changed after creation.
+</Note>

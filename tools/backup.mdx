@@ -1,0 +1,117 @@
+---
+title: Backup
+description: 'Optional centralized backup for your decentralized data'
+---
+
+Tusky offers an optional **centralized backup** service that stores copies of your files in a traditional blobstore alongside Walrus. This provides an additional layer of insurance against data loss — your files exist on both the decentralized Walrus network and a reliable centralized backup.
+
+## Why Backup?
+
+The Walrus network is designed for durability through redundant encoding across storage nodes. However, some use cases demand an extra safety net:
+
+<CardGroup cols={2}>
+  <Card title="Redundancy" icon="clone">
+    A second copy in a centralized blobstore protects against edge cases where Walrus data might become temporarily unavailable.
+  </Card>
+  <Card title="Faster Recovery" icon="clock-rotate-left">
+    In disaster recovery scenarios, restoring from a centralized backup can be faster than reconstructing from the decentralized network.
+  </Card>
+  <Card title="Compliance" icon="file-shield">
+    Some regulatory volumes require data to be stored in identifiable, auditable infrastructure in addition to decentralized systems.
+  </Card>
+  <Card title="Peace of Mind" icon="heart">
+    For mission-critical data, a backup in a proven centralized system provides additional confidence.
+  </Card>
+</CardGroup>
+
+## How It Works
+
+<Steps>
+  <Step title="Enable backup on a volume">
+    Turn on backup for any volume through the dashboard or API. Backup is configured per volume — you can choose which volumes need the extra protection.
+  </Step>
+  <Step title="Automatic on upload">
+    Once enabled, every file uploaded to the volume is automatically copied to Tusky's centralized blobstore in addition to being published to Walrus.
+  </Step>
+  <Step title="Transparent access">
+    File retrieval works exactly the same whether backup is enabled or not. If the primary Walrus path is unavailable, the aggregator can fall back to the backup copy.
+  </Step>
+</Steps>
+
+## Enabling Backup
+
+<Tabs>
+  <Tab title="Dashboard">
+    Navigate to your volume's **Settings → Backup** and toggle **Enable Backup**. All future uploads to this volume will be backed up automatically.
+  </Tab>
+  <Tab title="SDK">
+    Enable backup when creating or updating a volume:
+
+    ```typescript
+    // Enable on creation
+    const volume = await tusky.volume.create("Critical Data", {
+      encrypted: true,
+      backup: true,
+    });
+
+    // Enable on existing volume
+    await tusky.volume.update("vol_abc123", {
+      backup: true,
+    });
+    ```
+  </Tab>
+  <Tab title="API">
+    ```bash
+    curl -X PATCH https://api.tusky.io/v1/volumes/vol_abc123 \
+      -H "Authorization: Bearer tsk_live_abc123" \
+      -H "Content-Type: application/json" \
+      -d '{"backup": true}'
+    ```
+  </Tab>
+</Tabs>
+
+## Pricing
+
+Backup is a **paid feature** with a per-GB monthly cost on top of your standard Walrus storage fees. The backup fee covers:
+
+- Storage in the centralized blobstore
+- Data transfer to and from the backup
+- Automatic lifecycle management
+
+<Note>
+  Backup pricing is separate from Walrus storage costs and the Tusky platform fee. Check the [dashboard](https://app.tusky.io) for current rates.
+</Note>
+
+## What Gets Backed Up
+
+| Included | Not Included |
+| --- | --- |
+| File content (encrypted if volume is encrypted) | Volume metadata (stored in Tusky's database) |
+| Original file names and structure | Member access control lists |
+| MIME types and custom metadata | Aggregator configuration |
+
+<Info>
+  For encrypted volumes, the backup stores the **encrypted** file content. Tusky never has access to your unencrypted data, even in the backup.
+</Info>
+
+## Disabling Backup
+
+You can disable backup at any time:
+
+- New uploads will no longer be backed up.
+- Existing backup copies are retained for the remainder of the current billing period and then deleted.
+
+<Warning>
+  Disabling backup does not immediately delete existing backup copies. They are retained until the end of the billing period. After that, only the Walrus copies remain.
+</Warning>
+
+## What's Next
+
+<CardGroup cols={2}>
+  <Card title="S3 Migration" icon="right-left" href="/tools/s3-migration">
+    Migrate existing data from S3 to Tusky with automatic backup.
+  </Card>
+  <Card title="Volumes" icon="vault" href="/sdk/volumes">
+    Manage the volumes that contain your backed-up files.
+  </Card>
+</CardGroup>

@@ -1,0 +1,53 @@
+---
+title: Generate Fiat Payment URL
+api: 'POST https://api.tusky.io/v2/billing/fiat-checkout'
+---
+
+Generate a checkout URL to prepay for Tusky services using fiat currency (credit card). The user is redirected to a payment page. On successful payment, the equivalent SUI amount is credited to the managed wallet.
+
+## Request Body
+
+<ParamField body="amount" type="number" required>
+  Amount in USD to pay (e.g., `50`).
+</ParamField>
+
+<ParamField body="returnUrl" type="string">
+  URL to redirect to after payment completes.
+</ParamField>
+
+## Response
+
+<ResponseField name="checkoutUrl" type="string">
+  URL to redirect the user to for payment.
+</ResponseField>
+
+<ResponseField name="sessionId" type="string">
+  Payment session ID for tracking.
+</ResponseField>
+
+<ResponseField name="expiresAt" type="string">
+  ISO 8601 timestamp when the checkout URL expires (typically 30 minutes).
+</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.tusky.io/v2/billing/fiat-checkout \
+  -H "Api-Key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"amount": 50, "returnUrl": "https://app.tusky.io/billing/success"}'
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "checkoutUrl": "https://checkout.tusky.io/pay/session_abc123",
+  "sessionId": "session_abc123",
+  "expiresAt": "2026-03-07T15:00:00Z"
+}
+```

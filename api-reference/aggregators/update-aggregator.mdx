@@ -1,0 +1,84 @@
+---
+title: Update Aggregator
+api: 'PATCH https://api.tusky.io/v2/aggregators/{aggregatorId}'
+---
+
+Update an aggregator's configuration. Only included fields are updated.
+
+## Path Parameters
+
+<ParamField path="aggregatorId" type="string" required>
+  The aggregator ID.
+</ParamField>
+
+## Request Body
+
+<ParamField body="subdomain" type="string">
+  Subdomain for the aggregator. Must be unique, lowercase, 3–32 characters.
+</ParamField>
+
+<ParamField body="customDomain" type="string">
+  Custom domain. Set to `null` to remove. Requires a CNAME record pointing to `{subdomain}.mytusky.xyz`.
+</ParamField>
+
+<ParamField body="restricted" type="boolean">
+  When `true`, requests require authentication via `Api-Key` header. When `false`, content is served without authentication.
+</ParamField>
+
+<ParamField body="public" type="boolean">
+  When `true`, the aggregator serves any content from the Walrus network. When `false`, it serves only your account's content.
+</ParamField>
+
+<ParamField body="cache" type="boolean">
+  Whether to enable Cloudflare edge caching. Caches content at 300+ global edge locations for low-latency delivery. Disable for content that changes frequently.
+</ParamField>
+
+<ParamField body="fallbackToBackup" type="boolean">
+  Whether to fall back to the centralized backup store when Walrus is unavailable. Requires [Backup](/tools/backup) to be enabled on the relevant volumes.
+</ParamField>
+
+<ParamField body="analyticsEnabled" type="boolean">
+  Whether to enable analytics tracking for requests.
+</ParamField>
+
+## Response
+
+Returns the updated aggregator object.
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X PATCH https://api.tusky.io/v2/aggregators/agg_default \
+  -H "Api-Key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "public": true,
+    "cache": true,
+    "fallbackToBackup": true,
+    "customDomain": "cdn.example.com"
+  }'
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "id": "agg_default",
+  "url": "https://myapp.mytusky.xyz",
+  "subdomain": "myapp",
+  "customDomain": "cdn.example.com",
+  "public": true,
+  "cache": true,
+  "fallbackToBackup": true,
+  "analyticsEnabled": true,
+  "updatedAt": "2026-03-06T14:00:00Z"
+}
+```
+
+<Note>
+  `fallbackToBackup` only works for volumes with [Backup](/tools/backup) enabled. If backup is not enabled, the flag is accepted but has no effect.
+</Note>

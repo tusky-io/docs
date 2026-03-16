@@ -1,0 +1,74 @@
+---
+title: List Members
+api: 'GET https://api.tusky.io/v2/volumes/{volumeId}/members'
+---
+
+List all members of a volume, including their roles.
+
+## Path Parameters
+
+<ParamField path="volumeId" type="string" required>
+  The unique identifier of the volume.
+</ParamField>
+
+## Response
+
+<ResponseField name="data" type="array">
+  Array of member objects.
+
+  <Expandable title="Member object properties">
+    <ResponseField name="id" type="string">
+      Unique identifier for the membership.
+    </ResponseField>
+
+    <ResponseField name="address" type="string">
+      The Sui wallet address of the member.
+    </ResponseField>
+
+    <ResponseField name="role" type="string">
+      The assigned role (`viewer`, `manager`, or `owner`).
+    </ResponseField>
+
+    <ResponseField name="volumeId" type="string">
+      The volume this membership belongs to.
+    </ResponseField>
+
+    <ResponseField name="createdAt" type="string">
+      ISO 8601 timestamp of when the member was added.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl https://api.tusky.io/v2/volumes/vol_abc123def456/members \
+  -H "Api-Key: YOUR_API_KEY"
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "data": [
+    {
+      "id": "member_owner_001",
+      "address": "0xowner1234567890abcdef1234567890abcdef12",
+      "role": "admin",
+      "volumeId": "vol_abc123def456",
+      "createdAt": "2025-07-01T12:00:00.000Z"
+    },
+    {
+      "id": "member_stu901vwx234",
+      "address": "0x1a2b3c4d5e6f7890abcdef1234567890abcdef12",
+      "role": "manager",
+      "volumeId": "vol_abc123def456",
+      "createdAt": "2025-07-02T10:00:00.000Z"
+    }
+  ]
+}
+```

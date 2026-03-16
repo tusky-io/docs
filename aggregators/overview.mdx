@@ -1,0 +1,89 @@
+---
+title: Aggregator Overview
+description: 'Deliver your content through Tusky aggregators'
+---
+
+Tusky aggregators are the HTTP layer between your applications and the Walrus decentralized storage network. Every user gets a dedicated **private aggregator** that serves only their content, backed by a global CDN for fast, reliable delivery.
+
+## How Aggregators Work
+
+When a request arrives at your aggregator, the flow is:
+
+<Steps>
+  <Step title="Request received">
+    A client requests a file through your aggregator URL (e.g. `https://myproject.mytusky.xyz/v1/blobs/abc123`).
+  </Step>
+  <Step title="CDN edge check">
+    Cloudflare's edge network checks for a cached copy. If cached, the response is served immediately from the nearest edge node.
+  </Step>
+  <Step title="Aggregator fetch">
+    On a cache miss, the aggregator routes to Tusky's aggregator infrastructure, which reconstructs the blob from the Walrus network.
+  </Step>
+  <Step title="Response delivered">
+    The file is returned to the client and cached at the edge for subsequent requests.
+  </Step>
+</Steps>
+
+## URL Schemes
+
+Your aggregator supports multiple URL patterns for accessing content:
+
+| Pattern | Example | Description |
+| --- | --- | --- |
+| `/{quiltPatchId}` | `/qp_abc123` | Access a file by its quilt patch ID (the most common pattern). |
+| `/v1/blobs/{blobId}` | `/v1/blobs/blob_xyz789` | Access a raw Walrus blob by its blob ID. |
+| `/v1/blobs/by-quilt-patch-id/{quiltPatchId}` | `/v1/blobs/by-quilt-patch-id/qp_abc123` | Alternative verbose path for quilt patch access. |
+
+<Tip>
+  The short `/{quiltPatchId}` format is ideal for embedding in applications and sharing links. The longer `/v1/blobs/` paths follow Walrus conventions for compatibility with tooling.
+</Tip>
+
+## CDN and Edge Caching
+
+All Tusky aggregators are fronted by **Cloudflare's global CDN**:
+
+- **Edge caching** — Popular content is cached at 300+ edge locations worldwide, reducing latency to milliseconds for repeat requests.
+- **DDoS protection** — Cloudflare's Web Application Firewall (WAF) protects your aggregator from volumetric attacks and malicious traffic.
+- **Automatic compression** — Responses are compressed with Brotli or gzip when supported by the client.
+- **HTTP/3 support** — Modern clients benefit from QUIC-based transport for faster connections.
+
+## Fallback Aggregator
+
+For maximum resilience, Tusky operates a **fallback aggregator** on separate infrastructure from the primary aggregator stack. If the primary aggregator is unavailable, requests are automatically routed to the fallback, ensuring your content remains accessible even during infrastructure disruptions.
+
+<Info>
+  The fallback aggregator runs on independent infrastructure (different cloud provider, different region) to protect against correlated failures.
+</Info>
+
+## Security
+
+Private aggregators provide several security benefits over public Walrus aggregators:
+
+<CardGroup cols={2}>
+  <Card title="Content Isolation" icon="shield-halved">
+    Your aggregator only resolves content that belongs to your account. It will not serve blobs uploaded by other users.
+  </Card>
+  <Card title="DDoS Protection" icon="shield">
+    Cloudflare WAF rules protect your aggregator from abuse, rate-limiting malicious traffic before it reaches your content.
+  </Card>
+  <Card title="Access Logging" icon="clipboard-list">
+    Every request is logged with metadata for analytics, debugging, and audit trails.
+  </Card>
+  <Card title="Custom Rules" icon="sliders">
+    Enterprise users can configure custom WAF rules, IP allowlists, and rate limits for their aggregator.
+  </Card>
+</CardGroup>
+
+## What's Next
+
+<CardGroup cols={2}>
+  <Card title="Private Aggregators" icon="lock" href="/aggregators/private-aggregators">
+    Understand how your dedicated aggregator is provisioned and configured.
+  </Card>
+  <Card title="Custom Domains" icon="globe" href="/aggregators/custom-domains">
+    Serve content from your own branded domain.
+  </Card>
+  <Card title="Analytics" icon="chart-line" href="/aggregators/analytics">
+    Monitor traffic, bandwidth, and top files across your aggregator.
+  </Card>
+</CardGroup>

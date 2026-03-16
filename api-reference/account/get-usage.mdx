@@ -1,0 +1,111 @@
+---
+title: Get Usage
+api: 'GET https://api.tusky.io/v2/account/usage'
+---
+
+Retrieve usage statistics for the authenticated account.
+
+## Query Parameters
+
+<ParamField query="from" type="string">
+  Start of the period (ISO 8601). Defaults to 30 days ago.
+</ParamField>
+
+<ParamField query="to" type="string">
+  End of the period (ISO 8601). Defaults to now.
+</ParamField>
+
+## Response
+
+<ResponseField name="uploads" type="number">
+  Number of file uploads in the period.
+</ResponseField>
+
+<ResponseField name="deletions" type="number">
+  Number of file deletions in the period.
+</ResponseField>
+
+<ResponseField name="extends" type="number">
+  Number of storage extensions in the period.
+</ResponseField>
+
+<ResponseField name="ingressBytes" type="number">
+  Data uploaded in the period (bytes).
+</ResponseField>
+
+<ResponseField name="egressBytes" type="number">
+  Data downloaded / served via aggregators in the period (bytes).
+</ResponseField>
+
+<ResponseField name="usedBytes" type="number">
+  Total bytes currently stored on Walrus.
+</ResponseField>
+
+<ResponseField name="activeFiles" type="number">
+  Number of active files.
+</ResponseField>
+
+<ResponseField name="expiredFiles" type="number">
+  Number of files whose storage epochs have already expired.
+</ResponseField>
+
+<ResponseField name="blobs" type="number">
+  Number of Walrus blobs currently stored (standalone blobs).
+</ResponseField>
+
+<ResponseField name="quilts" type="number">
+  Number of Walrus quilts currently stored (batched blobs).
+</ResponseField>
+
+<ResponseField name="volumes" type="number">
+  Number of volumes on the account.
+</ResponseField>
+
+<ResponseField name="publishers" type="number">
+  Number of publishers on the account.
+</ResponseField>
+
+<ResponseField name="aggregators" type="number">
+  Number of aggregators on the account.
+</ResponseField>
+
+<ResponseField name="suiSpent" type="string">
+  SUI spent in the period (gas fees + conversions).
+</ResponseField>
+
+<ResponseField name="walSpent" type="string">
+  WAL spent in the period (Walrus storage).
+</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl "https://api.tusky.io/v2/account/usage?from=2026-03-01T00:00:00Z&to=2026-03-07T23:59:59Z" \
+  -H "Api-Key: YOUR_API_KEY"
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "uploads": 3120,
+  "deletions": 45,
+  "extends": 35,
+  "ingressBytes": 5368709120,
+  "egressBytes": 21474836480,
+  "usedBytes": 85236940800,
+  "activeFiles": 4520,
+  "expiredFiles": 18,
+  "blobs": 312,
+  "quilts": 89,
+  "volumes": 3,
+  "publishers": 4,
+  "aggregators": 2,
+  "suiSpent": "12.45",
+  "walSpent": "38.2"
+}
+```

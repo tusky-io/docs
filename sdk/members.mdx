@@ -1,0 +1,123 @@
+---
+title: Members
+description: 'Manage volume access and members with the SDK'
+---
+
+Volumes support collaborative access through role-based membership. The `tusky.volume` module includes methods to add, list, update, and remove members from any volume you own or manage.
+
+## Roles
+
+Tusky uses three roles with escalating permissions:
+
+| Role | Permissions |
+| --- | --- |
+| **Viewer** | Download and view files. Cannot upload, delete, or manage members. |
+| **Manager** | Everything a Viewer can do, plus upload and delete files, invite or remove Viewers. |
+| **Owner** | Full control — upload, delete, manage all members, modify volume settings. Each volume has exactly one owner (the creator). |
+
+## Add a Member
+
+Invite a user by their Sui wallet address:
+
+```typescript
+const member = await tusky.volume.addMember("vol_abc123", {
+  address: "0x1a2b3c...user_wallet_address",
+  role: "manager",
+});
+
+console.log("Added member:", member.id);
+console.log("Role:", member.role);
+```
+
+<Note>
+  For encrypted volumes, adding a member updates the on-chain [Seal](https://seal-docs.wal.app) policy to include the new wallet. The member can decrypt volume content using their wallet — no encryption keys are ever transmitted.
+</Note>
+
+## List Members
+
+Retrieve all members of a volume:
+
+```typescript
+const members = await tusky.volume.members("vol_abc123");
+
+for (const member of members) {
+  console.log(`${member.address} — ${member.role}`);
+}
+```
+
+### Member Object
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | `string` | Unique member ID. |
+| `address` | `string` | Sui wallet address of the member. |
+| `role` | `string` | One of `viewer`, `manager`, or `owner`. |
+| `createdAt` | `string` | ISO 8601 timestamp of when the member was added. |
+
+## Update a Member's Role
+
+Change a member's role:
+
+```typescript
+const updated = await tusky.volume.updateMember("member_def456", "manager");
+
+console.log("Updated role:", updated.role);
+```
+
+<Tip>
+  Promoting a member to `manager` grants them the ability to upload, delete, and manage Viewers. Only the volume owner can promote members.
+</Tip>
+
+## Remove a Member
+
+Revoke a member's access to the volume:
+
+```typescript
+await tusky.volume.removeMember("member_def456");
+console.log("Member removed");
+```
+
+<Warning>
+  Removing a member from an encrypted volume revokes their decryption capability. They will no longer be able to decrypt any files in the volume, even if they previously downloaded encrypted content.
+</Warning>
+
+## Complete Example
+
+```typescript
+import { Tusky } from "@tusky-io/ts-sdk";
+
+const tusky = new Tusky({ apiKey: process.env.TUSKY_API_KEY });
+
+const volumeId = "vol_abc123";
+
+// Add a manager
+const member = await tusky.volume.addMember(volumeId, {
+  address: "0xAliceWalletAddress",
+  role: "manager",
+});
+
+// List all members
+const members = await tusky.volume.members(volumeId);
+console.log("Volume members:");
+for (const m of members) {
+  console.log(`  ${m.address} [${m.role}]`);
+}
+
+// Downgrade to viewer
+await tusky.volume.updateMember(member.id, "viewer");
+
+// Remove the member
+await tusky.volume.removeMember(member.id);
+console.log("Member removed from volume");
+```
+
+## What's Next
+
+<CardGroup cols={2}>
+  <Card title="Volumes" icon="vault" href="/sdk/volumes">
+    Create and configure the volumes members collaborate in.
+  </Card>
+  <Card title="Encryption" icon="lock" href="/core-concepts/encryption">
+    Learn how encryption keys are shared with volume members.
+  </Card>
+</CardGroup>

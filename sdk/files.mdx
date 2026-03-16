@@ -1,0 +1,202 @@
+---
+title: Files
+description: 'Upload and manage files with the SDK'
+---
+
+The `tusky.file` module handles uploading, downloading, listing, and deleting files within volumes. Files uploaded to encrypted volumes are automatically encrypted client-side before being published to the Walrus network.
+
+## Upload a File
+
+### From a File Path (Node.js)
+
+The simplest way to upload in a Node.js volume:
+
+```typescript
+const file = await tusky.file.upload("vol_abc123", "./documents/report.pdf", {
+  name: "Q4 Report.pdf",
+});
+
+console.log("Uploaded:", file.id);
+console.log("Size:", file.size, "bytes");
+```
+
+### From a Buffer
+
+Upload file content directly from a `Buffer` or `Uint8Array`:
+
+```typescript
+const buffer = Buffer.from("Hello, Walrus!");
+
+const file = await tusky.file.upload("vol_abc123", buffer, {
+  name: "greeting.txt",
+  mimeType: "text/plain",
+});
+```
+
+### From a ReadableStream
+
+Stream large files without loading them entirely into memory:
+
+```typescript
+import { createReadStream } from "fs";
+
+const stream = createReadStream("./large-video.mp4");
+
+const file = await tusky.file.upload("vol_abc123", stream, {
+  name: "presentation.mp4",
+  mimeType: "video/mp4",
+});
+```
+
+### Upload Options
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `name` | `string` | Filename from path | Display name for the file. |
+| `mimeType` | `string` | Auto-detected | MIME type of the file content. |
+| `epochs` | `number` | Volume default | Number of Walrus storage epochs for this file. |
+| `autoExtend` | `boolean` | Volume default | Automatically renew storage before expiry. |
+
+<Tip>
+  Use the [upload cost endpoint](/api-reference/uploads/upload-cost) to preview the storage cost before uploading. Cost = Walrus storage cost (WAL) + gas fee (SUI). Tusky charges no infrastructure fee.
+</Tip>
+
+## Upload Cost
+
+Preview the cost of uploading one or more files before committing. Pass a list of file sizes to get a per-file breakdown and totals:
+
+```typescript
+const estimate = await tusky.upload.cost({
+  files: [
+    { size: 10485760, name: "video.mp4" },
+    { size: 2097152, name: "document.pdf" },
+    { size: 524288, name: "image.png" },
+  ],
+  epochs: 5,
+});
+
+// Per-file breakdown
+for (const file of estimate.files) {
+  console.log(`${file.name}: ${file.walCost} WAL, ${file.gasCost} SUI`);
+}
+
+// Totals
+console.log("Total WAL:", estimate.totals.totalWal);
+console.log("Total SUI:", estimate.totals.totalSui);
+console.log("Balance sufficient:", estimate.balance.sufficient);
+```
+
+The estimate includes your current wallet balance and whether it covers the batch. If the publisher has `autoConvert: true`, a WAL shortfall is covered by swapping SUI automatically.
+
+## Get File Metadata
+
+Retrieve metadata for a specific file:
+
+```typescript
+const file = await tusky.file.get("file_xyz789");
+
+console.log(file.name);        // "Q4 Report.pdf"
+console.log(file.size);        // 2048576
+console.log(file.mimeType);    // "application/pdf"
+console.log(file.volumeId);     // "vol_abc123"
+console.log(file.blobId);      // Walrus blob identifier
+console.log(file.createdAt);   // ISO 8601 timestamp
+```
+
+## List Files
+
+List all files in a volume:
+
+```typescript
+const files = await tusky.file.list("vol_abc123");
+
+for (const file of files) {
+  console.log(`${file.name} (${file.size} bytes)`);
+}
+```
+
+## Download a File
+
+Retrieve the file content as an `ArrayBuffer`:
+
+```typescript
+const content = await tusky.file.arrayBuffer("file_xyz789");
+
+// Write to disk in Node.js
+import { writeFileSync } from "fs";
+writeFileSync("./downloaded-report.pdf", Buffer.from(content));
+```
+
+<Note>
+  The SDK auto-detects encrypted files and decrypts transparently using your wallet credentials. No separate method or flag needed — `arrayBuffer()` handles both public and private content.
+</Note>
+
+### Download via a custom aggregator
+
+Fetch files from any Walrus aggregator by setting `aggregatorUrl` at init. Works even if Tusky's API is unavailable:
+
+```typescript
+const tusky = new Tusky({
+  wallet: keypair,
+  aggregatorUrl: "https://aggregator.walrus.site",
+});
+
+const content = await tusky.file.arrayBuffer("file_xyz789");
+// Fetched from the public aggregator, decrypted client-side
+```
+
+See [Decryption without Tusky](/core-concepts/encryption#decryption-without-tusky) for the full offline scenario.
+
+## Delete a File
+
+Remove a file from a volume:
+
+```typescript
+await tusky.file.delete("file_xyz789");
+console.log("File deleted");
+```
+
+<Warning>
+  Deleting a file removes it from Tusky and your aggregator. The underlying Walrus blob persists until its storage epochs expire.
+</Warning>
+
+## Complete Example
+
+```typescript
+import { Tusky } from "@tusky-io/ts-sdk";
+import { readFileSync, writeFileSync } from "fs";
+
+const tusky = new Tusky({ apiKey: process.env.TUSKY_API_KEY });
+
+// Upload a file
+const file = await tusky.file.upload("vol_abc123", "./photo.jpg", {
+  name: "vacation.jpg",
+  epochs: 5,
+  autoExtend: true,
+});
+
+console.log("Uploaded:", file.id);
+
+// List all files in the volume
+const files = await tusky.file.list("vol_abc123");
+console.log("Files in volume:", files.length);
+
+// Download the file
+const content = await tusky.file.arrayBuffer(file.id);
+writeFileSync("./downloaded-photo.jpg", Buffer.from(content));
+console.log("Downloaded successfully");
+
+// Clean up
+await tusky.file.delete(file.id);
+```
+
+## What's Next
+
+<CardGroup cols={2}>
+  <Card title="Volumes" icon="vault" href="/sdk/volumes">
+    Manage the volumes that contain your files.
+  </Card>
+  <Card title="Aggregators" icon="globe" href="/sdk/aggregators">
+    Configure how your files are served over HTTP.
+  </Card>
+</CardGroup>

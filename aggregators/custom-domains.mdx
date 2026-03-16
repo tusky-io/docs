@@ -1,0 +1,121 @@
+---
+title: Custom Domains
+description: 'Use your own domain for content delivery'
+---
+
+Tusky lets you serve your decentralized storage content through your own branded domain. Instead of `https://myproject.mytusky.xyz`, your users see `https://cdn.yourdomain.com` — with automatic SSL provisioning and the same CDN performance.
+
+## Setup Guide
+
+<Steps>
+  <Step title="Choose your domain">
+    Decide which domain or subdomain you want to use for your aggregator. Common choices include:
+    - `cdn.yourdomain.com`
+    - `files.yourdomain.com`
+    - `assets.yourdomain.com`
+    - `storage.yourdomain.com`
+  </Step>
+  <Step title="Add a CNAME record">
+    In your DNS provider's management console, create a `CNAME` record pointing your chosen domain to your Tusky aggregator:
+
+    | Type | Name | Value | TTL |
+    | --- | --- | --- | --- |
+    | `CNAME` | `cdn` | `{subdomain}.mytusky.xyz` | 3600 |
+
+    Replace `{subdomain}` with your Tusky aggregator subdomain.
+
+    <Tip>
+      If you are using Cloudflare as your DNS provider, set the proxy status to **DNS only** (gray cloud) to allow Tusky to provision the SSL certificate.
+    </Tip>
+  </Step>
+  <Step title="Configure in Tusky">
+    Once DNS is propagated, add the custom domain in Tusky:
+
+    <Tabs>
+      <Tab title="Dashboard">
+        Navigate to **Settings → Aggregator → Custom Domain** and enter your domain (e.g. `cdn.yourdomain.com`).
+      </Tab>
+      <Tab title="SDK">
+        ```typescript
+        await tusky.aggregator.update({
+          customDomain: "cdn.yourdomain.com",
+        });
+        ```
+      </Tab>
+      <Tab title="API">
+        ```bash
+        curl -X PATCH https://api.tusky.io/v1/aggregator \
+          -H "Authorization: Bearer tsk_live_abc123" \
+          -H "Content-Type: application/json" \
+          -d '{"customDomain": "cdn.yourdomain.com"}'
+        ```
+      </Tab>
+    </Tabs>
+  </Step>
+  <Step title="SSL auto-provisioned">
+    Tusky automatically provisions a TLS certificate for your custom domain. This typically completes within a few minutes. You can verify SSL is active by visiting your domain in a browser.
+  </Step>
+  <Step title="Verify">
+    Test that your custom domain is serving content correctly:
+
+    ```bash
+    curl -I https://cdn.yourdomain.com/v1/blobs/your_blob_id
+    ```
+
+    You should see a `200 OK` response with the correct content headers.
+  </Step>
+</Steps>
+
+## SSL Certificates
+
+Tusky handles SSL certificates automatically:
+
+- Certificates are provisioned via **Let's Encrypt** at no additional cost.
+- Renewal is automatic — you never need to manually manage certificates.
+- Both `HTTP/2` and `HTTP/3` are supported on custom domains.
+
+<Warning>
+  SSL provisioning requires the CNAME record to be correctly configured and propagated. If provisioning fails, double-check your DNS settings and ensure your DNS provider is not proxying the record.
+</Warning>
+
+## DNS Propagation
+
+DNS changes can take up to 48 hours to propagate globally, though most providers complete propagation within minutes. You can verify propagation with:
+
+```bash
+dig CNAME cdn.yourdomain.com
+```
+
+The response should show your Tusky aggregator as the CNAME target.
+
+## Removing a Custom Domain
+
+To remove a custom domain and revert to your default `*.mytusky.xyz` URL:
+
+<Tabs>
+  <Tab title="Dashboard">
+    Navigate to **Settings → Aggregator → Custom Domain** and click **Remove**.
+  </Tab>
+  <Tab title="SDK">
+    ```typescript
+    await tusky.aggregator.update({
+      customDomain: null,
+    });
+    ```
+  </Tab>
+</Tabs>
+
+<Note>
+  After removing a custom domain, traffic to that domain will no longer be served by Tusky. Make sure to update any references to the custom domain in your applications.
+</Note>
+
+## What's Next
+
+<CardGroup cols={2}>
+  <Card title="Aggregator Overview" icon="network-wired" href="/aggregators/overview">
+    Understand how the full aggregator infrastructure works.
+  </Card>
+  <Card title="Analytics" icon="chart-line" href="/aggregators/analytics">
+    Monitor traffic on your custom domain.
+  </Card>
+</CardGroup>

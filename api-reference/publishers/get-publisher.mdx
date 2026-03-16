@@ -1,0 +1,82 @@
+---
+title: Get Publisher
+api: 'GET https://api.tusky.io/v2/publishers/{publisherId}'
+---
+
+Retrieve a publisher by ID.
+
+## Path Parameters
+
+<ParamField path="publisherId" type="string" required>
+  The unique identifier of the publisher.
+</ParamField>
+
+## Response
+
+<ResponseField name="id" type="string">
+  Unique publisher identifier.
+</ResponseField>
+
+<ResponseField name="state" type="string">
+  Current operational state of the publisher. One of `ready`, `idle`, `working`, `deactivated`.
+</ResponseField>
+
+<ResponseField name="epochs" type="number">
+  Default storage epoch count.
+</ResponseField>
+
+<ResponseField name="quilt" type="boolean">
+  Whether quilt batching is enabled.
+</ResponseField>
+
+<ResponseField name="permanent" type="boolean">
+  Whether blobs are non-deletable.
+</ResponseField>
+
+<ResponseField name="share" type="boolean">
+  Whether blobs are shared.
+</ResponseField>
+
+<ResponseField name="autoConvert" type="boolean">
+  Whether SUI → WAL auto-conversion is enabled.
+</ResponseField>
+
+<ResponseField name="volumeId" type="string">
+  The volume this publisher is attached to, or `null` if it is the account default.
+</ResponseField>
+
+<ResponseField name="createdAt" type="string">
+  ISO 8601 creation timestamp.
+</ResponseField>
+
+<ResponseField name="updatedAt" type="string">
+  ISO 8601 last-updated timestamp.
+</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl https://api.tusky.io/v2/publishers/pub_7f3a2b1c \
+  -H "Api-Key: YOUR_API_KEY"
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "id": "pub_7f3a2b1c",
+  "state": "ready",
+  "epochs": 5,
+  "quilt": false,
+  "permanent": true,
+  "share": false,
+  "autoConvert": true,
+  "volumeId": "vol_abc123",
+  "createdAt": "2026-03-05T12:00:00Z",
+  "updatedAt": "2026-03-05T14:30:00Z"
+}
+```

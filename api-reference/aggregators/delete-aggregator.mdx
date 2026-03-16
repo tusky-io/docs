@@ -1,0 +1,35 @@
+---
+title: Delete Aggregator
+api: 'DELETE https://api.tusky.io/v2/aggregators/{aggregatorId}'
+---
+
+Delete an aggregator. You cannot delete the account's default aggregator.
+
+## Path Parameters
+
+<ParamField path="aggregatorId" type="string" required>
+  The aggregator ID to delete.
+</ParamField>
+
+## Response
+
+Returns `204 No Content` on success.
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X DELETE https://api.tusky.io/v2/aggregators/agg_secondary \
+  -H "Api-Key: YOUR_API_KEY"
+```
+
+</CodeGroup>
+
+<Warning>
+  Deleting an aggregator immediately stops serving content through its URL and custom domain. Update any applications referencing this aggregator's URL before deleting.
+</Warning>
+
+<Note>
+  The default aggregator cannot be deleted. To change its configuration, use [Update Aggregator](/api-reference/aggregators/update-aggregator) instead.
+</Note>

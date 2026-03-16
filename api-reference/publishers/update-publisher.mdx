@@ -1,0 +1,123 @@
+---
+title: Update Publisher
+api: 'PATCH https://api.tusky.io/v2/publishers/{publisherId}'
+---
+
+Update a publisher's configuration. Only the fields included in the request body are updated — omitted fields remain unchanged.
+
+## Path Parameters
+
+<ParamField path="publisherId" type="string" required>
+  The unique identifier of the publisher to update.
+</ParamField>
+
+## Request Body
+
+<ParamField body="state" type="string">
+  Set the operational state. One of `ready`, `idle`, `deactivated`. You cannot set `deactivated` if it is the **only non-deactivated publisher** on the account.
+</ParamField>
+
+<ParamField body="epochs" type="number">
+  Default number of Walrus storage epochs. Range: 1–100. Each epoch is approximately 2 weeks.
+</ParamField>
+
+<ParamField body="quilt" type="boolean">
+  Whether to batch files into quilts.
+</ParamField>
+
+<ParamField body="permanent" type="boolean">
+  Whether blobs are non-deletable.
+</ParamField>
+
+<ParamField body="share" type="boolean">
+  Whether blobs are shared.
+</ParamField>
+
+<ParamField body="autoConvert" type="boolean">
+  Whether to automatically convert SUI to WAL before upload when WAL balance is insufficient. When `true`, the publisher swaps SUI → WAL via on-chain DEX at the best available rate.
+</ParamField>
+
+<ParamField body="volumeId" type="string">
+  Attach or detach the publisher to/from a volume. Set to a volume ID to attach, or `null` to detach and make it an account-level publisher.
+</ParamField>
+
+## Response
+
+Returns the updated publisher object.
+
+<ResponseField name="id" type="string">
+  Unique publisher identifier.
+</ResponseField>
+
+<ResponseField name="state" type="string">
+  Current operational state. One of `ready`, `idle`, `working`, `deactivated`.
+</ResponseField>
+
+<ResponseField name="epochs" type="number">
+  Default storage epoch count.
+</ResponseField>
+
+<ResponseField name="quilt" type="boolean">
+  Whether quilt batching is enabled.
+</ResponseField>
+
+<ResponseField name="permanent" type="boolean">
+  Whether blobs are non-deletable.
+</ResponseField>
+
+<ResponseField name="share" type="boolean">
+  Whether blobs are shared.
+</ResponseField>
+
+<ResponseField name="autoConvert" type="boolean">
+  Whether SUI → WAL auto-conversion is enabled.
+</ResponseField>
+
+<ResponseField name="volumeId" type="string">
+  Attached volume ID, or `null`.
+</ResponseField>
+
+<ResponseField name="updatedAt" type="string">
+  ISO 8601 last-updated timestamp.
+</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X PATCH https://api.tusky.io/v2/publishers/pub_7f3a2b1c \
+  -H "Api-Key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "epochs": 10,
+    "quilt": true,
+    "permanent": false
+  }'
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "id": "pub_7f3a2b1c",
+  "state": "ready",
+  "epochs": 10,
+  "quilt": true,
+  "permanent": false,
+  "share": false,
+  "autoConvert": true,
+  "volumeId": "vol_abc123",
+  "updatedAt": "2026-03-05T15:00:00Z"
+}
+```
+
+<Warning>
+  Changing `quilt` from `true` to `false` (or vice versa) only affects **future uploads**. Files already published retain their original publishing mode.
+</Warning>
+
+<Note>
+  You cannot set the last non-deactivated publisher to `deactivated`. Create another publisher first.
+</Note>

@@ -1,0 +1,41 @@
+---
+title: Remove Member
+api: 'DELETE https://api.tusky.io/v2/volumes/{volumeId}/members/{memberId}'
+---
+
+Remove a member from a volume, revoking their access.
+
+## Path Parameters
+
+<ParamField path="volumeId" type="string" required>
+  The unique identifier of the volume.
+</ParamField>
+
+<ParamField path="memberId" type="string" required>
+  The unique identifier of the member to remove.
+</ParamField>
+
+## Response
+
+Returns a `204 No Content` response on success.
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X DELETE https://api.tusky.io/v2/volumes/vol_abc123def456/members/member_stu901vwx234 \
+  -H "Api-Key: YOUR_API_KEY"
+```
+
+</CodeGroup>
+
+### Response
+
+```
+204 No Content
+```
+
+<Note>
+  Only volume owners and admins can remove members. The volume owner cannot be removed. For encrypted volumes, removing a member revokes their decryption access.
+</Note>

@@ -1,0 +1,141 @@
+---
+title: Files
+description: 'Upload, manage, and retrieve files on Walrus'
+---
+
+Files are the fundamental units of storage in Tusky. Every file you upload is published to the [Walrus](https://walrus.xyz) decentralized storage network and served back to you through your dedicated aggregator. This page covers the upload process, supported formats, storage duration, and retrieval.
+
+## Upload process
+
+<Steps>
+  <Step title="Select a volume">
+    Choose the volume where the file will live. The volume's encryption setting determines whether the file is encrypted before upload.
+  </Step>
+  <Step title="Upload the file">
+    Drag-and-drop or select a file from your device. If the volume is encrypted, Tusky encrypts the file **client-side** in your browser before any data leaves your machine.
+  </Step>
+  <Step title="Publish to Walrus">
+    Tusky sends the (optionally encrypted) file data to Walrus using your dedicated managed wallet. The Walrus network encodes the data with erasure coding and distributes it across storage nodes.
+  </Step>
+  <Step title="Confirm storage">
+    Once Walrus confirms the storage transaction on Sui, Tusky records the blob ID and metadata. The file is now retrievable through your aggregator.
+  </Step>
+</Steps>
+
+<Tip>
+  Tusky batches multiple small files into **quilts** to reduce on-chain transaction costs. Each individual file within a quilt is assigned a unique **quilt patch ID** so it can be addressed independently.
+</Tip>
+
+## File metadata
+
+Every file stored in Tusky carries the following metadata:
+
+| Field | Description |
+|---|---|
+| **Name** | Original file name (preserved on upload). |
+| **MIME type** | Detected content type (e.g. `image/png`, `application/pdf`). |
+| **Size** | File size in bytes. |
+| **Blob ID** | The Walrus blob identifier — a unique content-addressed hash. |
+| **Quilt patch ID** | If the file was batched into a quilt, this ID addresses the individual file within that quilt. |
+| **Volume** | The parent volume containing this file. |
+| **Storage epochs** | Number of Walrus epochs the file is stored for. |
+| **Auto-extend** | Whether automatic storage renewal is enabled. |
+| **Created at** | Timestamp of the initial upload. |
+
+## Supported file types
+
+Tusky accepts virtually any file type. Common categories include:
+
+<CardGroup cols={3}>
+  <Card title="Images" icon="image">
+    PNG, JPEG, GIF, WebP, SVG, TIFF, BMP, AVIF
+  </Card>
+  <Card title="Video" icon="video">
+    MP4, WebM, MOV, AVI, MKV
+  </Card>
+  <Card title="Audio" icon="music">
+    MP3, WAV, FLAC, OGG, AAC
+  </Card>
+  <Card title="Documents" icon="file-lines">
+    PDF, DOCX, XLSX, PPTX, TXT
+  </Card>
+  <Card title="Data" icon="code">
+    JSON, CSV, XML, YAML, Markdown
+  </Card>
+  <Card title="Archives" icon="file-zipper">
+    ZIP, TAR, GZ, 7Z, RAR
+  </Card>
+</CardGroup>
+
+<Warning>
+  The maximum file size is **2.5 GB** per upload. Files exceeding this limit will be rejected. If you need to store larger datasets, split them into multiple files or contact support.
+</Warning>
+
+## Storage duration and epochs
+
+Walrus measures storage time in **epochs**. When you upload a file you choose how many epochs it should be stored for. One epoch corresponds to a fixed period defined by the Walrus protocol.
+
+<Tabs>
+  <Tab title="Manual duration">
+    Select a specific number of epochs at upload time. The file is guaranteed to be available for that duration. Once the epochs expire, the data is no longer replicated by Walrus storage nodes.
+  </Tab>
+  <Tab title="Auto-extend">
+    Enable **auto-extend** on a file or at the volume level. Tusky automatically renews the storage allocation before the current epochs expire, ensuring uninterrupted availability. Auto-extend charges are billed to your account.
+  </Tab>
+</Tabs>
+
+<Note>
+  You can change the auto-extend setting for individual files or apply it as a volume-wide default. Volume-level settings are inherited by new uploads but can be overridden per file.
+</Note>
+
+## Blob IDs and quilt patch IDs
+
+Every piece of data on Walrus is identified by a **blob ID** — a content-addressed identifier derived from the data itself. Blob IDs are deterministic: the same data always produces the same blob ID.
+
+When Tusky batches multiple files into a single **quilt**, the quilt as a whole receives one blob ID. Each individual file within the quilt is assigned a **quilt patch ID** that lets you address it independently.
+
+You can retrieve files using either identifier through your aggregator:
+
+```
+# By blob ID
+https://<your-aggregator>/v1/blobs/{blobId}
+
+# By quilt patch ID
+https://<your-aggregator>/v1/blobs/by-quilt-patch-id/{quiltPatchId}
+```
+
+<Info>
+  Quilt patch IDs are Tusky-specific identifiers. If you eject your blobs to your own wallet and access them directly through the Walrus network, you will use the underlying blob ID.
+</Info>
+
+## File lifecycle
+
+```
+Upload → Encrypt (if private volume) → Batch into quilt → Publish to Walrus → Retrieve via aggregator
+```
+
+1. **Upload** — File data is sent to Tusky (encrypted client-side for private volumes).
+2. **Batch** — Small files may be combined into a quilt for cost efficiency.
+3. **Publish** — The quilt or standalone blob is published to Walrus through your dedicated managed wallet.
+4. **Store** — Walrus erasure-codes the data and distributes it across storage nodes for the chosen number of epochs.
+5. **Retrieve** — Files are served through your private aggregator URL, with CDN caching for fast delivery.
+6. **Expire or renew** — When storage epochs end, the file is no longer guaranteed. With auto-extend enabled, Tusky renews automatically.
+
+## Deleting files
+
+Deleting a file in Tusky removes its metadata and stops serving it through your aggregator. However, the underlying Walrus blob persists on the network until its storage epochs expire. This is a property of decentralized storage — data availability is governed by the protocol, not by any single party.
+
+<Warning>
+  If a file was uploaded to a public volume, anyone who recorded the blob ID can still retrieve it directly from Walrus until the epochs expire, even after you delete it in Tusky.
+</Warning>
+
+## What's next?
+
+<CardGroup cols={2}>
+  <Card title="Publishing" icon="cloud-arrow-up" href="/core-concepts/publishing">
+    Learn about the managed wallet model and how Tusky publishes to Walrus.
+  </Card>
+  <Card title="Aggregators" icon="network-wired" href="/core-concepts/aggregators">
+    See how to access your files through your private aggregator.
+  </Card>
+</CardGroup>

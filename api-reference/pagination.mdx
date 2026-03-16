@@ -1,0 +1,54 @@
+---
+title: Pagination
+description: 'Navigate through paginated results'
+---
+
+List endpoints return paginated results using cursor-based pagination. Use the `cursor` and `limit` query parameters to navigate through results.
+
+## Query Parameters
+
+<ParamField query="cursor" type="string">
+  Opaque cursor returned from a previous request. Pass this to fetch the next page of results.
+</ParamField>
+
+<ParamField query="limit" type="number" default="20">
+  Number of items to return per page. Maximum value is `100`.
+</ParamField>
+
+## Response format
+
+Every paginated response includes:
+
+```json
+{
+  "data": [...],
+  "nextCursor": "eyJpZCI6IjEyMzQ1In0",
+  "hasMore": true
+}
+```
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `data` | array | The page of results. |
+| `nextCursor` | string \| null | Cursor to pass as the `cursor` query parameter for the next page. `null` if there are no more results. |
+| `hasMore` | boolean | `true` if there are additional pages after this one. |
+
+## Example
+
+Fetch the first page:
+
+```bash
+curl https://api.tusky.io/v2/volumes?limit=10 \
+  -H "Api-Key: YOUR_API_KEY"
+```
+
+Fetch the next page using the returned cursor:
+
+```bash
+curl "https://api.tusky.io/v2/volumes?limit=10&cursor=eyJpZCI6IjEyMzQ1In0" \
+  -H "Api-Key: YOUR_API_KEY"
+```
+
+<Tip>
+  Keep paginating until `hasMore` is `false` or `nextCursor` is `null` to retrieve all results.
+</Tip>

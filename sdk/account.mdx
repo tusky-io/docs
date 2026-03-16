@@ -1,0 +1,137 @@
+---
+title: Account
+description: 'Manage your account with the SDK'
+---
+
+The `tusky.account` module provides access to your account details, managed wallet information, and usage statistics. Use it to check balances, monitor consumption, and integrate billing visibility into your applications.
+
+## Get Account Details
+
+Retrieve your account information and managed wallet status:
+
+```typescript
+const account = await tusky.account.get();
+
+console.log("Account ID:", account.id);
+console.log("Email:", account.email);
+console.log("Plan:", account.plan);
+```
+
+### Managed Wallet
+
+Every Tusky account includes a dedicated managed wallet used for publishing blobs to the Walrus network. Check your wallet balance at any time:
+
+```typescript
+const account = await tusky.account.get();
+const wallet = account.managedWallet;
+
+console.log("Wallet address:", wallet.address);
+console.log("SUI balance:", wallet.suiBalance);
+console.log("WAL balance:", wallet.walBalance);
+```
+
+<Info>
+  Your managed wallet is automatically provisioned when you create your Tusky account. Fund it via [prepaid deposits](/billing/prepaid) to ensure uninterrupted uploads.
+</Info>
+
+### Account Object
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | `string` | Unique account identifier. |
+| `email` | `string \| null` | Associated email address if set. |
+| `plan` | `string` | Current billing plan (`free`, `pro`, `enterprise`). |
+| `managedWallet` | `object` | Managed wallet details (see below). |
+| `createdAt` | `string` | ISO 8601 account creation timestamp. |
+
+### Managed Wallet Object
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `address` | `string` | Sui address of the managed wallet. |
+| `suiBalance` | `string` | Current SUI balance (in MIST). |
+| `walBalance` | `string` | Current WAL balance. |
+
+## Get Usage Statistics
+
+Monitor your storage consumption and API usage:
+
+```typescript
+const usage = await tusky.account.usage();
+
+console.log("Uploads:", usage.uploads);
+console.log("Deletions:", usage.deletions);
+console.log("Extends:", usage.extends);
+console.log("Ingress:", usage.ingressBytes, "bytes");
+console.log("Egress:", usage.egressBytes, "bytes");
+console.log("Storage used:", usage.usedBytes, "bytes");
+console.log("Active files:", usage.activeFiles);
+console.log("Expired files:", usage.expiredFiles);
+console.log("Blobs:", usage.blobs);
+console.log("Quilts:", usage.quilts);
+console.log("Volumes:", usage.volumes);
+console.log("Publishers:", usage.publishers);
+console.log("Aggregators:", usage.aggregators);
+console.log("SUI spent:", usage.suiSpent);
+console.log("WAL spent:", usage.walSpent);
+```
+
+### Usage Object
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `uploads` | `number` | Number of file uploads in the period. |
+| `deletions` | `number` | Number of file deletions in the period. |
+| `extends` | `number` | Number of storage extensions in the period. |
+| `ingressBytes` | `number` | Data uploaded in the period (bytes). |
+| `egressBytes` | `number` | Data downloaded / served via aggregators in the period (bytes). |
+| `usedBytes` | `number` | Total bytes currently stored on Walrus. |
+| `activeFiles` | `number` | Number of active files. |
+| `expiredFiles` | `number` | Number of files whose storage epochs have already expired. |
+| `blobs` | `number` | Number of Walrus blobs currently stored (standalone blobs). |
+| `quilts` | `number` | Number of Walrus quilts currently stored (batched blobs). |
+| `volumes` | `number` | Number of volumes on the account. |
+| `publishers` | `number` | Number of publishers on the account. |
+| `aggregators` | `number` | Number of aggregators on the account. |
+| `suiSpent` | `string` | SUI spent in the period (gas fees + conversions). |
+| `walSpent` | `string` | WAL spent in the period (Walrus storage). |
+
+<Tip>
+  Use `tusky.account.usage()` in monitoring dashboards or alerting systems to track consumption and avoid unexpected charges.
+</Tip>
+
+## Complete Example
+
+```typescript
+import { Tusky } from "@tusky-io/ts-sdk";
+
+const tusky = new Tusky({ apiKey: process.env.TUSKY_API_KEY });
+
+// Account overview
+const account = await tusky.account.get();
+console.log(`Account: ${account.id} (${account.plan})`);
+console.log(`Wallet: ${account.managedWallet.address}`);
+console.log(`SUI: ${account.managedWallet.suiBalance}`);
+console.log(`WAL: ${account.managedWallet.walBalance}`);
+
+// Usage stats
+const usage = await tusky.account.usage();
+console.log(`Uploads: ${usage.uploads}`);
+console.log(`Deletions: ${usage.deletions}`);
+console.log(`Extends: ${usage.extends}`);
+console.log(`Storage: ${(usage.usedBytes / 1e9).toFixed(2)} GB`);
+console.log(`Active files: ${usage.activeFiles}`);
+console.log(`Blobs: ${usage.blobs}, Quilts: ${usage.quilts}`);
+console.log(`Egress: ${(usage.egressBytes / 1e9).toFixed(2)} GB`);
+```
+
+## What's Next
+
+<CardGroup cols={2}>
+  <Card title="Pay As You Go" icon="credit-card" href="/billing/pay-as-you-go">
+    Understand how micropayments work with x402.
+  </Card>
+  <Card title="Prepaid" icon="wallet" href="/billing/prepaid">
+    Fund your managed wallet for seamless uploads.
+  </Card>
+</CardGroup>
