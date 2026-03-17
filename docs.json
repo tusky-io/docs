@@ -88,19 +88,19 @@
             ]
           },
           {
-            "group": "Tools",
+            "group": "Migrations",
             "pages": [
-              "tools/s3-migration",
-              "tools/backup"
+              "migrations/s3",
+              "migrations/ipfs",
+              "migrations/dropbox"
             ]
           },
           {
-            "group": "Architecture",
+            "group": "Tools",
             "pages": [
-              "architecture/overview",
-              "architecture/walrus-network"
+              "tools/backup"
             ]
-          }
+          },
         ]
       },
       {

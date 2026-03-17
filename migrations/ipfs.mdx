@@ -1,0 +1,91 @@
+---
+title: IPFS Migration
+description: 'Migrate your pinned files from IPFS to Tusky'
+---
+
+Tusky can pull content from IPFS using CIDs (Content Identifiers) and store it permanently on the Walrus decentralized storage network. This is ideal for teams moving away from IPFS pinning services or self-hosted IPFS nodes.
+
+## How It Works
+
+<Steps>
+  <Step title="Provide CIDs">
+    Supply a list of IPFS CIDs you want to migrate — either a single root CID for a directory or individual file CIDs.
+  </Step>
+  <Step title="Fetch from IPFS">
+    Tusky retrieves content from the IPFS network via a configurable gateway. No local IPFS node is required.
+  </Step>
+  <Step title="Store on Walrus">
+    Each file is uploaded to your chosen Tusky volume on the Walrus network with your selected storage options.
+  </Step>
+  <Step title="Verify and switch">
+    Once complete, verify your content through your Tusky aggregator and update application references from IPFS gateway URLs to Tusky aggregator URLs.
+  </Step>
+</Steps>
+
+## Configuring the Migration
+
+### Dashboard
+
+<Steps>
+  <Step title="Navigate to Migrations → IPFS Migration">
+    Open the [Tusky dashboard](https://app.tusky.io) and go to **Migrations → IPFS Migration**.
+  </Step>
+  <Step title="Enter CIDs">
+    Provide the following:
+
+    | Field | Description |
+    | --- | --- |
+    | **CIDs** | One or more IPFS CIDs to migrate. Enter one per line or upload a text file. |
+    | **IPFS Gateway** *(optional)* | Custom IPFS gateway URL. Defaults to the public IPFS gateway. |
+    | **Preserve directory structure** | When migrating a directory CID, maintain the original folder hierarchy in the target volume. |
+  </Step>
+  <Step title="Select target volume">
+    Choose an existing volume or create a new one to receive the migrated files.
+  </Step>
+  <Step title="Configure storage options">
+    Set the number of storage epochs and whether to enable auto-extend for the migrated files.
+  </Step>
+  <Step title="Start migration">
+    Click **Start Migration**. Tusky begins fetching content from IPFS and uploading it to Walrus.
+  </Step>
+</Steps>
+
+<Note>
+  Migration speed depends on IPFS content availability. Rarely accessed or poorly replicated content may take longer to retrieve. Using a dedicated pinning service gateway (e.g. Pinata, Infura) as your IPFS Gateway can significantly improve speed and reliability.
+</Note>
+
+## Monitoring Progress
+
+The dashboard shows real-time migration status including:
+
+- Total CIDs discovered
+- Files fetched and uploaded successfully
+- Files failed (with error details, e.g. content not found on IPFS)
+- Total storage cost
+
+<Tip>
+  Large migrations may take several hours depending on IPFS network conditions. The migration runs in the background — you will be notified upon completion.
+</Tip>
+
+## Post-Migration
+
+After the migration completes:
+
+1. **Verify content** — Spot-check files through your Tusky aggregator to confirm integrity.
+2. **Update references** — Replace IPFS gateway URLs (e.g. `https://ipfs.io/ipfs/<CID>`) in your application with Tusky aggregator URLs.
+3. **Unpin content** *(optional)* — Once all content is accessible through Tusky, you can unpin CIDs from your pinning service to stop incurring pinning costs.
+
+<Note>
+  Tusky preserves original file names and directory structure from IPFS UnixFS directories. Files are organized in the target volume exactly as they appeared under the root CID.
+</Note>
+
+## What's Next
+
+<CardGroup cols={2}>
+  <Card title="S3 Migration" icon="aws" href="/migrations/s3">
+    Migrate your data from Amazon S3 to Tusky.
+  </Card>
+  <Card title="Dropbox Migration" icon="dropbox" href="/migrations/dropbox">
+    Migrate your Dropbox files to Tusky.
+  </Card>
+</CardGroup>

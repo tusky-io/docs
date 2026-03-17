@@ -1,0 +1,136 @@
+---
+title: S3 Migration
+description: 'Migrate your data from Amazon S3 to Tusky'
+---
+
+Tusky provides a fully automated migration tool that pulls your data from Amazon S3 and publishes it to the Walrus decentralized storage network. Set up your S3 connection, and Tusky handles the rest — no manual downloads, no scripting, no infrastructure to manage.
+
+## How It Works
+
+<Steps>
+  <Step title="Configure S3 connection">
+    Provide your S3 bucket details and a read-only IAM credential. Tusky only needs permission to list and read objects — it never modifies your S3 data.
+  </Step>
+  <Step title="Select content">
+    Choose whether to migrate the entire bucket or specific prefixes (folders). You can also filter by file type or size.
+  </Step>
+  <Step title="Start migration">
+    Tusky begins pulling objects from S3 and uploading them to your chosen volume on the Walrus network. Progress is tracked in real time.
+  </Step>
+  <Step title="Verify and switch">
+    Once the migration completes, verify your content through your Tusky aggregator and update your application to point to the new URLs.
+  </Step>
+</Steps>
+
+## Setting Up IAM Permissions
+
+Create a dedicated IAM user or role with **minimal read-only** permissions for the migration. Use the following IAM policy:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "TuskyMigrationReadOnly",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:ListBucket"
+      ],
+      "Resource": [
+        "arn:aws:s3:::your-bucket-name",
+        "arn:aws:s3:::your-bucket-name/*"
+      ]
+    }
+  ]
+}
+```
+
+<Warning>
+  Never grant write or delete permissions to the migration credential. Tusky only reads from your S3 bucket and does not modify any existing data.
+</Warning>
+
+### Creating the IAM User
+
+<Steps>
+  <Step title="Open IAM console">
+    Navigate to the [AWS IAM console](https://console.aws.amazon.com/iam/) and click **Users → Create user**.
+  </Step>
+  <Step title="Create user">
+    Name the user (e.g. `tusky-migration`) and select **Programmatic access** to generate an access key and secret.
+  </Step>
+  <Step title="Attach policy">
+    Create a custom policy using the JSON above, replacing `your-bucket-name` with your actual bucket name. Attach it to the user.
+  </Step>
+  <Step title="Save credentials">
+    Copy the **Access Key ID** and **Secret Access Key**. You will enter these in the Tusky dashboard.
+  </Step>
+</Steps>
+
+## Configuring the Migration
+
+### Dashboard
+
+<Steps>
+  <Step title="Navigate to Tools → S3 Migration">
+    Open the [Tusky dashboard](https://app.tusky.io) and go to **Tools → S3 Migration**.
+  </Step>
+  <Step title="Enter S3 details">
+    Provide the following:
+
+    | Field | Description |
+    | --- | --- |
+    | **Bucket name** | The name of your S3 bucket. |
+    | **Region** | The AWS region where the bucket is located. |
+    | **Access Key ID** | IAM user access key. |
+    | **Secret Access Key** | IAM user secret key. |
+    | **Prefix** *(optional)* | Only migrate objects under this prefix (e.g. `uploads/images/`). |
+  </Step>
+  <Step title="Select target volume">
+    Choose an existing volume or create a new one to receive the migrated files.
+  </Step>
+  <Step title="Configure storage options">
+    Set the number of storage epochs and whether to enable auto-extend for the migrated files.
+  </Step>
+  <Step title="Start migration">
+    Click **Start Migration**. Tusky validates the S3 connection and begins pulling data.
+  </Step>
+</Steps>
+
+## Monitoring Progress
+
+The dashboard shows real-time migration progress including:
+
+- Total objects discovered
+- Objects migrated successfully
+- Objects failed (with error details)
+- Estimated time remaining
+- Total storage cost
+
+<Tip>
+  Large migrations (millions of objects) may take several hours. You can safely close the dashboard — the migration runs in the background and you will be notified upon completion.
+</Tip>
+
+## Post-Migration
+
+After the migration completes:
+
+1. **Verify content** — Spot-check files through your Tusky aggregator to confirm integrity.
+2. **Update references** — Replace S3 URLs in your application with Tusky aggregator URLs.
+3. **Revoke IAM credentials** — Delete the migration IAM user from AWS since it is no longer needed.
+4. **Decommission S3** *(optional)* — Once you have verified all content is accessible through Tusky, you can optionally remove the S3 bucket to stop incurring AWS storage costs.
+
+<Note>
+  Tusky preserves the original file names, directory structure (prefixes), and MIME types from S3. Your files are organized in the target volume exactly as they were in the bucket.
+</Note>
+
+## What's Next
+
+<CardGroup cols={2}>
+  <Card title="IPFS Migration" icon="circle-nodes" href="/migrations/ipfs">
+    Migrate your pinned files from IPFS to Tusky.
+  </Card>
+  <Card title="Dropbox Migration" icon="dropbox" href="/migrations/dropbox">
+    Migrate your Dropbox files to Tusky.
+  </Card>
+</CardGroup>
