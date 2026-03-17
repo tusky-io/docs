@@ -3,7 +3,7 @@ title: Aggregators
 description: 'Access your stored content through dedicated aggregators'
 ---
 
-Aggregators are the retrieval layer of Tusky — they fetch your content from the Walrus network and serve it over standard HTTPS. Every Tusky user gets a **private aggregator** that serves only their own uploaded content, complete with CDN edge caching, DDoS protection, and optional custom domains.
+Aggregators are the retrieval layer of Tusky — they fetch your content from the Walrus network and serve it over standard HTTPS. Every Tusky user gets a **private aggregator** backed by a **dedicated Kubernetes deployment**, configured exclusively for your account ID so your content is isolated at the infrastructure level. Each aggregator gets its own DNS record (`{subdomain}.mytusky.xyz`) provisioned via Cloudflare. You also get CDN edge caching, DDoS protection, and optional custom domains.
 
 ## What is an aggregator?
 

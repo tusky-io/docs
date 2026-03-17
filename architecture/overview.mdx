@@ -96,11 +96,14 @@ Background workers that process the write path:
 
 ### Aggregators
 
-Aggregators reconstruct blobs from the Walrus network and serve them through aggregators:
+Each Tusky customer gets a **dedicated aggregator** — a real Kubernetes Deployment provisioned on demand when an aggregator is created. The aggregator pod is configured with the customer's account ID so it only serves that account's content.
 
-- Primary aggregator fleet for standard operations
+- **Per-customer Kubernetes Deployments** with isolated pods and ClusterIP Services
+- **Per-customer DNS records** (`{subdomain}.mytusky.xyz`) provisioned via Cloudflare API
 - **Fallback aggregator** on separate infrastructure for resilience
-- Optimized for low-latency blob reconstruction
+- Optimized for low-latency blob reconstruction through the Cloudflare edge
+
+For full details, see [Aggregator Provisioning](/architecture/aggregator-provisioning).
 
 ### Managed Wallets
 
@@ -153,5 +156,8 @@ All Tusky services run on **Kubernetes**, providing:
   </Card>
   <Card title="Aggregators" icon="globe" href="/aggregators/overview">
     Learn how content is delivered through the CDN and aggregator infrastructure.
+  </Card>
+  <Card title="Aggregator Provisioning" icon="server" href="/architecture/aggregator-provisioning">
+    Deep dive into per-customer Kubernetes deployments and DNS provisioning.
   </Card>
 </CardGroup>

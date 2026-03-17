@@ -98,7 +98,8 @@
             "group": "Architecture",
             "pages": [
               "architecture/overview",
-              "architecture/walrus-network"
+              "architecture/walrus-network",
+              "architecture/aggregator-provisioning"
             ]
           }
         ]

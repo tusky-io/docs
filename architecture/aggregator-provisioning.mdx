@@ -1,0 +1,259 @@
+---
+title: Aggregator Provisioning
+description: 'How Tusky provisions a dedicated Kubernetes deployment and DNS record for each customer aggregator'
+---
+
+When a customer calls `POST /v2/aggregators`, Tusky does not merely write a database record — it provisions a real, dedicated **Kubernetes Deployment**, a **ClusterIP Service**, a **Cloudflare DNS record**, and a **shared Ingress rule**, all scoped to that customer's account. This page documents that full provisioning pipeline.
+
+## Provisioning Flow
+
+<Steps>
+  <Step title="API request received">
+    The API validates the request, checks subdomain uniqueness across all accounts, and writes the aggregator record to PostgreSQL with `status: provisioning`. It returns `202 Accepted` immediately — provisioning is asynchronous.
+  </Step>
+  <Step title="Event enqueued">
+    A provisioning event is pushed to the internal worker queue (Redis-backed). The caller can poll `GET /v2/aggregators/{id}` to watch the `status` field transition from `provisioning` to `active`.
+  </Step>
+  <Step title="Kubernetes resources created">
+    The provisioning worker creates three Kubernetes resources in sequence:
+
+    - A `Deployment` running the aggregator container, configured with the customer's `accountId` as the `TUSKY_ACCOUNT_ID` environment variable. This is what scopes the aggregator to serve only that account's content.
+    - A `ClusterIP` Service selecting the deployment's pods. This is the stable internal endpoint that the Ingress routes to.
+    - A rule appended to the shared Ingress resource, routing `{subdomain}.mytusky.xyz` traffic to the new Service.
+  </Step>
+  <Step title="DNS record created">
+    The worker calls the Cloudflare API to create a proxied CNAME record:
+
+    ```
+    {subdomain}.mytusky.xyz  CNAME  ingress.mytusky.xyz
+    ```
+
+    Because the record is orange-cloud (proxied), Cloudflare terminates TLS at the edge and handles caching and DDoS protection before forwarding traffic to the cluster ingress.
+  </Step>
+  <Step title="Status updated">
+    The aggregator row in PostgreSQL is updated to `status: active` with the final `url` value. The aggregator is now live.
+  </Step>
+</Steps>
+
+```
+POST /v2/aggregators
+       │
+       ▼
+┌─────────────┐   write (status: provisioning)   ┌─────────────┐
+│  Tusky API  │──────────────────────────────────▶│  PostgreSQL │
+└──────┬──────┘                                   └─────────────┘
+       │ enqueue
+       ▼
+┌──────────────────┐
+│ Provisioning     │
+│ Worker           │
+└──┬──────┬────────┘
+   │      │      │
+   ▼      ▼      ▼
+ K8s    K8s    Cloudflare
+ Deploy Service  DNS CNAME
+   │      │      │
+   └──────┴──────┘
+          │
+          ▼ write (status: active)
+   ┌─────────────┐
+   │  PostgreSQL │
+   └─────────────┘
+```
+
+## Kubernetes Resources Per Aggregator
+
+Each aggregator gets three Kubernetes resources. Resource names include the aggregator ID so they remain stable across subdomain changes.
+
+<Tabs>
+  <Tab title="Deployment">
+    ```yaml
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: aggregator-<aggregator-id>
+      namespace: tusky
+      labels:
+        app: aggregator
+        tusky.io/aggregator-id: "<aggregator-id>"
+        tusky.io/account-id: "<account-id>"
+    spec:
+      replicas: 2
+      selector:
+        matchLabels:
+          tusky.io/aggregator-id: "<aggregator-id>"
+      template:
+        metadata:
+          labels:
+            tusky.io/aggregator-id: "<aggregator-id>"
+            tusky.io/account-id: "<account-id>"
+        spec:
+          containers:
+            - name: aggregator
+              image: tusky/aggregator:latest
+              env:
+                - name: TUSKY_ACCOUNT_ID
+                  value: "<account-id>"
+              resources:
+                requests:
+                  cpu: "100m"
+                  memory: "128Mi"
+                limits:
+                  cpu: "500m"
+                  memory: "512Mi"
+    ```
+
+    The `TUSKY_ACCOUNT_ID` environment variable is how the aggregator enforces account-scoped access control — it will only serve blob IDs associated with this account ID, returning `404` for everything else.
+  </Tab>
+  <Tab title="Service">
+    ```yaml
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: aggregator-<aggregator-id>
+      namespace: tusky
+    spec:
+      type: ClusterIP
+      selector:
+        tusky.io/aggregator-id: "<aggregator-id>"
+      ports:
+        - port: 80
+          targetPort: 8080
+    ```
+
+    ClusterIP keeps the service internal to the cluster. All external traffic enters through the shared Ingress, which routes by `Host:` header to this Service.
+  </Tab>
+  <Tab title="Ingress Rule">
+    Tusky uses a single shared Ingress resource. When a new aggregator is provisioned, a new rule is appended routing that subdomain to the per-customer Service:
+
+    ```yaml
+    # Excerpt from the shared Ingress — one rule per customer aggregator
+    - host: myproject.mytusky.xyz
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: aggregator-agg_xyz789
+                port:
+                  number: 80
+    ```
+
+    <Note>
+      Ingress rules are applied via a Kubernetes patch operation on the shared Ingress object. New rules take effect within seconds without restarting any pods or causing downtime.
+    </Note>
+  </Tab>
+</Tabs>
+
+## DNS Architecture
+
+Each aggregator subdomain gets its own Cloudflare DNS record, all pointing at the same shared ingress endpoint. Routing to the correct per-customer pod happens at the Ingress layer based on the `Host:` header.
+
+```
+Client: GET https://myproject.mytusky.xyz/v1/blobs/abc123
+                     │
+                     ▼ DNS lookup
+          Cloudflare DNS:
+          myproject.mytusky.xyz  CNAME  ingress.mytusky.xyz  (proxied)
+                     │
+                     ▼ TLS terminated at Cloudflare edge
+          Cloudflare Edge
+          (cache check · WAF · HTTP/3 · compression)
+                     │ cache miss
+                     ▼
+          K8s Ingress (ingress.mytusky.xyz)
+          routes by Host: header
+                     │
+                     ▼
+          Service: aggregator-agg_xyz789 (ClusterIP)
+                     │
+                     ▼
+          Pod: aggregator container
+          env: TUSKY_ACCOUNT_ID=acct_abc
+                     │
+                     ▼
+          Walrus Network
+```
+
+| Layer | Component | Role |
+|---|---|---|
+| DNS | Cloudflare CNAME (proxied) | Maps `{subdomain}.mytusky.xyz` → shared ingress |
+| Edge | Cloudflare proxy | TLS termination, edge caching, WAF, DDoS protection |
+| Ingress | K8s shared Ingress | Routes by `Host:` header to the per-customer Service |
+| Service | K8s ClusterIP | Stable internal endpoint for the customer's pods |
+| Pod | Aggregator container | Scoped to one account via `TUSKY_ACCOUNT_ID` |
+
+## TLS
+
+Because all CNAME records are Cloudflare-proxied (orange-cloud), TLS is terminated at the Cloudflare edge. Cloudflare holds a wildcard certificate for `*.mytusky.xyz` — no cert-manager or Let's Encrypt is required in the cluster for base subdomains.
+
+Traffic between Cloudflare and the cluster ingress can be HTTP (using Cloudflare's "Flexible" SSL mode) or encrypted with an origin certificate (using "Full" or "Full (Strict)" mode), depending on your security posture.
+
+**Custom domains** (`customDomain` field on the aggregator) use [Cloudflare for SaaS](https://developers.cloudflare.com/cloudflare-for-platforms/cloudflare-for-saas/), which issues per-hostname TLS certificates automatically once the customer's CNAME is validated.
+
+<Info>
+  Custom domain TLS certificates are provisioned automatically within minutes of CNAME validation. No manual certificate issuance is required.
+</Info>
+
+## Deletion Flow
+
+<Steps>
+  <Step title="DELETE /v2/aggregators/{id} received">
+    The API validates the request. The account's default aggregator cannot be deleted. The aggregator row is marked `status: deleting`.
+  </Step>
+  <Step title="Kubernetes resources removed">
+    The provisioning worker deletes the `Deployment` and `Service` for this aggregator. The corresponding rule is removed from the shared Ingress.
+  </Step>
+  <Step title="DNS record deleted">
+    The worker calls the Cloudflare API to delete the CNAME record for `{subdomain}.mytusky.xyz`. Existing cached responses at the Cloudflare edge will be served until TTL expiry.
+  </Step>
+  <Step title="Record soft-deleted">
+    The aggregator row is marked `deleted_at` in PostgreSQL. The subdomain enters a cooldown period before becoming available for reuse.
+  </Step>
+</Steps>
+
+<Warning>
+  Deletion is irreversible. Any application using this aggregator's URL will receive errors immediately after the DNS record is removed. Update your applications before calling DELETE.
+</Warning>
+
+## Subdomain Update Flow
+
+When `PATCH /v2/aggregators/{id}` changes the `subdomain` field, only DNS and Ingress routing are updated — the Kubernetes Deployment and Service (keyed by aggregator ID) are not touched and continue running without interruption.
+
+1. API validates new subdomain uniqueness.
+2. Provisioning worker creates a Cloudflare CNAME record for `{new-subdomain}.mytusky.xyz`.
+3. Worker patches the Ingress to add a rule for `{new-subdomain}.mytusky.xyz` → same ClusterIP Service.
+4. Worker deletes the old Cloudflare CNAME for `{old-subdomain}.mytusky.xyz`.
+5. Worker removes the old Ingress rule.
+6. PostgreSQL row updated with new subdomain and URL.
+
+<Note>
+  The aggregator pod is not restarted during a subdomain change. DNS changeover at the Cloudflare layer is near-instantaneous; edge cache propagation for the old subdomain drains naturally.
+</Note>
+
+## Aggregator Status Reference
+
+Poll `GET /v2/aggregators/{id}` to track provisioning progress via the `status` field:
+
+| Status | Meaning |
+|---|---|
+| `provisioning` | Kubernetes and DNS resources are being created |
+| `active` | All resources are live and the URL is serving |
+| `updating` | A subdomain or configuration change is in progress |
+| `deleting` | Resources are being torn down |
+| `error` | Provisioning or deletion failed; contact support |
+
+## What's Next
+
+<CardGroup cols={2}>
+  <Card title="Aggregators" icon="globe" href="/aggregators/overview">
+    User-facing guide to aggregators, URL schemes, and configuration options.
+  </Card>
+  <Card title="Private Aggregators" icon="lock" href="/aggregators/private-aggregators">
+    How your aggregator enforces account-scoped access control.
+  </Card>
+  <Card title="Architecture Overview" icon="sitemap" href="/architecture/overview">
+    High-level view of all Tusky components and data flows.
+  </Card>
+</CardGroup>
