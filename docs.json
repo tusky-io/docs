@@ -88,9 +88,16 @@
             ]
           },
           {
+            "group": "Migrations",
+            "pages": [
+              "migrations/s3",
+              "migrations/ipfs",
+              "migrations/dropbox"
+            ]
+          },
+          {
             "group": "Tools",
             "pages": [
-              "tools/s3-migration",
               "tools/backup"
             ]
           },

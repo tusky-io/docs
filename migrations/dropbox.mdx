@@ -1,0 +1,96 @@
+---
+title: Dropbox Migration
+description: 'Migrate your files from Dropbox to Tusky'
+---
+
+Tusky can connect directly to your Dropbox account and migrate your files to the Walrus decentralized storage network. No manual downloads or uploads required — Tusky handles the transfer automatically once you authorize access.
+
+## How It Works
+
+<Steps>
+  <Step title="Authorize Dropbox">
+    Connect your Dropbox account to Tusky using OAuth. Tusky receives read-only access — it cannot modify or delete your Dropbox files.
+  </Step>
+  <Step title="Select content">
+    Choose specific folders or files to migrate, or migrate your entire Dropbox.
+  </Step>
+  <Step title="Start migration">
+    Tusky downloads files from Dropbox and uploads them to your chosen Tusky volume on the Walrus network.
+  </Step>
+  <Step title="Verify and switch">
+    Once complete, verify your content through your Tusky aggregator and update application references to use the new Tusky URLs.
+  </Step>
+</Steps>
+
+## Configuring the Migration
+
+### Dashboard
+
+<Steps>
+  <Step title="Navigate to Migrations → Dropbox Migration">
+    Open the [Tusky dashboard](https://app.tusky.io) and go to **Migrations → Dropbox Migration**.
+  </Step>
+  <Step title="Connect Dropbox">
+    Click **Connect Dropbox** and complete the OAuth authorization flow. You will be redirected back to Tusky after granting access.
+  </Step>
+  <Step title="Select content">
+    Browse your Dropbox folder tree and select the folders or files to migrate.
+
+    | Option | Description |
+    | --- | --- |
+    | **Entire Dropbox** | Migrate all files and folders. |
+    | **Selected folders** | Choose specific top-level or nested folders. |
+    | **Preserve folder structure** | Recreate the Dropbox folder hierarchy in the target volume. |
+  </Step>
+  <Step title="Select target volume">
+    Choose an existing volume or create a new one to receive the migrated files.
+  </Step>
+  <Step title="Configure storage options">
+    Set the number of storage epochs and whether to enable auto-extend for the migrated files.
+  </Step>
+  <Step title="Start migration">
+    Click **Start Migration**. Tusky begins downloading from Dropbox and uploading to Walrus.
+  </Step>
+</Steps>
+
+<Warning>
+  Tusky requests read-only Dropbox access. It does not modify, move, or delete any files in your Dropbox account.
+</Warning>
+
+## Monitoring Progress
+
+The dashboard shows real-time migration status including:
+
+- Total files discovered
+- Files migrated successfully
+- Files failed (with error details)
+- Estimated time remaining
+- Total storage cost
+
+<Tip>
+  Large Dropbox accounts may take several hours to migrate. The migration runs in the background — you can safely close the dashboard and will be notified upon completion.
+</Tip>
+
+## Post-Migration
+
+After the migration completes:
+
+1. **Verify content** — Spot-check files through your Tusky aggregator to confirm integrity.
+2. **Update references** — Replace Dropbox shared links in your application with Tusky aggregator URLs.
+3. **Revoke Dropbox access** *(optional)* — Disconnect Tusky from your Dropbox account in your [Dropbox connected apps settings](https://www.dropbox.com/account/connected_apps) once the migration is done.
+4. **Decommission Dropbox** *(optional)* — Once all content is verified on Tusky, you can delete files from Dropbox to free up storage quota.
+
+<Note>
+  Tusky preserves original file names, folder structure, and MIME types from Dropbox. Your files are organized in the target volume exactly as they were in your Dropbox account.
+</Note>
+
+## What's Next
+
+<CardGroup cols={2}>
+  <Card title="S3 Migration" icon="aws" href="/migrations/s3">
+    Migrate your data from Amazon S3 to Tusky.
+  </Card>
+  <Card title="IPFS Migration" icon="circle-nodes" href="/migrations/ipfs">
+    Migrate your pinned files from IPFS to Tusky.
+  </Card>
+</CardGroup>
