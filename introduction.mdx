@@ -1,30 +1,44 @@
 ---
-title: Introduction
-description: 'Tusky makes decentralized storage on Walrus trivial'
+title: "Introduction"
+description: "Tusky your blobs"
 ---
 
-Tusky is an infrastructure provider for [Sui Walrus](https://walrus.xyz) that makes decentralized storage as simple as using any cloud storage service. Instead of running your own publishers and aggregators, Tusky manages the entire stack for you — dedicated infrastructure, encryption, access control, and a familiar developer experience on top of the Walrus network.
+## Why Walrus
 
-## Why Tusky?
+Walrus is powerful. Makes your data decentralized and so → verifiable by anyone. Moving to Walrus from any centralized service provider means: 
 
-Walrus provides powerful decentralized blob storage on the Sui network, but using it directly requires operating publishers, managing aggregators, handling encoding, and coordinating storage resources. Tusky abstracts all of that away.
+1. You don't depend on any service provider anymore. To read and write data you can use locally installed Walrus tooling. For this you'll need a Sui wallet with tokens (SUI & WAL). You'll also need some RAM and CPU: Walrus de-/encodes your file in memory and that is a resource demanding process. It also runs hundreds of HTTP requests to decentralize your file over the network.
+2. Your data is verifiable. This also means it can now be read by anyone (!). This is important: do not throw your private data on decentralized storage just like that. Humans may read it, robots may index it, AI agents can download it. If you want to keep something decentralised and private → encrypt it before storing and keep the key safe.
+3. You decide for how long the file is on the network (Walrus epochs) and pay accordingly in WAL tokens. You also manage the file lifecycle: extend or delete the file. 
+4. From your perspective (a Walrus client), your files are now a key-value store. Any content on Walrus gets a unique identifier (either blobID or quiltPatchID for batched uploads). You read the content using that identifier. As simple as that
+
+## Why Tusky
+
+Tusky is an infra provider for [Sui Walrus](https://walrus.xyz). It makes using Walrus easy at any scale.
+
+Tusky gives you managed infra — shared or dedicated publishers and aggregators, encryption, access control, and a familiar file system like experience on top of the Walrus network.
 
 <CardGroup cols={2}>
   <Card title="Persistent Storage" icon="database">
     Store files on the Walrus network with automatic blob management, renewals, and lifecycle handling. Your data is replicated across the decentralized network.
   </Card>
+
   <Card title="End-to-End Encryption" icon="lock">
     Every file is encrypted before it leaves your device. Encryption keys are tied to your connected Sui wallet or managed through [Seal](https://seal-docs.wal.app), eliminating password friction entirely.
   </Card>
+
   <Card title="Volumes & File Management" icon="folder-tree">
     Organize files into volumes — encrypted containers with granular access control. Volumes give you a familiar file-system abstraction on top of Walrus blobs.
   </Card>
+
   <Card title="Private Aggregators" icon="shield-halved">
     Each user gets a private aggregator with custom subdomains or fully custom domains. Serve content directly from the Walrus network through your own branded endpoint.
   </Card>
+
   <Card title="SDK & API" icon="code">
     A TypeScript SDK and REST API let you integrate Tusky into any application. Upload, download, manage volumes, and control access programmatically.
   </Card>
+
   <Card title="Self-Custody Ready" icon="key">
     Start with Tusky-managed infrastructure and eject at any time. Export your blobs and self-manage them directly on Walrus whenever you choose.
   </Card>
@@ -32,7 +46,7 @@ Walrus provides powerful decentralized blob storage on the Sui network, but usin
 
 ## How It Works
 
-Tusky orchestrates dedicated **publishers** and **aggregators** for each user:
+Tusky orchestrates (dedicated or shared) **publishers** and **aggregators**  for each user:
 
 - **Publishers** handle encoding and writing your data to the Walrus network. Each user gets a dedicated managed wallet for publishing, funded from your prepaid balance.
 - **Aggregators** reconstruct and serve your data from the decentralized network. Tusky runs optimized aggregators with standard URL schemes for seamless access.
@@ -43,28 +57,21 @@ You interact with Tusky through the [dashboard](https://app.tusky.io), the [Type
   Tusky is not a storage network — it is an **infrastructure layer** built on top of Walrus. Your data is stored on the decentralized Walrus network. Tusky provides the tooling, encryption, and access management to make that storage practical for real applications.
 </Note>
 
-## Core Concepts
-
-| Concept | Description |
-| --- | --- |
-| **Volumes** | Encrypted containers that group files with shared access policies. |
-| **Files** | Individual objects stored inside volumes, encrypted and published to Walrus. |
-| **Members** | Users or API keys granted access to a volume with role-based permissions. |
-| **Aggregators** | Private HTTP endpoints for serving volume content over custom domains. |
-| **Wallets** | Prepaid balances in SUI and WAL that fund storage operations. |
-
 ## Get Started
 
 <CardGroup cols={2}>
   <Card title="Quickstart" icon="rocket" href="/quickstart">
     Upload your first file to Walrus in under 5 minutes.
   </Card>
+
   <Card title="Create an Account" icon="user-plus" href="/getting-started/create-account">
     Connect your Sui wallet and set up your Tusky account.
   </Card>
+
   <Card title="SDK Reference" icon="book" href="/sdk/getting-started">
     Integrate Tusky into your TypeScript application.
   </Card>
+
   <Card title="API Reference" icon="terminal" href="/api-reference/overview">
     Explore the full REST API for programmatic access.
   </Card>
