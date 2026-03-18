@@ -1,0 +1,184 @@
+---
+title: Balance & Prepay
+description: 'Fund your account balance and let Tusky handle on-chain payments automatically'
+---
+
+Your Tusky account has a **balance** you can top up at any time with SUI, WAL, or USDC. When your publishers post transactions to Walrus — publishing files, extending storage, or deleting blobs — costs are automatically deducted from that balance. No per-request approvals, no manual gas management.
+
+You can also withdraw your remaining balance back to your wallet at any time.
+
+## Supported tokens
+
+You can deposit any of the following tokens:
+
+<CardGroup cols={3}>
+  <Card title="SUI" icon="coins">
+    Covers **gas fees** for every Sui transaction your publishers submit.
+  </Card>
+  <Card title="WAL" icon="database">
+    Pays **Walrus storage nodes** for the epochs you purchase. WAL is locked on-chain for the duration of your storage reservation.
+  </Card>
+  <Card title="USDC" icon="circle-dollar-sign">
+    Deposited as a stablecoin and converted to the required token as needed.
+  </Card>
+</CardGroup>
+
+<Tip>
+  With auto-convert enabled (the default), you only need to hold one token — Tusky converts between SUI, WAL, and USDC via on-chain DEX as needed for each operation.
+</Tip>
+
+## How it works
+
+<Steps>
+  <Step title="Deposit tokens">
+    Top up your balance with SUI, WAL, or USDC from any Sui-compatible wallet. There is no minimum deposit — your balance carries forward indefinitely.
+  </Step>
+  <Step title="Publishers use the balance">
+    Your pool of publishers automatically draws from the balance to pay for every on-chain operation: publishing new blobs, extending storage epochs, and deleting blobs.
+  </Step>
+  <Step title="Auto-convert as needed">
+    If a transaction requires WAL but you only hold SUI (or vice versa), Tusky swaps tokens automatically via on-chain DEX at the best available rate — unless you have disabled auto-convert.
+  </Step>
+  <Step title="Get notified when low">
+    Tusky monitors your balance and sends alerts before it runs out, so you can top up before any operations are affected.
+  </Step>
+  <Step title="Withdraw anytime">
+    Withdraw your remaining balance back to your Sui wallet at any time — no lock-in periods.
+  </Step>
+</Steps>
+
+## What the balance pays for
+
+Your balance is drawn on for all publisher operations:
+
+| Operation | Costs |
+| --- | --- |
+| **Publish** (upload a file) | WAL for storage epochs + SUI for gas |
+| **Extend** (add storage epochs to a file) | WAL for the additional epochs + SUI for gas |
+| **Delete** (delete a blob on-chain) | SUI for gas |
+
+The balance can also be applied toward **subscription plans**, letting you pay for a Tusky plan directly from your on-chain balance rather than a payment card. See [Subscriptions](/core-concepts/subscriptions).
+
+## Auto-convert
+
+When auto-convert is enabled (the default on all publishers), Tusky automatically swaps between tokens via on-chain DEX whenever the required token is insufficient.
+
+| Scenario | Auto-convert on | Auto-convert off |
+| --- | --- | --- |
+| WAL insufficient, SUI available | SUI swapped to WAL, operation proceeds | Operation fails with `402` |
+| SUI insufficient, WAL available | WAL swapped to SUI for gas, operation proceeds | Operation fails with `402` |
+| All balances insufficient | Operation fails with `402` | Operation fails with `402` |
+
+<Note>
+  Swaps use aggregated DEX liquidity (Cetus, DeepBook, and others) for the best available rate. A small amount of additional SUI covers swap gas. Conversion details are included in each operation receipt.
+</Note>
+
+You can disable auto-convert per publisher in **Settings → Publishers** or via the API.
+
+## Cost estimation
+
+Preview the cost of uploading files before committing:
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.tusky.io/v2/uploads/cost \
+  -H "Api-Key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "files": [
+      { "size": 10485760, "name": "video.mp4" },
+      { "size": 2097152, "name": "document.pdf" }
+    ],
+    "epochs": 5
+  }'
+```
+
+```typescript SDK
+const estimate = await tusky.upload.cost({
+  files: [
+    { size: 10485760, name: "video.mp4" },
+    { size: 2097152, name: "document.pdf" },
+  ],
+  epochs: 5,
+});
+
+console.log("Total WAL:", estimate.totals.totalWal);
+console.log("Total SUI:", estimate.totals.totalSui);
+console.log("Balance sufficient:", estimate.balance.sufficient);
+```
+
+</CodeGroup>
+
+The response includes a per-file breakdown and tells you whether your current balance covers the batch.
+
+## Checking your balance
+
+<Tabs>
+  <Tab title="Dashboard">
+    Navigate to **Settings → Wallet** in the [Tusky dashboard](https://app.tusky.io) to see current balances, recent transactions with costs and file references, and projected runway based on usage patterns.
+  </Tab>
+  <Tab title="SDK">
+    ```typescript
+    const account = await tusky.account.get();
+    const wallet = account.managedWallet;
+
+    console.log(`SUI balance: ${wallet.suiBalance}`);
+    console.log(`WAL balance: ${wallet.walBalance}`);
+    ```
+  </Tab>
+  <Tab title="API">
+    ```bash
+    curl https://api.tusky.io/v2/account \
+      -H "Api-Key: YOUR_API_KEY"
+    ```
+
+    ```json
+    {
+      "id": "acc_abc123",
+      "managedWallet": {
+        "address": "0x1a2b3c...",
+        "suiBalance": "12.5",
+        "walBalance": "48.2"
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Low balance notifications
+
+Tusky monitors your balance and alerts you when it drops below a configurable threshold:
+
+| Channel | Description |
+| --- | --- |
+| **Dashboard** | A banner alert appears at the top of the Tusky dashboard. |
+| **Email** | A notification is sent to your configured email address. |
+| **Webhook** | A programmatic alert is sent to your configured webhook URL. |
+
+Configure thresholds and channels in **Settings → Wallet → Notifications**.
+
+## What happens when balance runs out
+
+| Scenario | Behavior |
+| --- | --- |
+| **New uploads (WAL low, SUI available, auto-convert on)** | SUI swapped to WAL automatically — upload proceeds. |
+| **New uploads (all tokens low)** | Fail with `402 Payment Required` until you top up. |
+| **Existing files** | Remain available on Walrus until their purchased epochs expire. |
+| **Auto-extend** | Paused — storage will not be renewed without sufficient funds. |
+| **File downloads** | Unaffected — retrieval does not consume SUI or WAL. |
+
+<Info>
+  Running out of balance never deletes your data. Files remain accessible for the full duration of their purchased epochs. Top up at any time to resume uploads and re-enable auto-extend.
+</Info>
+
+## What's next?
+
+<CardGroup cols={2}>
+  <Card title="Publisher" icon="cloud-arrow-up" href="/core-concepts/publisher">
+    Configure your publishers, including auto-convert and storage defaults.
+  </Card>
+  <Card title="Subscriptions" icon="receipt" href="/core-concepts/subscriptions">
+    Use your balance to pay for a Tusky subscription plan.
+  </Card>
+</CardGroup>

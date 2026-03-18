@@ -64,8 +64,7 @@
               "core-concepts/encryption",
               "core-concepts/publisher",
               "core-concepts/aggregators",
-              "core-concepts/managed-wallet",
-              "core-concepts/prepay",
+              "core-concepts/balance",
               "core-concepts/subscriptions"
             ]
           },
