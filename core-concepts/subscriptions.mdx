@@ -1,188 +1,34 @@
 ---
-title: Subscriptions & Plans
-description: 'Free tier, plans, limits, and how subscription billing works'
+title: Subscription Plans
+description: 'Plans, limits, and pricing for Tusky'
 ---
 
-Tusky offers a **free tier** by default and optional paid subscriptions for higher limits. All plans share the same storage model: Walrus storage costs are always paid in WAL from your [managed wallet](/core-concepts/balance) — the subscription covers only Tusky infrastructure (API, encryption, aggregators).
-
-## How it works
-
-<CardGroup cols={2}>
-  <Card title="Walrus costs (WAL)" icon="database">
-    Storage always costs WAL tokens, deducted from your wallet per upload. This is fixed by the Walrus network — no plan changes it.
-  </Card>
-  <Card title="Tusky infrastructure (SUI)" icon="server">
-    API calls, aggregator bandwidth, encryption, and request handling are what your subscription covers. Paid monthly in SUI.
-  </Card>
-</CardGroup>
-
-Every Tusky account starts on the **Free** plan with no credit card required. Upgrade when you need more capacity.
+Tusky offers three plans. All plans include the same core features — the difference is scale. Walrus storage costs (WAL) are always billed separately from your [balance](/core-concepts/balance) regardless of plan.
 
 ## Plans
 
-<Tabs>
-  <Tab title="Free">
-    ### Free
-
-    **0 SUI / month** — no card required
-
-    The Free plan is a pay-as-you-go baseline. There is no monthly fee and no commitment. You get a modest allowance each month; once a limit is hit, requests are throttled until the next cycle or until you upgrade.
-
-    | Limit | Free |
-    | --- | --- |
-    | **API requests / month** | 1,000 |
-    | **Egress bandwidth / month** | 5 GB |
-    | **Volumes** | 2 |
-    | **Publishers** | 1 |
-    | **Aggregators** | Shared (tusky.io) |
-    | **Team members per env** | 1 (owner only) |
-    | **Support** | Community |
-
-    <Info>
-      The Free plan uses Tusky's shared aggregator. Upgrade to get a private aggregator at your own domain with custom access controls.
-    </Info>
-
-  </Tab>
-  <Tab title="Builder — 12 SUI/mo">
-    ### Builder
-
-    **12 SUI / month**
-
-    For developers and side projects that need comfortable limits without a big commitment.
-
-    | Limit | Builder |
-    | --- | --- |
-    | **API requests / month** | 50,000 |
-    | **Egress bandwidth / month** | 200 GB |
-    | **Volumes** | 10 |
-    | **Publishers** | 3 |
-    | **Aggregators** | 1 private |
-    | **Team members per env** | 5 |
-    | **Support** | Email |
-
-    Includes:
-    - Custom aggregator domain
-    - Encrypted volumes
-    - Aggregator access logs and analytics
-
-  </Tab>
-  <Tab title="Pro — 50 SUI/mo">
-    ### Pro
-
-    **50 SUI / month**
-
-    For production applications with real traffic and team collaboration needs.
-
-    | Limit | Pro |
-    | --- | --- |
-    | **API requests / month** | 500,000 |
-    | **Egress bandwidth / month** | 2 TB |
-    | **Volumes** | 50 |
-    | **Publishers** | 10 |
-    | **Aggregators** | 3 private |
-    | **Team members per env** | 25 |
-    | **Support** | Priority email |
-
-    Includes everything in Builder, plus:
-    - Multiple private aggregators
-    - Token-gated volumes (NFT / DAO access)
-    - SUI → WAL auto-convert on publishers
-    - Advanced usage analytics
-
-  </Tab>
-  <Tab title="Scale — 200 SUI/mo">
-    ### Scale
-
-    **200 SUI / month**
-
-    For high-throughput platforms, data pipelines, and large-scale consumer apps.
-
-    | Limit | Scale |
-    | --- | --- |
-    | **API requests / month** | 5,000,000 |
-    | **Egress bandwidth / month** | 20 TB |
-    | **Volumes** | Unlimited |
-    | **Publishers** | Unlimited |
-    | **Aggregators** | 5 private |
-    | **Team members per env** | Unlimited |
-    | **Support** | Dedicated Slack |
-
-    Includes everything in Pro, plus:
-    - Dedicated Slack support channel
-    - SLA uptime guarantees
-    - Priority publisher queue
-
-  </Tab>
-</Tabs>
-
-## Plan comparison
-
-| | **Free** | **Builder** | **Pro** | **Scale** |
-| --- | :---: | :---: | :---: | :---: |
-| **Monthly price (SUI)** | 0 | 12 | 50 | 200 |
-| **API requests / mo** | 1K | 50K | 500K | 5M |
-| **Egress bandwidth / mo** | 5 GB | 200 GB | 2 TB | 20 TB |
-| **Volumes** | 2 | 10 | 50 | Unlimited |
-| **Publishers** | 1 | 3 | 10 | Unlimited |
-| **Private aggregators** | — | 1 | 3 | 5 |
-| **Team members / env** | 1 | 5 | 25 | Unlimited |
-| **Encrypted volumes** | ✓ | ✓ | ✓ | ✓ |
-| **Token-gated access** | — | — | ✓ | ✓ |
-| **Auto-convert SUI → WAL** | — | — | ✓ | ✓ |
-| **Custom aggregator domain** | — | ✓ | ✓ | ✓ |
-| **Support** | Community | Email | Priority email | Dedicated Slack |
-
-<Note>
-  Walrus storage (WAL) is **never** included in any plan — it is always billed separately at current network rates from your managed wallet. This is by design: Tusky has no control over Walrus pricing.
-</Note>
+| | **Pay As You Go** | **Developer** | **Business** |
+| --- | :---: | :---: | :---: |
+| **Monthly price** | $0 | $50 | $500 |
+| **Storage included** | 5 GB | 100 GB | 2 TB |
+| **Transactions / month** | 10,000 | 100,000 | 1,000,000 |
+| **Bandwidth / month** | 50 GB | 500 GB | 10 TB |
+| **Aggregators** | 1 (shared) | 1 (private) | 3 (private) |
+| **Custom domains** | — | — | ✓ |
 
 ## Overage behavior
 
-When you exceed a monthly limit the behaviour depends on which limit was hit:
+When you exceed a monthly limit:
 
 | Limit exceeded | Behavior |
 | --- | --- |
-| **API requests** | Requests return `429 Too Many Requests` until the next billing cycle or until you upgrade. |
-| **Egress bandwidth** | Downloads through your aggregator are throttled to a lower rate. Files remain accessible — just slower. |
-| **Volumes / publishers / aggregators** | Creating new resources is blocked. Existing ones continue to work. |
-
-<Tip>
-  Watch your usage in the dashboard or via the [usage API](/api-reference/account/get-usage). You can upgrade mid-cycle at any time — the new limits apply immediately and you're charged the prorated difference in SUI.
-</Tip>
-
-## Free tier vs pay-as-you-go
-
-The Free plan and [pay-as-you-go](/billing/pay-as-you-go) serve different use cases:
-
-| | **Free plan** | **Pay-as-you-go (x402)** |
-| --- | --- | --- |
-| Monthly fee | None | None |
-| API requests | 1,000 / month then throttled | Unlimited, charged per request |
-| Bandwidth | 5 GB / month then throttled | Unlimited, charged per GB |
-| Payment timing | Prepaid (SUI in managed wallet for WAL) | Per-request at call time |
-| Best for | Getting started, low-volume use | Variable traffic, cost-per-request billing |
-
-The Free plan has hard monthly caps. Pay-as-you-go has no caps but meters every request. Both require WAL in your managed wallet for storage.
-
-## Switching plans
-
-<Steps>
-  <Step title="Open billing settings">
-    Go to **Settings → Billing** in the [Tusky dashboard](https://app.tusky.io).
-  </Step>
-  <Step title="Select a new plan">
-    Choose the plan that fits your usage. You'll see a preview of the prorated SUI charge before confirming.
-  </Step>
-  <Step title="Confirm">
-    Payment is deducted in SUI from your connected wallet. Your new limits apply immediately.
-  </Step>
-</Steps>
-
-Downgrading takes effect at the end of the current billing cycle. If your current usage exceeds the lower plan's limits, new resource creation is blocked until usage drops back within limits — existing data is never deleted.
+| **Storage** | New uploads are blocked until the next billing cycle or until you upgrade. |
+| **Transactions** | Requests return `429 Too Many Requests` until the next cycle or until you upgrade. |
+| **Bandwidth** | Downloads through your aggregator are throttled. Files remain accessible — just slower. |
 
 ## Enterprise
 
-Need higher limits, custom SLAs, a dedicated aggregator cluster, or volume discounts on SUI? [Contact us](mailto:support@tusky.io) for an enterprise plan.
+Need higher limits, custom SLAs, a dedicated aggregator cluster, or volume pricing? [Contact us](mailto:support@tusky.io).
 
 ## What's next?
 
@@ -191,9 +37,6 @@ Need higher limits, custom SLAs, a dedicated aggregator cluster, or volume disco
     Top up your balance with SUI, WAL, or USDC for storage operations.
   </Card>
   <Card title="Usage API" icon="chart-bar" href="/api-reference/account/get-usage">
-    Track your request and bandwidth consumption programmatically.
-  </Card>
-  <Card title="Pay As You Go" icon="credit-card" href="/billing/pay-as-you-go">
-    Per-request billing via the x402 micropayment protocol.
+    Track your storage, transaction, and bandwidth consumption programmatically.
   </Card>
 </CardGroup>

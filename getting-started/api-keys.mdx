@@ -9,7 +9,7 @@ API keys let you interact with Tusky programmatically through the [REST API](/ap
 
 <Steps>
   <Step title="Open the API keys page">
-    Navigate to [dashboard.tusky.io/account/api-keys](https://app.tusky.io/account/api-keys) in the Tusky dashboard.
+    Navigate to [dashboard.tusky.io/account/api-keys](https://dashboard.tusky.io/account/api-keys) in the Tusky dashboard.
   </Step>
   <Step title="Generate a new key">
     Click **Create API Key**. Provide a descriptive name (for example, `production-backend` or `ci-pipeline`) and select the permission scopes you need.
@@ -83,7 +83,30 @@ Rotate API keys regularly, especially if they may have been exposed. To rotate:
 
 ### Revocation
 
-Revoke a key instantly from the [API keys page](https://app.tusky.io/account/api-keys). Revocation takes effect immediately — any in-flight requests using the revoked key will fail.
+Revoke a key instantly from the [API keys page](https://dashboard.tusky.io/account/api-keys). Revocation takes effect immediately — any in-flight requests using the revoked key will fail.
+
+## Security Best Practices
+
+<Warning>
+  API keys grant programmatic access to your Tusky account. Treat them like passwords.
+</Warning>
+
+- **Use volume variables** — never hardcode API keys in source code
+
+  ```bash
+  # .env (add to .gitignore)
+  TUSKY_API_KEY=tsk_live_...
+  ```
+
+- **Never commit keys to version control** — use `.gitignore` to exclude `.env` files and audit your git history if a key is accidentally committed
+- **Use separate keys per volume** — create distinct keys for development, staging, and production
+- **Scope keys narrowly** — grant only the permissions each integration needs
+- **Revoke unused keys** — regularly audit your active keys and revoke any that are no longer needed
+- **Monitor usage** — check the dashboard for unexpected API activity that could indicate a compromised key
+
+<Note>
+  If you suspect a key has been compromised, revoke it immediately from the dashboard at [dashboard.tusky.io/account/api-keys](https://dashboard.tusky.io/account/api-keys). Then create a new key and update your application.
+</Note>
 
 ## Next Steps
 
