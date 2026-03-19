@@ -20,7 +20,7 @@
   ],
   "topbarCtaButton": {
     "name": "Dashboard",
-    "url": "https://app.tusky.io"
+    "url": "https://dashboard.tusky.io"
   },
   "anchors": [
     {

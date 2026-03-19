@@ -5,7 +5,7 @@ description: 'Create and manage volumes with the SDK'
 
 Volumes are the primary organizational unit in Tusky. Each volume acts as a secure container for files, with its own encryption settings, access policies, and member list. The `tusky.volume` module provides full CRUD operations and member management.
 
-## Create an Volume
+## Create a Volume
 
 Create a new volume with a name and optional configuration:
 
@@ -34,7 +34,7 @@ console.log("Created volume:", volume.id);
   The `encrypted` setting is permanent and cannot be changed after the volume is created.
 </Warning>
 
-## Get an Volume
+## Get a Volume
 
 Retrieve a volume by its ID:
 
@@ -65,7 +65,7 @@ for (const volume of volumes) {
   The list is ordered by creation date (newest first) by default. You can use the returned metadata to build volume selectors, dashboards, or migration tools.
 </Tip>
 
-## Update an Volume
+## Update a Volume
 
 Modify a volume's mutable settings:
 
@@ -84,7 +84,7 @@ console.log("Updated:", updated.name);
   You can update the name, description, default epochs, auto-extend setting, and tags. The encryption type and volume ID are immutable.
 </Note>
 
-## Delete an Volume
+## Delete a Volume
 
 Permanently remove a volume and its Tusky metadata:
 
@@ -120,8 +120,8 @@ await tusky.volume.update(volume.id, {
 });
 
 // List all
-const allDrives = await tusky.volume.list();
-console.log("Total volumes:", allDrives.length);
+const allVolumes = await tusky.volume.list();
+console.log("Total volumes:", allVolumes.length);
 
 // Delete
 await tusky.volume.delete(volume.id);

@@ -1,22 +1,22 @@
 ---
 title: "Introduction"
-description: "Tusky your blobs"
+description: "Decentralized storage infrastructure for Walrus"
 ---
 
 ## Why Walrus
 
-Walrus is powerful. Makes your data decentralized and so → verifiable by anyone. Moving to Walrus from any centralized service provider means: 
+Walrus is powerful. It makes your data decentralized and verifiable by anyone. Moving to Walrus from any centralized service provider means:
 
-1. You don't depend on any service provider anymore. To read and write data you can use locally installed Walrus tooling. For this you'll need a Sui wallet with tokens (SUI & WAL). You'll also need some RAM and CPU: Walrus de-/encodes your file in memory and that is a resource demanding process. It also runs hundreds of HTTP requests to decentralize your file over the network.
-2. Your data is verifiable. This also means it can now be read by anyone (!). This is important: do not throw your private data on decentralized storage just like that. Humans may read it, robots may index it, AI agents can download it. If you want to keep something decentralised and private → encrypt it before storing and keep the key safe.
-3. You decide for how long the file is on the network (Walrus epochs) and pay accordingly in WAL tokens. You also manage the file lifecycle: extend or delete the file. 
-4. From your perspective (a Walrus client), your files are now a key-value store. Any content on Walrus gets a unique identifier (either blobID or quiltPatchID for batched uploads). You read the content using that identifier. As simple as that
+1. **No vendor lock-in.** You can read and write data using locally installed Walrus tooling. You'll need a Sui wallet with tokens (SUI & WAL), plus some RAM and CPU — Walrus encodes your file in memory and distributes it across the network.
+2. **Your data is verifiable — and public by default.** Anyone can read it. Do not store private data on Walrus without encrypting it first. If you want decentralized *and* private storage, encrypt before storing and keep the key safe.
+3. **You control the lifecycle.** You choose how long a file stays on the network (measured in Walrus epochs) and pay accordingly in WAL tokens. You can extend or delete files at any time.
+4. **Simple key-value access.** Every piece of content on Walrus gets a unique identifier (a blobID, or a quiltPatchID for batched uploads). You retrieve content using that identifier.
 
 ## Why Tusky
 
 Tusky is an infra provider for [Sui Walrus](https://walrus.xyz). It makes using Walrus easy at any scale.
 
-Tusky gives you managed infra — shared or dedicated publishers and aggregators, encryption, access control, and a familiar file system like experience on top of the Walrus network.
+Tusky gives you managed infrastructure — shared or dedicated publishers and aggregators, encryption, access control, and a familiar file-system-like experience on top of the Walrus network.
 
 <CardGroup cols={2}>
   <Card title="Persistent Storage" icon="database">
@@ -46,7 +46,7 @@ Tusky gives you managed infra — shared or dedicated publishers and aggregators
 
 ## How It Works
 
-Tusky orchestrates (dedicated or shared) **publishers** and **aggregators**  for each user:
+Tusky orchestrates **publishers** and **aggregators** (dedicated or shared) for each user:
 
 - **Publishers** handle encoding and writing your data to the Walrus network. Each user gets a dedicated managed wallet for publishing, funded from your prepaid balance.
 - **Aggregators** reconstruct and serve your data from the decentralized network. Tusky runs optimized aggregators with standard URL schemes for seamless access.
