@@ -1,18 +1,16 @@
 ---
-title: Wallets & Funding
-description: 'Fund your Tusky wallet with SUI and WAL tokens'
+title: "Funding"
+description: "Fund your storage"
 ---
 
-Tusky uses a **prepaid wallet** system. You deposit tokens into your Tusky wallet, and storage operations draw from that balance automatically. There is no free tier — all storage is paid at current Walrus network rates.
-
-With **auto-convert** enabled (the default), you only need to deposit **SUI** — the publisher swaps SUI → WAL automatically when needed. You can also deposit WAL directly if you prefer.
+At start, after creating account on Tusky you're on **Pay as You Go** plan: you pay for the things you use on blockchain. There are two ways of funding your on-chain activity and decentralized storage: **x402 micropayment** or a **prepaid balance**. 
 
 ## How Billing Works
 
 Every file you upload through Tusky involves two costs:
 
 | Cost Component | Token | Description |
-| --- | --- | --- |
+| :-- | :-- | :-- |
 | **Walrus storage** | WAL | Paid to Walrus storage nodes for blob storage across epochs. Rate determined by the Walrus network. |
 | **Gas fee** | SUI | Sui network transaction fee for publishing the blob on-chain. |
 
@@ -20,27 +18,24 @@ Every file you upload through Tusky involves two costs:
   Storage costs scale with file size and the number of storage epochs. Tusky passes through Walrus storage costs directly with no markup or infrastructure fee.
 </Info>
 
-## Funding Your Wallet
+## Prepaid balance
+
+You can deposit tokens into your Tusky balance wallet. All storage operations in pay as you go account and subscription plan payments draw from that balance automatically. 
+
+With **auto-convert** enabled (the default), you can deposit any of supported tokens: **SUI / WAL / USDC** — the publisher swaps tokens automatically when needed. You can also deposit SUI & WAL directly and disable auto conversions if you prefer.
+
+### Funding Your Balance
 
 <Steps>
   <Step title="Open the wallet page">
     Navigate to **Account → Wallet** in the [Tusky dashboard](https://dashboard.tusky.io), or go directly to [dashboard.tusky.io/account/wallet](https://dashboard.tusky.io/account/wallet).
   </Step>
-
-  <Step title="Deposit SUI">
-    Click **Deposit SUI** and approve the transfer from your connected Sui wallet. SUI is used for gas fees on Sui transactions.
-  </Step>
-
-  <Step title="Deposit WAL (optional)">
-    Click **Deposit WAL** and approve the transfer. WAL is used to pay Walrus storage nodes for blob storage.
-
-    <Tip>
-      With `autoConvert: true` on your publisher (the default), you can skip this step entirely — the publisher swaps SUI → WAL via on-chain DEX when needed. If you prefer to deposit WAL directly, you can acquire it on [supported Sui DEXes](https://app.cetus.zone/swap) or through the Walrus staking mechanism.
-    </Tip>
+  <Step title="Deposit SUI / WAL / USDC">
+    Click **Deposit ** and select the token. Approve the transfer from your connected  wallet. 
   </Step>
 </Steps>
 
-## Checking Your Balance
+### Checking Your Balance
 
 View your current SUI and WAL balances on the wallet page in the dashboard. The page shows:
 
@@ -53,19 +48,21 @@ View your current SUI and WAL balances on the wallet page in the dashboard. The 
 Use the SDK or API to check your balance programmatically:
 
 <CodeGroup>
-  ```typescript SDK
-  const account = await tusky.account.get();
-  console.log("SUI balance:", account.wallet.sui);
-  console.log("WAL balance:", account.wallet.wal);
-  ```
 
-  ```bash cURL
-  curl https://api.tusky.io/v2/account \
-    -H "Api-Key: YOUR_API_KEY"
-  ```
+```typescript SDK
+const account = await tusky.account.get();
+console.log("SUI balance:", account.wallet.sui);
+console.log("WAL balance:", account.wallet.wal);
+```
+
+```bash cURL
+curl https://api.tusky.io/v2/account \
+  -H "Api-Key: YOUR_API_KEY"
+```
+
 </CodeGroup>
 
-## Low Balance Notifications
+### Low Balance Notifications
 
 Tusky sends notifications when your wallet balance drops below the threshold needed for continued operations:
 
@@ -128,9 +125,9 @@ console.log("Balance sufficient:", estimate.balance.sufficient);
 
 ## Summary
 
-| Feature | Prepaid Wallet | x402 Pay-As-You-Go |
+| Feature | Prepaid Balance | x402 Micropayments |
 | --- | --- | --- |
-| **Funding model** | Deposit SUI + WAL upfront | Pay per request via micropayment |
+| **Funding model** | Deposit tokens upfront | Pay per request via micropayment |
 | **Best for** | High-volume, predictable usage | Sporadic, per-request billing |
 | **Overhead** | Single deposit transaction | Payment header per request |
 | **Balance management** | Manual top-ups with notifications | No balance to manage |
@@ -141,6 +138,7 @@ console.log("Balance sufficient:", estimate.balance.sufficient);
   <Card title="Generate API Keys" icon="key" href="/getting-started/api-keys">
     Create API keys for programmatic access.
   </Card>
+
   <Card title="Quickstart" icon="rocket" href="/quickstart">
     Upload your first file to Walrus.
   </Card>

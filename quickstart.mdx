@@ -1,15 +1,14 @@
 ---
-title: Quickstart
-description: 'Start uploading to Walrus in under 5 minutes'
+title: "Quickstart"
+description: "Start uploading to Walrus"
 ---
 
 This guide walks you through creating an account, funding your wallet, and uploading your first file to the Walrus network using the Tusky SDK.
 
 ## Prerequisites
 
-- A [Sui-compatible wallet](https://sui.io/ecosystem?tags=Wallets) (such as Sui Wallet or Suiet) installed as a browser extension
 - SUI and WAL tokens for storage funding
-- Node.js 18+ and npm (or yarn/pnpm)
+- Node.js 18\+ and npm (or yarn/pnpm)
 
 <Steps>
   <Step title="Create your account">
@@ -19,17 +18,17 @@ This guide walks you through creating an account, funding your wallet, and uploa
       Your connected Sui wallet is used for authentication and encryption key derivation. Tusky never has access to your private keys.
     </Tip>
   </Step>
-
   <Step title="Fund your prepaid wallet">
-    Navigate to **Account → Wallet** in the dashboard. Deposit SUI and WAL tokens to your Tusky prepaid wallet. These funds cover Walrus storage costs and gas fees.
+    Navigate to **Account → Wallet** in the dashboard. Deposit SUI / WAL / USDC tokens to your Tusky prepaid balance wallet. These funds cover Walrus storage costs and gas fees.
 
     Storage costs are based on current Walrus network rates. Tusky passes through costs directly with no infrastructure fee.
 
     <Info>
-      You need both **SUI** (for gas fees) and **WAL** (for Walrus storage epochs). Check the dashboard for current rate estimates.
+      You normally need both **SUI** (for gas fees) and **WAL** (for Walrus storage epochs). 
+
+      Managed Tusky publishers make auto conversions of tokens when required if not disabled on publisher level (enabled by default). This is to make things easier - you can simply drop one of the tokens supported and rely on Tusky conversions when more WAL or SUI is needed. 
     </Info>
   </Step>
-
   <Step title="Generate an API key">
     Go to [dashboard.tusky.io/account/api-keys](https://dashboard.tusky.io/account/api-keys) and create a new API key. Copy the key — you will only see it once.
 
@@ -41,41 +40,42 @@ This guide walks you through creating an account, funding your wallet, and uploa
       Keep your API key secret. Never commit it to version control or expose it in client-side code.
     </Warning>
   </Step>
-
   <Step title="Install the SDK">
     Install the Tusky TypeScript SDK in your project:
 
     <CodeGroup>
-      ```bash npm
-      npm install @tusky-io/ts-sdk
-      ```
 
-      ```bash yarn
-      yarn add @tusky-io/ts-sdk
-      ```
+    ```bash npm
+    npm install @tusky-io/ts-sdk
+    ```
 
-      ```bash pnpm
-      pnpm add @tusky-io/ts-sdk
-      ```
+    ```bash yarn
+    yarn add @tusky-io/ts-sdk
+    ```
+
+    ```bash pnpm
+    pnpm add @tusky-io/ts-sdk
+    ```
+
     </CodeGroup>
   </Step>
-
   <Step title="Upload your first file">
     Create a new file (for example, `upload.ts`) and add the following code:
 
     ```typescript upload.ts
     import Tusky from "@tusky-io/ts-sdk";
-
+    
     async function main() {
       // Initialize the SDK with your API key
       const tusky = new Tusky({ apiKey: process.env.TUSKY_API_KEY });
-
+    
       // Create a volume to organize your files
       const volume = await tusky.volumes.create({
         name: "My First Volume",
+    	encrypted: true
       });
       console.log("Volume created:", volume.id);
-
+    
       // Upload a file to the volume
       const file = await tusky.files.upload(volume.id, {
         data: Buffer.from("Hello, Walrus! Stored with Tusky."),
@@ -83,12 +83,12 @@ This guide walks you through creating an account, funding your wallet, and uploa
         mimeType: "text/plain",
       });
       console.log("File uploaded:", file.id);
-
+    
       // Retrieve the file
       const downloaded = await tusky.files.download(file.id);
       console.log("Downloaded content:", downloaded.toString());
     }
-
+    
     main().catch(console.error);
     ```
 
@@ -98,7 +98,7 @@ This guide walks you through creating an account, funding your wallet, and uploa
     npx tsx upload.ts
     ```
 
-    You should see your volume ID, file ID, and the downloaded content printed to the console. Your file is now stored on the Walrus decentralized network.
+    You should see your volume ID, file ID, and the downloaded content printed to the console. Those are Tusky things. You'll need to wait for network IDs (blobID / quiltPatchID) until your data is published. This may take few minutes, sometimes more (depending on file size and your publisher type: shared vs dedicated)
   </Step>
 </Steps>
 
@@ -106,7 +106,7 @@ This guide walks you through creating an account, funding your wallet, and uploa
 
 Behind the scenes, Tusky:
 
-1. **Encrypted** your file using keys derived from your connected wallet
+1. **Encrypted** your file using your volume keys
 2. **Encoded** the data into Walrus blob format using your dedicated publisher
 3. **Stored** the blob across Walrus storage nodes for the configured number of epochs
 4. **Indexed** the file metadata in your volume for easy retrieval
@@ -119,9 +119,11 @@ The file is now persistently stored on the decentralized Walrus network. You can
   <Card title="SDK Guide" icon="code" href="/sdk/getting-started">
     Explore the full SDK — volumes, files, members, encryption, and more.
   </Card>
+
   <Card title="API Reference" icon="terminal" href="/api-reference/overview">
     Use the REST API directly for maximum control.
   </Card>
+
   <Card title="Private Aggregators" icon="globe" href="/aggregators/overview">
     Serve files through your own custom domain with a private aggregator.
   </Card>
