@@ -63,9 +63,7 @@
               "core-concepts/secrets",
               "core-concepts/encryption",
               "core-concepts/publisher",
-              "core-concepts/aggregators",
-              "core-concepts/balance",
-              "core-concepts/subscriptions"
+              "core-concepts/aggregators"
             ]
           },
           {
@@ -81,9 +79,8 @@
             "group": "Billing",
             "pages": [
               "billing/pay-as-you-go",
-              "billing/prepaid",
-              "billing/subscriptions",
-              "billing/enterprise"
+              "core-concepts/balance",
+              "core-concepts/subscriptions"
             ]
           },
           {
@@ -95,7 +92,7 @@
             ]
           },
           {
-            "group": "Tools",
+            "group": "Resilience",
             "pages": [
               "tools/backup"
             ]
