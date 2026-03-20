@@ -69,8 +69,8 @@ You can configure your aggregator through the [Tusky dashboard](https://dashboar
   </Tab>
   <Tab title="API">
     ```bash
-    curl -X PATCH https://api.tusky.io/v1/aggregator \
-      -H "Authorization: Bearer tsk_live_abc123" \
+    curl -X PATCH https://api.tusky.io/v2/aggregators/default \
+      -H "Api-Key: YOUR_API_KEY" \
       -H "Content-Type: application/json" \
       -d '{"subdomain": "my-brand"}'
     ```
@@ -88,6 +88,9 @@ For a fully branded experience, you can attach your own domain to the aggregator
 ## What's Next
 
 <CardGroup cols={2}>
+  <Card title="Restricted Access" icon="lock" href="/aggregators/restricted">
+    Require an access token before serving content.
+  </Card>
   <Card title="Custom Domains" icon="globe" href="/aggregators/custom-domains">
     Serve content from your own domain with automatic SSL.
   </Card>

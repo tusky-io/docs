@@ -49,10 +49,12 @@ All Tusky aggregators are fronted by **Cloudflare's global CDN**:
 
 ## Fallback Aggregator
 
-For maximum resilience, Tusky operates a **fallback aggregator** on separate infrastructure from the primary aggregator stack. If the primary aggregator is unavailable, requests are automatically routed to the fallback, ensuring your content remains accessible even during infrastructure disruptions.
+CDN and cloud providers are extremely reliable, but occasional outages do happen — even Cloudflare has had brief global incidents. For this reason, Tusky operates a **fallback aggregator** on entirely independent infrastructure: a different cloud provider, different region, and separate network path.
+
+When the primary aggregator stack is unreachable — whether due to a CDN provider incident, a regional cloud outage, or network disruption — requests are automatically rerouted to the fallback. Your content stays accessible during these rare but real events.
 
 <Info>
-  The fallback aggregator runs on independent infrastructure (different cloud provider, different region) to protect against correlated failures.
+  The fallback aggregator is not a hot standby for performance — it is a resilience mechanism for outages. Under normal conditions, all traffic is served through the primary CDN-backed stack.
 </Info>
 
 ## Security

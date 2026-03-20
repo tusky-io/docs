@@ -47,7 +47,7 @@
             ]
           },
           {
-            "group": "Getting Started",
+            "group": "Onboarding",
             "pages": [
               "getting-started/create-account",
               "getting-started/api-keys",
@@ -73,6 +73,7 @@
             "pages": [
               "aggregators/overview",
               "aggregators/private-aggregators",
+              "aggregators/restricted",
               "aggregators/custom-domains",
               "aggregators/analytics"
             ]

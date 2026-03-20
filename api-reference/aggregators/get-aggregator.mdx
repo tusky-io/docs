@@ -30,7 +30,11 @@ Retrieve an aggregator by ID.
 </ResponseField>
 
 <ResponseField name="restricted" type="boolean">
-  Whether authentication is required. When `true`, requests must include an `Api-Key` header.
+  Whether authentication is required.
+</ResponseField>
+
+<ResponseField name="restrictedMode" type="string">
+  How clients pass the access token when `restricted` is `true`. One of: `header`, `query`, or `path`.
 </ResponseField>
 
 <ResponseField name="public" type="boolean">
@@ -73,6 +77,7 @@ curl https://api.tusky.io/v2/aggregators/default \
   "subdomain": "myapp",
   "customDomain": null,
   "restricted": false,
+  "restrictedMode": "header",
   "public": false,
   "cache": true,
   "fallbackToBackup": false,
