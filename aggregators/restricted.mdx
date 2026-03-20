@@ -1,0 +1,121 @@
+---
+title: Restricted Aggregators
+description: 'Require an access token to serve content from your aggregator'
+---
+
+By default, your private aggregator serves your content to anyone who knows the URL. **Restricted mode** locks it down — every request must carry an access token before content is served. This is useful for gating downloads behind authentication, building signed-URL systems, or protecting premium content.
+
+## Enabling Restriction
+
+<Tabs>
+  <Tab title="Dashboard">
+    Navigate to **Settings → Aggregator** and toggle **Require authentication**. Choose the access mode that fits your use case.
+  </Tab>
+  <Tab title="SDK">
+    ```typescript
+    await tusky.aggregator.update({
+      restricted: true,
+      restrictedMode: "header", // "header" | "query" | "path"
+    });
+    ```
+  </Tab>
+  <Tab title="API">
+    ```bash
+    curl -X PATCH https://api.tusky.io/v2/aggregators/default \
+      -H "Api-Key: YOUR_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{"restricted": true, "restrictedMode": "header"}'
+    ```
+  </Tab>
+</Tabs>
+
+## Access Modes
+
+The `restrictedMode` field controls how clients present their access token. Use your Tusky API key as the token.
+
+### Header (default)
+
+The client sends the `Api-Key` header with every request:
+
+```bash
+curl https://myproject.mytusky.xyz/v1/blobs/abc123 \
+  -H "Api-Key: YOUR_API_KEY"
+```
+
+**Best for:** Server-to-server communication, backend services, the Tusky SDK. The SDK passes this header automatically when configured with an API key.
+
+### Query parameter
+
+The client appends `?api-key=` to the URL:
+
+```
+https://myproject.mytusky.xyz/v1/blobs/abc123?api-key=YOUR_API_KEY
+```
+
+**Best for:** Browser contexts where you cannot set custom headers — `<img>` tags, `<video>` sources, direct download links, or `window.open()` calls.
+
+```html
+<img src="https://myproject.mytusky.xyz/qp_abc123?api-key=YOUR_API_KEY" />
+```
+
+<Warning>
+  Query parameter tokens appear in browser history, server logs, and referrer headers. Use short-lived or scoped API keys when using this mode. Never expose a full-permissions key in client-side HTML.
+</Warning>
+
+### Path prefix
+
+The client embeds the token at the start of the URL path:
+
+```
+https://myproject.mytusky.xyz/{accessToken}/v1/blobs/abc123
+```
+
+For example:
+
+```bash
+curl https://myproject.mytusky.xyz/YOUR_API_KEY/v1/blobs/abc123
+```
+
+**Best for:** CDN configurations that route on path rather than query string, or presigned-URL-style access patterns where the token is baked into a shareable link.
+
+<Note>
+  All three modes use the same access token — your Tusky API key. You can create a scoped key with only `files:read` permission specifically for aggregator access. See [API Keys](/getting-started/api-keys#permission-scopes) for the full scopes reference.
+</Note>
+
+## Access Mode Comparison
+
+| Mode | Token location | Use case |
+| --- | --- | --- |
+| `header` | `Api-Key:` request header | Server-side, SDK, secure clients |
+| `query` | `?api-key=` URL parameter | `<img>` tags, direct browser links |
+| `path` | `/{token}/v1/blobs/...` URL prefix | CDN path routing, presigned links |
+
+## Scoped Keys for Aggregator Access
+
+Create a read-only API key to limit the blast radius if the token is ever exposed:
+
+<Steps>
+  <Step title="Create a scoped key">
+    Go to [dashboard.tusky.io/account/api-keys](https://dashboard.tusky.io/account/api-keys) and create a new key. Grant only the `files:read` scope.
+  </Step>
+  <Step title="Configure your aggregator">
+    Enable restricted mode with your preferred access mode.
+  </Step>
+  <Step title="Use the scoped key as the token">
+    Distribute the scoped key to clients or embed it in signed links. If the key is compromised, revoke it and create a new one — it cannot write, delete, or modify anything.
+  </Step>
+</Steps>
+
+## What's Next
+
+<CardGroup cols={2}>
+  <Card title="API Keys" icon="key" href="/getting-started/api-keys">
+    Create scoped keys for aggregator access.
+  </Card>
+  <Card title="Custom Domains" icon="globe" href="/aggregators/custom-domains">
+    Serve restricted content through your own branded domain.
+  </Card>
+  <Card title="Analytics" icon="chart-line" href="/aggregators/analytics">
+    Monitor who is accessing your restricted aggregator.
+  </Card>
+</CardGroup>

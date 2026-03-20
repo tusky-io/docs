@@ -22,7 +22,11 @@ Update an aggregator's configuration. Only included fields are updated.
 </ParamField>
 
 <ParamField body="restricted" type="boolean">
-  When `true`, requests require authentication via `Api-Key` header. When `false`, content is served without authentication.
+  When `true`, requests must be authenticated. When `false`, content is served publicly.
+</ParamField>
+
+<ParamField body="restrictedMode" type="string">
+  Controls how clients pass the access token when `restricted` is `true`. One of: `header` (default — `Api-Key` request header), `query` (`?api-key=` query parameter), or `path` (`/{accessToken}/v1/blobs/{blobId}` URL prefix).
 </ParamField>
 
 <ParamField body="public" type="boolean">
@@ -71,6 +75,8 @@ curl -X PATCH https://api.tusky.io/v2/aggregators/agg_default \
   "url": "https://myapp.mytusky.xyz",
   "subdomain": "myapp",
   "customDomain": "cdn.example.com",
+  "restricted": false,
+  "restrictedMode": "header",
   "public": true,
   "cache": true,
   "fallbackToBackup": true,

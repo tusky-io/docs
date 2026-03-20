@@ -11,7 +11,11 @@ The Walrus network is designed for durability through redundant encoding across 
 
 <CardGroup cols={2}>
   <Card title="Human Error" icon="clock-rotate-left">
-    Mistakes happen: deleting files by a missclick, disabling auto-extend flag, missing blob expiration notifications...
+    Mistakes happen: accidentally deleting files, disabling auto-extend, or missing blob expiration notifications.
+  </Card>
+
+  <Card title="Compliance" icon="file-shield">
+    Some regulatory requirements demand data be stored in identifiable, auditable infrastructure in addition to decentralized systems.
   </Card>
 
   <Card title="Peace of Mind" icon="heart">
@@ -25,17 +29,17 @@ The Walrus network is designed for durability through redundant encoding across 
   <Step title="Enable backup on a volume">
     Turn on backup for any volume through the dashboard or API. Backup is configured per volume — you can choose which volumes need the extra protection.
   </Step>
-  <Step title=" Once enabled">
-    Tusky runs over all your files from given volume and downloads it to backup.
+  <Step title="Existing files backed up">
+    Once enabled, Tusky copies all existing files in the volume to the centralized backup store.
   </Step>
   <Step title="Automatic on upload">
-    Every file uploaded to the volume is automatically copied to Tusky's centralized blobstore in addition to being published to Walrus.
+    Every file subsequently uploaded to the volume is automatically copied to Tusky's centralized blobstore in addition to being published to Walrus.
   </Step>
-  <Step title="Once removed from the network">
-    When your file gets deleted from Walrus, Tusky will still hold it in backup for 2 epochs
+  <Step title="Retained after expiry">
+    When a file's Walrus storage epochs expire, Tusky retains the backup copy for 2 additional epochs before removing it.
   </Step>
   <Step title="Transparent access">
-    File retrieval works exactly the same whether backup is enabled or not. If the primary Walrus path is unavailable, the aggregator can fall back to the backup copy - only if enabled on your aggregator level.
+    File retrieval works exactly the same whether backup is enabled or not. If the primary Walrus path is unavailable, the aggregator falls back to the backup copy — provided `fallbackToBackup` is enabled on your aggregator.
   </Step>
 </Steps>
 
@@ -54,7 +58,7 @@ The Walrus network is designed for durability through redundant encoding across 
       encrypted: true,
       backup: true,
     });
-    
+
     // Enable on existing volume
     await tusky.volume.update("vol_abc123", {
       backup: true,
@@ -63,8 +67,8 @@ The Walrus network is designed for durability through redundant encoding across 
   </Tab>
   <Tab title="API">
     ```bash
-    curl -X PATCH https://api.tusky.io/v1/volumes/vol_abc123 \
-      -H "Authorization: Bearer tsk_live_abc123" \
+    curl -X PATCH https://api.tusky.io/v2/volumes/vol_abc123 \
+      -H "Api-Key: YOUR_API_KEY" \
       -H "Content-Type: application/json" \
       -d '{"backup": true}'
     ```
@@ -85,7 +89,7 @@ You can disable backup at any time:
 ## What's Next
 
 <CardGroup cols={2}>
-  <Card title="S3 Migration" icon="right-left" href="/tools/s3-migration">
+  <Card title="S3 Migration" icon="right-left" href="/migrations/s3">
     Migrate existing data from S3 to Tusky with automatic backup.
   </Card>
 

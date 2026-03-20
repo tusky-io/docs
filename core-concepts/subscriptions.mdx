@@ -11,10 +11,20 @@ Tusky offers three plans. All plans include the same core features — the diffe
 | --- | :-: | :-: | :-: |
 | **Monthly price** | \$0 | \$50 | \$500 |
 | **Storage included** | 5 GB | 50 GB | 2 TB |
-| **Transactions / month** | 1000 | 10 000 | 100 000 |
+| **Transactions / month** | 1,000 | 10,000 | 100,000 |
 | **Bandwidth / month** | 50 GB | 500 GB | 10 TB |
-| **Aggregators** | 1 private aggregator | 1 private aggregator | 3 private aggregators<br />with custom domains |
-| Backup |  |  |  |
+| **Aggregators** | 1 private aggregator | 1 private aggregator | 3 private aggregators with custom domains |
+| **Backup** | — | — | ✓ |
+
+## Overage behavior
+
+When you exceed a monthly limit:
+
+| Limit exceeded | Behavior |
+| --- | --- |
+| **Storage** | New uploads are blocked until the next billing cycle or until you upgrade. |
+| **Transactions** | Requests return `429 Too Many Requests` until the next cycle or until you upgrade. |
+| **Bandwidth** | Downloads through your aggregator are throttled. Files remain accessible — just slower. |
 
 ## Enterprise
 

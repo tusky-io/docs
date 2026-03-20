@@ -12,7 +12,14 @@ Create a new aggregator. Each account starts with a default aggregator; use this
 </ParamField>
 
 <ParamField body="restricted" type="boolean" default="false">
-  When `true`, requests require authentication via `Api-Key` header. When `false`, content is served without authentication.
+  When `true`, requests must be authenticated. When `false`, content is served publicly. Use `restrictedMode` to control how the access token is presented.
+</ParamField>
+
+<ParamField body="restrictedMode" type="string" default="header">
+  Controls how clients pass the access token when `restricted` is `true`. One of:
+  - `header` — client sends `Api-Key: YOUR_TOKEN` request header (default; suitable for server-to-server and SDK use)
+  - `query` — client appends `?api-key=YOUR_TOKEN` to the URL (useful for browser `<img>` tags, direct download links, or contexts where setting headers is not possible)
+  - `path` — client prefixes the path with the token: `/{accessToken}/v1/blobs/{blobId}` (useful for CDN path-based routing or presigned-URL-style access)
 </ParamField>
 
 <ParamField body="public" type="boolean" default="false">
@@ -38,6 +45,7 @@ Create a new aggregator. Each account starts with a default aggregator; use this
 <ResponseField name="subdomain" type="string">Assigned subdomain.</ResponseField>
 <ResponseField name="customDomain" type="string">Custom domain, or `null`.</ResponseField>
 <ResponseField name="restricted" type="boolean">Whether authentication is required.</ResponseField>
+<ResponseField name="restrictedMode" type="string">How clients pass the access token: `header`, `query`, or `path`.</ResponseField>
 <ResponseField name="public" type="boolean">Whether serving all Walrus content.</ResponseField>
 <ResponseField name="cache" type="boolean">Whether Cloudflare edge caching is enabled.</ResponseField>
 <ResponseField name="fallbackToBackup" type="boolean">Whether backup fallback is enabled.</ResponseField>
@@ -70,6 +78,7 @@ curl -X POST https://api.tusky.io/v2/aggregators \
   "subdomain": "cdn-assets",
   "customDomain": null,
   "restricted": false,
+  "restrictedMode": "header",
   "public": false,
   "cache": true,
   "fallbackToBackup": false,
@@ -78,5 +87,5 @@ curl -X POST https://api.tusky.io/v2/aggregators \
 ```
 
 <Note>
-  Default: `restricted: false, public: false` — serves your account's content without requiring authentication. Set `restricted: true` to require an `Api-Key` header on every request. Set `public: true` to serve any blob from the Walrus network.
+  Default: `restricted: false, public: false` — serves your account's content without requiring authentication. Set `restricted: true` to require an access token; use `restrictedMode` to control how the token is presented (`header`, `query`, or `path`). Set `public: true` to serve any blob from the Walrus network.
 </Note>

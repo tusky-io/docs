@@ -44,8 +44,8 @@ Tusky lets you serve your decentralized storage content through your own branded
       </Tab>
       <Tab title="API">
         ```bash
-        curl -X PATCH https://api.tusky.io/v1/aggregator \
-          -H "Authorization: Bearer tsk_live_abc123" \
+        curl -X PATCH https://api.tusky.io/v2/aggregators/default \
+          -H "Api-Key: YOUR_API_KEY" \
           -H "Content-Type: application/json" \
           -d '{"customDomain": "cdn.yourdomain.com"}'
         ```

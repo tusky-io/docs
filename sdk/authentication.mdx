@@ -3,7 +3,7 @@ title: Authentication
 description: 'Configure authentication for the SDK'
 ---
 
-Tusky supports two authentication methods, each designed for different volumes. You can authenticate with an **API key** for server-side applications and scripts, or with a **Sui wallet** for browser-based dApps.
+Tusky supports two authentication methods, each designed for different use cases. You can authenticate with an **API key** for server-side applications and scripts, or with a **Sui wallet** for browser-based dApps.
 
 ## API Key Authentication
 
@@ -18,12 +18,12 @@ const tusky = new Tusky({
 ```
 
 <Warning>
-  API keys carry the full permissions of your account. Never expose them in client-side code or commit them to version control. Use volume variables or a secrets manager instead.
+  API keys carry the full permissions of your account. Never expose them in client-side code or commit them to version control. Use environment variables or a secrets manager instead.
 </Warning>
 
 ### Best Practices for API Keys
 
-- Store keys in volume variables (e.g. `TUSKY_API_KEY`).
+- Store keys in environment variables (e.g. `TUSKY_API_KEY`).
 - Rotate keys periodically from the dashboard.
 - Use separate keys for development and production.
 
@@ -99,7 +99,7 @@ const tusky = new Tusky({
 
 ## Authentication Comparison
 
-| Method | Volume | Use Case |
+| Method | Environment | Use Case |
 | --- | --- | --- |
 | **API Key** | Server / Scripts | Backend services, CI/CD, automation |
 | **Browser Wallet** | Browser | User-facing dApps with wallet connect |

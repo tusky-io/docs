@@ -26,6 +26,8 @@ console.log("SSL:", aggregator.sslEnabled);
 | `subdomain` | `string` | Your aggregator subdomain (e.g. `myproject`). |
 | `url` | `string` | Full aggregator URL (e.g. `https://myproject.mytusky.xyz`). |
 | `customDomain` | `string \| null` | Custom domain if configured, otherwise `null`. |
+| `restricted` | `boolean` | Whether access token is required on requests. |
+| `restrictedMode` | `string` | How the token is passed: `header`, `query`, or `path`. |
 | `sslEnabled` | `boolean` | Whether SSL is active on the aggregator. |
 | `createdAt` | `string` | ISO 8601 creation timestamp. |
 
@@ -43,6 +45,32 @@ const updated = await tusky.aggregator.update({
 console.log("New URL:", updated.url);
 // https://brand-assets.mytusky.xyz
 ```
+
+### Restrict Access
+
+Require an access token on every request to your aggregator:
+
+```typescript
+// Require Api-Key header (default — server-to-server, SDK)
+await tusky.aggregator.update({
+  restricted: true,
+  restrictedMode: "header",
+});
+
+// Require ?api-key= query param (browser img tags, direct links)
+await tusky.aggregator.update({
+  restricted: true,
+  restrictedMode: "query",
+});
+
+// Require /{token}/... path prefix (CDN routing, presigned links)
+await tusky.aggregator.update({
+  restricted: true,
+  restrictedMode: "path",
+});
+```
+
+See [Restricted Aggregators](/aggregators/restricted) for a full guide.
 
 ### Attach a Custom Domain
 

@@ -26,7 +26,7 @@ This guide walks you through creating an account, funding your wallet, and uploa
     <Info>
       You normally need both **SUI** (for gas fees) and **WAL** (for Walrus storage epochs). 
 
-      Managed Tusky publishers make auto conversions of tokens when required if not disabled on publisher level (enabled by default). This is to make things easier - you can simply drop one of the tokens supported and rely on Tusky conversions when more WAL or SUI is needed. 
+      Tusky publishers automatically convert between tokens when needed (enabled by default). You can deposit any supported token and let Tusky handle conversions as required.
     </Info>
   </Step>
   <Step title="Generate an API key">
@@ -98,7 +98,7 @@ This guide walks you through creating an account, funding your wallet, and uploa
     npx tsx upload.ts
     ```
 
-    You should see your volume ID, file ID, and the downloaded content printed to the console. Those are Tusky things. You'll need to wait for network IDs (blobID / quiltPatchID) until your data is published. This may take few minutes, sometimes more (depending on file size and your publisher type: shared vs dedicated)
+    You should see your volume ID, file ID, and the downloaded content printed to the console. Network IDs (blobID / quiltPatchID) become available once your data is published to Walrus, which may take a few minutes depending on file size and your publisher type (shared vs. dedicated).
   </Step>
 </Steps>
 

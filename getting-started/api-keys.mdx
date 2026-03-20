@@ -59,11 +59,11 @@ const tusky = new Tusky({
 
 ### With the REST API
 
-Include the API key in the `Authorization` header of every request:
+Include the API key in the `Api-Key` header of every request:
 
 ```bash
-curl https://api.tusky.io/v1/volumes \
-  -H "Authorization: Bearer $TUSKY_API_KEY"
+curl https://api.tusky.io/v2/volumes \
+  -H "Api-Key: $TUSKY_API_KEY"
 ```
 
 ## Key Management
@@ -91,7 +91,7 @@ Revoke a key instantly from the [API keys page](https://dashboard.tusky.io/accou
   API keys grant programmatic access to your Tusky account. Treat them like passwords.
 </Warning>
 
-- **Use volume variables** — never hardcode API keys in source code
+- **Use environment variables** — never hardcode API keys in source code
 
   ```bash
   # .env (add to .gitignore)
@@ -99,7 +99,7 @@ Revoke a key instantly from the [API keys page](https://dashboard.tusky.io/accou
   ```
 
 - **Never commit keys to version control** — use `.gitignore` to exclude `.env` files and audit your git history if a key is accidentally committed
-- **Use separate keys per volume** — create distinct keys for development, staging, and production
+- **Use separate keys per environment** — create distinct keys for development, staging, and production
 - **Scope keys narrowly** — grant only the permissions each integration needs
 - **Revoke unused keys** — regularly audit your active keys and revoke any that are no longer needed
 - **Monitor usage** — check the dashboard for unexpected API activity that could indicate a compromised key
@@ -111,8 +111,8 @@ Revoke a key instantly from the [API keys page](https://dashboard.tusky.io/accou
 ## Next Steps
 
 <CardGroup cols={2}>
-  <Card title="Fund Your Balance" icon="wallet" href="/getting-started/wallets">
-    Add SUI /WAL / USDC to start uploading files.
+  <Card title="Fund Your Balance" icon="wallet" href="/getting-started/funding">
+    Add SUI / WAL / USDC to start uploading files.
   </Card>
 
   <Card title="Quickstart" icon="rocket" href="/quickstart">
