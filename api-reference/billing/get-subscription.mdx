@@ -7,7 +7,7 @@ Retrieve the current subscription plan and status.
 
 ## Response
 
-<ResponseField name="plan" type="string">Current plan: `payg`, `starter`, `growth`, `scale`, `enterprise`.</ResponseField>
+<ResponseField name="plan" type="string">Current plan: `payg`, `developer`, `business`, `enterprise`.</ResponseField>
 <ResponseField name="status" type="string">Subscription status: `active`, `past_due`, `cancelled`.</ResponseField>
 <ResponseField name="limits" type="object">
   <Expandable title="Plan limits">
@@ -38,11 +38,11 @@ curl https://api.tusky.io/v2/billing/subscription \
 
 ```json
 {
-  "plan": "growth",
+  "plan": "developer",
   "status": "active",
   "limits": {
     "transactionsPerMonth": 10000,
-    "bandwidthPerMonth": 107374182400
+    "bandwidthPerMonth": 536870912000
   },
   "currentPeriod": {
     "start": "2026-03-01T00:00:00Z",
