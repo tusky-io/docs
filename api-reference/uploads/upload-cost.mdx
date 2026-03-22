@@ -127,7 +127,7 @@ Use this to preview costs, build budgeting tools, or validate that your balance 
   Subscription coverage details. Present when the account has an active subscription.
   <Expandable title="Subscription object">
     <ResponseField name="plan" type="string">
-      Current subscription plan name (e.g. `"starter"`, `"growth"`, `"scale"`).
+      Current subscription plan name (e.g. `"developer"`, `"business"`).
     </ResponseField>
     <ResponseField name="coveredGas" type="boolean">
       Whether gas fees for this batch are covered by the subscription.
@@ -212,7 +212,7 @@ curl -X POST https://api.tusky.io/v2/uploads/cost \
     "source": "aggregated"
   },
   "subscription": {
-    "plan": "growth",
+    "plan": "developer",
     "coveredGas": true,
     "monthlyUploadsRemaining": 8750,
     "monthlyBandwidthRemaining": 96636764160

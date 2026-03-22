@@ -8,7 +8,7 @@ Generate a checkout URL to subscribe using a credit card. The user is redirected
 ## Request Body
 
 <ParamField body="plan" type="string" required>
-  Target plan: `starter`, `growth`, `scale`.
+  Target plan: `developer`, `business`.
 </ParamField>
 
 <ParamField body="returnUrl" type="string">
@@ -30,7 +30,7 @@ Generate a checkout URL to subscribe using a credit card. The user is redirected
 curl -X POST https://api.tusky.io/v2/billing/subscription/checkout \
   -H "Api-Key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"plan": "growth", "returnUrl": "https://dashboard.tusky.io/billing/success"}'
+  -d '{"plan": "developer", "returnUrl": "https://dashboard.tusky.io/billing/success"}'
 ```
 
 </CodeGroup>
@@ -41,7 +41,7 @@ curl -X POST https://api.tusky.io/v2/billing/subscription/checkout \
 {
   "checkoutUrl": "https://checkout.tusky.io/subscribe/session_xyz789",
   "sessionId": "session_xyz789",
-  "plan": "growth",
+  "plan": "developer",
   "expiresAt": "2026-03-07T15:30:00Z"
 }
 ```
